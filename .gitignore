@@ -231,8 +231,8 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+application.properties
 
 
 # End of https://www.gitignore.io/api/macos,linux,windows,intellij,intellij+all,intellij+iml
 #
-application.properties
