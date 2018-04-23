@@ -16,6 +16,7 @@ var config = {
     }
  };
  
+ var cursors;
  var layer;
  var tileset;
  var player;
@@ -26,6 +27,13 @@ var config = {
  function preload (){
     this.load.spritesheet('playerRun', '../sprites/PlayerRun.png',
         { frameWidth:128, frameHeight:140});
+    this.load.spritesheet('playerIdle', '../sprites/PlayerIdle.png',
+        { frameWidth:128, frameHeight:140});
+    this.load.spritesheet('playerHeavyAttack', '../sprites/PlayerHeavyAtk.png',
+        { frameWidth:217, frameHeight:187});
+    this.load.spritesheet('playerLightAttack', '../sprites/PlayerLightAtk.png',
+        { frameWidth:217, frameHeight:187});    
+    
     this.load.image('dirtGrass', '../sprites/ground.png');
     //LOAD TERRAIN
     this.load.image('tiles', '../sprites/allTiles.png');
@@ -44,16 +52,57 @@ var config = {
     //Makes player and platforms collide
     this.physics.add.collider(player, layer);
 
+    //"Key listener"
+    cursors = game.input.keyboard.createCursorKeys();
+
     //Animations for player
+    this.anims.create({
+        key: 'lightAttack',
+        frames: this.anims.generateFrameNumbers('playerLightAttack', { start: 0, end: 9 }),
+        frameRate: 20,
+        repeat: 1
+    });
+
+    this.anims.create({
+        key: 'heavyAttack',
+        frames: this.anims.generateFrameNumbers('playerHeavyAttack', { start: 0, end: 9 }),
+        frameRate: 20,
+        repeat: 1
+    });
+
     this.anims.create({
         key: 'run',
         frames: this.anims.generateFrameNumbers('playerRun', { start: 0, end: 19 }),
         frameRate: 20,
         repeat: 1
     });
-
+    
+    this.anims.create({
+        key: 'idle',
+        frames: this.anims.generateFrameNumbers('playerIdle', { start: 0, end: 19 }),
+        frameRate: 20,
+        repeat: 1
+    });
  }
  
  function update (){
     //Plays animation
+    if(cursors.down.isDown) {
+        player.anims.play('heavyAttack', true);
+    } else if(cursors.left.isDown) {
+        player.setVelocityX(-260);
+        player.anims.play('run', true);
+        player.flipX=true;
+    } else if (cursors.right.isDown) {
+        player.setVelocityX(260);
+        player.anims.play('run', true);
+        player.flipX=false;
+    } else {
+        player.setVelocityX(0);
+        player.anims.play('idle', true);
+    }
+    if(cursors.up.isDown && player.body.onFloor()) {
+        player.setVelocityY(-400);
+    }
+
  }
