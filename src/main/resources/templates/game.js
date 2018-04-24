@@ -10,7 +10,7 @@ var config = {
     physics: {
         default: 'arcade',
         arcade: {
-            gravity: { y: 800 },
+            gravity: { y: 600 },
             debug: false
         }
     }
@@ -51,7 +51,7 @@ function preload() {
     this.load.image('background','../sprites/testBackground.png');
     //LOAD TERRAIN
     this.load.image('tiles', '../sprites/allTiles.png');
-    this.load.tilemapCSV('map', '../maps/TutLevel.csv');
+    this.load.tilemapCSV('map', '../maps/Level1.csv');
 
 }
 
@@ -67,7 +67,7 @@ function create() {
     //Creating Map
     map = this.make.tilemap({ key: 'map', tileWidth: 64, tileHeight: 64 });
     var tileset = map.addTilesetImage('tiles');
-    var layer = map.createStaticLayer(0, tileset, 0, -1000);
+    var layer = map.createStaticLayer(0, tileset, 0, -830);
 
     map.setCollisionBetween(0, 15);
 
