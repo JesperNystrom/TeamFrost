@@ -175,7 +175,7 @@ function update() {
     if (player.body.velocity.y > 200) {
         player.anims.play('fall', true);
     }
-    if(player.body.velocity.x == 0 && player.body.velocity.y == 0){
+    if(erdtjiklxtbjhnkl){
         player.anims.play('idle', true);
     }
 }
