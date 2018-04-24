@@ -10,7 +10,7 @@ var config = {
     physics: {
         default: 'arcade',
         arcade: {
-            gravity: { y: 1000 },
+            gravity: { y: 950 },
             debug: false
         }
     }
@@ -41,7 +41,8 @@ function preload() {
         { frameWidth: 128, frameHeight: 140 });
     this.load.spritesheet('playerFall', '../sprites/PlayerFall.png',
         { frameWidth: 128, frameHeight: 150 });
-        
+    this.load.spritesheet('playerWallGlide', '../sprites/PlayerWallGlide.png',
+        { frameWidth: 129, frameHeight: 210 });    
 
 
     this.load.image('dirtGrass', '../sprites/ground.png');
@@ -61,7 +62,7 @@ function create() {
     var tileset = map.addTilesetImage('tiles');
     var layer = map.createStaticLayer(0, tileset, 0, -1000);
 
-    map.setCollisionBetween(0, 5);
+    map.setCollisionBetween(0, 15);
 
     //Make player a phys object and player/platforms collide
     player = this.physics.add.sprite(200, 200, 'playerRun');
@@ -72,6 +73,7 @@ function create() {
     key_X = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.X);
     key_Z = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z);
     key_jump = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+
 
     //Camera
     this.cameras.main.setSize(1137, 640);
@@ -116,12 +118,21 @@ function create() {
         frameRate: 20,
         repeat: 1
     });
+
+    this.anims.create({
+        key: 'wallGlide',
+        frames: this.anims.generateFrameNumbers('playerWallGlide', { start: 0, end: 4 }),
+        frameRate: 20,
+        repeat: -1
+    });
+
     this.anims.create({
         key: 'jump',
         frames: this.anims.generateFrameNumbers('playerJump', { start: 0, end: 1 }),
         frameRate: 20,
         repeat: 1
     });
+
     this.anims.create({
         key: 'fall',
         frames: this.anims.generateFrameNumbers('playerFall', { start: 0, end: 1 }),
@@ -141,8 +152,11 @@ function update() {
 
     //Plays animation'
     switch (states) {
-        case 'gliding':
+        case 'glide':
         player.anims.play('glide', true);
+        break;
+        case 'wallGlide':
+        player.anims.play('wallGlide', true);
         break;
         case 'run' :
         player.anims.play('run', true);
@@ -166,11 +180,11 @@ function update() {
 
 
     if (cursors.down.isDown && fallBuffert > 0) {
-        states = 'gliding';
+        states = 'glide';
         if (player.flipX) {
-            player.setVelocityX(-400)
+            player.setVelocityX(-900)
         } else {
-            player.setVelocityX(400)
+            player.setVelocityX(900)
         }
 
     } else if (cursors.left.isDown) {
@@ -209,7 +223,14 @@ function update() {
     if (player.body.velocity.y > 0 && !key_X.isDown && !key_Z.isDown) {
        states = 'fall';
     }
+    if (player.body.velocity.y < 0 && !cursors.up.isDown) {
+        states = 'jump';
+     }
 
-    if(player.body.velocity.x == 0 && player.body.velocity.y == 0){
+    if(cursors.up.isDown && player.body.onWall()){
+        states = 'wallGlide';
+        player.setVelocityY(-400);
     }
+    
+    console.log(states)
 }
