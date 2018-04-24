@@ -37,14 +37,14 @@ var config = {
     this.load.image('dirtGrass', '../sprites/ground.png');
     //LOAD TERRAIN
     this.load.image('tiles', '../sprites/allTiles.png');
-    this.load.tilemapCSV('map', '../maps/TestMap2.csv');
+    this.load.tilemapCSV('map', '../maps/TutLevel.csv');
 
  }
  
  function create (){
     map = this.make.tilemap({ key: 'map', tileWidth: 64, tileHeight: 64 });
     var tileset = map.addTilesetImage('tiles');
-    var layer = map.createStaticLayer(0, tileset, 0, 500);
+    var layer = map.createStaticLayer(0, tileset, 0, -1000);
 
     map.setCollisionBetween(0,5);
     //Make player a phys object
