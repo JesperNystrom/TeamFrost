@@ -18,6 +18,7 @@ var config = {
         }
     }
 };
+var hit;
 var gamepad;
 var states;
 var fallBuffert;
@@ -93,7 +94,7 @@ function create() {
     player.body.setSize(64, 138);
 
     //Create enemies
-    enemies = this.physics.add.staticGroup();
+    enemies = this.physics.add.group();
     enemies.create(400,200, 'enemyGhost');
     enemies.create(500,200, 'enemyGhost');
     //enemies.body.setSize(64, 90);
@@ -104,6 +105,8 @@ function create() {
     this.physics.add.collider(weaponHitBox, enemies);
     console.log(this.physics.add.collider(weaponHitBox, enemies));
     console.log(this.physics.add.collider(player, layer));
+
+    hit = this.physics.add.overlap(weaponHitBox, enemies,  null, this);
 
 
 
@@ -189,16 +192,6 @@ function create() {
 
 function update() {
 
-    var enemyChildren = enemies.getChildren();
-    var weaponChildren = weaponHitBox.getChildren();
-    for(enemyChild of enemyChildren) {
-        for (child of weaponChildren) {
-        if(child.getBounds() == enemyChild.getBounds()) {
-            enemies.clear();
-            console.log("failure");
-        }
-    }
-}
 
 
 
@@ -499,6 +492,8 @@ function onEvent() {
         }
 
     }
+}
 
-
+function removeEnemy(player, enemies) {
+    enemies.disableBody(true, true);
 }
