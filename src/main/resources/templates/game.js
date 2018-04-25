@@ -22,6 +22,7 @@ var cursors;
 var layer;
 var tileset;
 var player;
+var enemies;
 var platforms;
 var map;
 var spacefield;
@@ -29,6 +30,7 @@ var backgroundv;
 var game = new Phaser.Game(config);
 
 function preload() {
+    //Player sprites
     this.load.spritesheet('playerRun', '../sprites/PlayerRun.png',
         { frameWidth: 128, frameHeight: 140 });
     this.load.spritesheet('playerIdle', '../sprites/PlayerIdle.png',
@@ -46,6 +48,10 @@ function preload() {
     this.load.spritesheet('playerWallGlide', '../sprites/PlayerWallGlide.png',
         { frameWidth: 129, frameHeight: 210 });    
 
+    //Enemy sprites
+    this.load.spritesheet('enemyGhost', '../sprites/EnemyGhost.png',
+        { frameWidth: 64, frameHeight: 64 });    
+
 
     this.load.image('dirtGrass', '../sprites/ground.png');
     this.load.image('background','../sprites/testBackground.png');
@@ -56,10 +62,13 @@ function preload() {
 }
 
 function create() {
+    //enemies = this.add.group();
+
+
+
+    //Background
     spacefield = this.add.tileSprite(0,0,1137,640,'background');
     backgroundv = -5;
-
-
 
     //FloorCounter
     fallBuffert = 25;
@@ -69,12 +78,23 @@ function create() {
     var tileset = map.addTilesetImage('tiles');
     var layer = map.createStaticLayer(0, tileset, 0, -50);
 
+    //Tile collision
     map.setCollisionBetween(0, 15);
 
-    //Make player a phys object and player/platforms collide
+    //Make player a phys object and player/platforms/enemies collide
     player = this.physics.add.sprite(200, 200, 'playerRun');
     player.body.setSize(64, 138)
+
+    //Create enemies
+    enemies = this.physics.add.sprite(400, 200,'enemyGhost');
+    enemies.body.setSize(64,64)
+
     this.physics.add.collider(player, layer);
+    this.physics.add.collider(enemies, layer);
+    this.physics.add.collider(player, enemies);
+
+    
+
 
     //"Key listener"
     cursors = game.input.keyboard.createCursorKeys();
