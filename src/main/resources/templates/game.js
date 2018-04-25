@@ -51,7 +51,7 @@ function preload() {
     this.load.image('background','../sprites/testBackground.png');
     //LOAD TERRAIN
     this.load.image('tiles', '../sprites/allTiles.png');
-    this.load.tilemapCSV('map', '../maps/Level1.csv');
+    this.load.tilemapCSV('map', '../maps/GlideLevel.csv');
 
 }
 
@@ -67,7 +67,7 @@ function create() {
     //Creating Map
     map = this.make.tilemap({ key: 'map', tileWidth: 64, tileHeight: 64 });
     var tileset = map.addTilesetImage('tiles');
-    var layer = map.createStaticLayer(0, tileset, 0, -830);
+    var layer = map.createStaticLayer(0, tileset, 0, -50);
 
     map.setCollisionBetween(0, 15);
 
@@ -199,10 +199,10 @@ function update() {
         states = 'glide';
         player.originY = 0.58;
         if (player.flipX) {
-            player.setVelocityX(-900)
+            player.setVelocityX(-650)
             player.originX = 0.2;
         } else {
-            player.setVelocityX(900)
+            player.setVelocityX(650)
             player.originX = 0.8;
         }
 
