@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Form</title>
+</head>
+<body>
+<h1>Form</h1>
+<form action="/registration" th:object="${gameUser}" method="post">
+
+    Username <input type="text" th:field="*{gameUserName}"/>
+    Password <input type="password" th:field="*{password}"/>
+    Email <input type="text" th:field="*{email}"/>
+    <input type="submit" value="Submit"/>
+
+</form>
+</body>
+</html>

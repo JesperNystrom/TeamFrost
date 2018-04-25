@@ -40,16 +40,16 @@ public class GameUser {
         this.outfits = outfits;
     }
 
-    public Long getUserID() {
+    public Long getGameUserID() {
         return gameUserID;
     }
 
-    public String getUserName() {
+    public String getGameUserName() {
         return gameUserName;
     }
 
-    public void setUserName(String userName) {
-        this.gameUserName = userName;
+    public void setGameUserName(String gameUserName) {
+        this.gameUserName = gameUserName;
     }
 
     public String getPassword() {
