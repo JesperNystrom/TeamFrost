@@ -2,6 +2,9 @@ var config = {
     type: Phaser.AUTO,
     width: 1137,
     height: 640,
+    input: {
+        gamepad: true
+    },
     scene: {
         preload: preload,
         create: create,
@@ -15,7 +18,7 @@ var config = {
         }
     }
 };
-
+var gamepad;
 var states;
 var fallBuffert;
 var cursors;
@@ -147,9 +150,17 @@ function create() {
         frameRate: 20,
         repeat: 1
     });
+
+    //GAMEPAD TESTING
+        config = Phaser.Input.Gamepad.Configs.DUALSHOCK_4;
+
+        this.input.gamepad.on('down', function (pad, button, value, data) {
+        gamepad = pad;
+    });
 }
 
 function update() {
+
     spacefield.x = player.x;
     spacefield.y = player.y;
     spacefield.tilePositionY += backgroundv;
@@ -193,84 +204,169 @@ function update() {
         player.anims.play('idle', true);
     }
 
+    //CONTROLS
+        if (cursors.down.isDown && fallBuffert > 0) {
+            states = 'glide';
+            player.originY = 0.58;
+            if (player.flipX) {
+                player.setVelocityX(-650)
+                player.originX = 0.2;
+            } else {
+                player.setVelocityX(650)
+                player.originX = 0.8;
+            }
 
+        } else if (cursors.left.isDown) {
+            player.setVelocityX(-260);
 
-    if (cursors.down.isDown && fallBuffert > 0) {
-        states = 'glide';
-        player.originY = 0.58;
-        if (player.flipX) {
-            player.setVelocityX(-650)
-            player.originX = 0.2;
-        } else {
-            player.setVelocityX(650)
-            player.originX = 0.8;
-        }
-
-    } else if (cursors.left.isDown) {
-        player.setVelocityX(-260);
-
-        if (player.body.onFloor())
-        states = 'run';
-
-        player.flipX = true;
-    } else if (cursors.right.isDown) {
-        player.setVelocityX(260);
-        player.flipX = false;
-        if (player.body.onFloor()){
+            if (player.body.onFloor())
             states = 'run';
-        }
 
-    } else {
-        player.originX = 0.5;
-        player.originY = 0.5;
-        player.setVelocityX(0);
-        states = 4;
-    }
-    if (key_Z.isDown && !cursors.down.isDown){
-        player.originY = 0.5;
-        if(player.flipX){
-            player.originX = 0.7;
+            player.flipX = true;
+        } else if (cursors.right.isDown) {
+            player.setVelocityX(260);
+            player.flipX = false;
+            if (player.body.onFloor()){
+                states = 'run';
+            }
+
         } else {
-            player.originX = 0.3;
+            player.originX = 0.5;
+            player.originY = 0.5;
+            player.setVelocityX(0);
+            states = 4;
         }
-        states = 'lightAttack';
-    }
-
-    if (key_X.isDown && !cursors.down.isDown){
-        player.originY = 0.62;
-        if(player.flipX){
-            player.originX = 0.7;
-        } else {
-            player.originX = 0.3;
+        if (key_Z.isDown && !cursors.down.isDown){
+            player.originY = 0.5;
+            if(player.flipX){
+                player.originX = 0.7;
+            } else {
+                player.originX = 0.3;
+            }
+            states = 'lightAttack';
         }
-        states = 'heavyAttack';
-    }
 
-    if (key_jump.isDown && player.body.onFloor()) {
-        player.setVelocityY(-400);
-        if (player.body.velocity.y < 0 && player.body.velocity.x !=0)
+        if (key_X.isDown && !cursors.down.isDown){
+            player.originY = 0.62;
+            if(player.flipX){
+                player.originX = 0.7;
+            } else {
+                player.originX = 0.3;
+            }
+            states = 'heavyAttack';
+        }
+
+        if (key_jump.isDown && player.body.onFloor()) {
+            player.setVelocityY(-400);
+            if (player.body.velocity.y < 0 && player.body.velocity.x !=0)
+                states = 'jump';
+            fallBuffert = 0;
+        }
+
+        if (player.body.velocity.y > 0 && !key_X.isDown && !key_Z.isDown) {
+        states = 'fall';
+        }
+        if (player.body.velocity.y < 0 && !cursors.up.isDown) {
             states = 'jump';
-        fallBuffert = 0;
-    }
-
-    if (player.body.velocity.y > 0 && !key_X.isDown && !key_Z.isDown) {
-       states = 'fall';
-    }
-    if (player.body.velocity.y < 0 && !cursors.up.isDown) {
-        states = 'jump';
-     }
-
-    if(player.body.velocity.y < 0){
-        states = 'jump';
-    }
-    if(cursors.up.isDown && player.body.onWall()){
-        if(player.flipX){
-        player.originX = 0.3;
-        } else {
-            player.originX = 0.7; 
         }
-        states = 'wallGlide';
-        player.setVelocityY(-400);
+
+        if(player.body.velocity.y < 0){
+            states = 'jump';
+        }
+        if(cursors.up.isDown && player.body.onWall()){
+            if(player.flipX){
+            player.originX = 0.3;
+            } else {
+                player.originX = 0.7; 
+            }
+            states = 'wallGlide';
+            player.setVelocityY(-400);
     }
+    //GAMEPAD CONTROLS
+    if (gamepad) {
+        if (gamepad.buttons[config.R1].pressed && fallBuffert > 0) {
+            states = 'glide';
+            player.originY = 0.58;
+            if (player.flipX) {
+                player.setVelocityX(-650)
+                player.originX = 0.2;
+            } else {
+                player.setVelocityX(650)
+                player.originX = 0.8;
+            }
+
+        } else if (gamepad.buttons[config.LEFT].pressed) {
+            player.setVelocityX(-260);
+
+            if (player.body.onFloor())
+            states = 'run';
+
+            player.flipX = true;
+        } else if (gamepad.buttons[config.RIGHT].pressed) {
+            player.setVelocityX(260);
+            player.flipX = false;
+            if (player.body.onFloor()){
+                states = 'run';
+            }
+
+        } else {
+            player.originX = 0.5;
+            player.originY = 0.5;
+            player.setVelocityX(0);
+            states = 4;
+        }
+        if (gamepad.buttons[config.SQUARE].pressed && !gamepad.buttons[config.R1].pressed){
+            player.originY = 0.5;
+            if(player.flipX){
+                player.originX = 0.7;
+            } else {
+                player.originX = 0.3;
+            }
+            states = 'lightAttack';
+        }
+
+        if (gamepad.buttons[config.TRIANGLE].pressed && !gamepad.buttons[config.R1].pressed){
+            player.originY = 0.62;
+            if(player.flipX){
+                player.originX = 0.7;
+            } else {
+                player.originX = 0.3;
+            }
+            states = 'heavyAttack';
+        }
+
+        if (gamepad.buttons[config.X].pressed && player.body.onFloor()) {
+            player.setVelocityY(-400);
+            if (player.body.velocity.y < 0 && player.body.velocity.x !=0)
+                states = 'jump';
+            fallBuffert = 0;
+        }
+
+        if (player.body.velocity.y > 0 && !gamepad.buttons[config.TRIANGLE].pressed && !gamepad.buttons[config.SQUARE].pressed) {
+        states = 'fall';
+        }
+        if (player.body.velocity.y < 0 && !gamepad.buttons[config.UP].pressed) {
+            states = 'jump';
+        }
+
+        if(player.body.velocity.y < 0 && !gamepad.buttons[config.TRIANGLE].pressed && !gamepad.buttons[config.SQUARE].pressed){
+            states = 'jump';
+        }
+        if(gamepad.buttons[config.UP].pressed && gamepad.buttons[config.R1].pressed && player.body.onWall()){
+            player.originY = 0.5;
+            if(player.flipX){
+                player.originX = 0.3;
+                player.setVelocityX(-260);
+            } else {
+                player.originX = 0.7; 
+                player.setVelocityX(260);
+            }
+            states = 'wallGlide';
+            player.setVelocityY(-400);
+        }
+    }
+    if(cursors.right.isDown)
+        gamepad = false;
+    //CONTROL END
     console.log(states)
 }
