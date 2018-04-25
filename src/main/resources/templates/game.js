@@ -268,12 +268,12 @@ function update() {
             if(player.flipX){
                 weaponHitBox = this.add.image(player.body.x-40, player.body.y+110, 'weaponHitBox');
                 weaponHitBox = this.add.image(player.body.x-65, player.body.y+65, 'weaponHitBox');
-                this.physics.add.collider(weaponHitBox, enemies);
+                //this.physics.add.collider(weaponHitBox, enemies);
                 player.originX = 0.7;
             } else {
                 weaponHitBox = this.add.image(player.body.x+58, player.body.y+110, 'weaponHitBox');
                 weaponHitBox = this.add.image(player.body.x+87, player.body.y+65, 'weaponHitBox');
-                this.physics.add.collider(weaponHitBox, enemies);
+                //this.physics.add.collider(weaponHitBox, enemies);
             }
             states = 'lightAttack';
         }
@@ -284,13 +284,13 @@ function update() {
                 weaponHitBox = this.add.image(player.body.x-25, player.body.y-20, 'weaponHitBox');
                 weaponHitBox = this.add.image(player.body.x-50, player.body.y+22, 'weaponHitBox');
                 weaponHitBox = this.add.image(player.body.x-65, player.body.y+65, 'weaponHitBox');
-                this.physics.add.collider(weaponHitBox, enemies);
+                //this.physics.add.collider(weaponHitBox, enemies);
                 player.originX = 0.7;
             } else {
                 weaponHitBox = this.add.image(player.body.x+90, player.body.y-20, 'weaponHitBox');
                 weaponHitBox = this.add.image(player.body.x+115, player.body.y+22, 'weaponHitBox');
                 weaponHitBox = this.add.image(player.body.x+130, player.body.y+65, 'weaponHitBox');
-                this.physics.add.collider(weaponHitBox, enemies);
+                //this.physics.add.collider(weaponHitBox, enemies);
                 player.originX = 0.3;
             }
             states = 'heavyAttack';
