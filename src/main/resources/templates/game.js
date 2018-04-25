@@ -93,13 +93,17 @@ function create() {
     player.body.setSize(64, 138);
 
     //Create enemies
-    enemies = this.physics.add.sprite(400, 200, 'enemyGhost');
-    enemies.body.setSize(64, 90);
+    enemies = this.physics.add.staticGroup();
+    enemies.create(400,200, 'enemyGhost');
+    enemies.create(500,200, 'enemyGhost');
+    //enemies.body.setSize(64, 90);
 
     this.physics.add.collider(player, layer);
     this.physics.add.collider(enemies, layer);
     this.physics.add.collider(player, enemies);
     this.physics.add.collider(weaponHitBox, enemies);
+    console.log(this.physics.add.collider(weaponHitBox, enemies));
+    console.log(this.physics.add.collider(player, layer));
 
 
 
@@ -184,6 +188,20 @@ function create() {
 }
 
 function update() {
+
+    var enemyChildren = enemies.getChildren();
+    var weaponChildren = weaponHitBox.getChildren();
+    for(enemyChild of enemyChildren) {
+        for (child of weaponChildren) {
+        if(child.getBounds() == enemyChild.getBounds()) {
+            enemies.clear();
+            console.log("failure");
+        }
+    }
+}
+
+
+
 
     spacefield.x = player.x;
     spacefield.y = player.y;
