@@ -10,7 +10,7 @@ var config = {
     physics: {
         default: 'arcade',
         arcade: {
-            gravity: { y: 950 },
+            gravity: { y: 600 },
             debug: false
         }
     }
@@ -24,6 +24,8 @@ var tileset;
 var player;
 var platforms;
 var map;
+var spacefield;
+var backgroundv;
 var game = new Phaser.Game(config);
 
 function preload() {
@@ -46,13 +48,18 @@ function preload() {
 
 
     this.load.image('dirtGrass', '../sprites/ground.png');
+    this.load.image('background','../sprites/testBackground.png');
     //LOAD TERRAIN
     this.load.image('tiles', '../sprites/allTiles.png');
-    this.load.tilemapCSV('map', '../maps/TutLevel.csv');
+    this.load.tilemapCSV('map', '../maps/Level1.csv');
 
 }
 
 function create() {
+    spacefield = this.add.tileSprite(0,0,1137,640,'background');
+    backgroundv = -5;
+
+
 
     //FloorCounter
     fallBuffert = 25;
@@ -60,12 +67,13 @@ function create() {
     //Creating Map
     map = this.make.tilemap({ key: 'map', tileWidth: 64, tileHeight: 64 });
     var tileset = map.addTilesetImage('tiles');
-    var layer = map.createStaticLayer(0, tileset, 0, -1000);
+    var layer = map.createStaticLayer(0, tileset, 0, -830);
 
     map.setCollisionBetween(0, 15);
 
     //Make player a phys object and player/platforms collide
     player = this.physics.add.sprite(200, 200, 'playerRun');
+    player.body.setSize(64, 138)
     this.physics.add.collider(player, layer);
 
     //"Key listener"
@@ -142,6 +150,9 @@ function create() {
 }
 
 function update() {
+    spacefield.x = player.x;
+    spacefield.y = player.y;
+    spacefield.tilePositionY += backgroundv;
 
     if (!player.body.onFloor()) {
         fallBuffert--;
@@ -154,12 +165,16 @@ function update() {
     switch (states) {
         case 'glide':
         player.anims.play('glide', true);
+        player.originX = 0.8;
+        player.originY = 0.58;
         break;
         case 'wallGlide':
         player.anims.play('wallGlide', true);
         break;
         case 'run' :
         player.anims.play('run', true);
+        player.originX = 0.5;
+        player.originY = 0.5;
         break;
         case 'lightAttack':
         player.anims.play('lightAttack', true);
@@ -169,6 +184,7 @@ function update() {
         break;
         case 'jump':
         player.anims.play('jump', true);
+        player.originX = 0.5;
         break;
         case 'fall':
         player.anims.play('fall', true);
@@ -181,10 +197,13 @@ function update() {
 
     if (cursors.down.isDown && fallBuffert > 0) {
         states = 'glide';
+        player.originY = 0.58;
         if (player.flipX) {
             player.setVelocityX(-900)
+            player.originX = 0.2;
         } else {
             player.setVelocityX(900)
+            player.originX = 0.8;
         }
 
     } else if (cursors.left.isDown) {
@@ -202,14 +221,28 @@ function update() {
         }
 
     } else {
+        player.originX = 0.5;
+        player.originY = 0.5;
         player.setVelocityX(0);
         states = 4;
     }
     if (key_Z.isDown && !cursors.down.isDown){
+        player.originY = 0.5;
+        if(player.flipX){
+            player.originX = 0.7;
+        } else {
+            player.originX = 0.3;
+        }
         states = 'lightAttack';
     }
 
     if (key_X.isDown && !cursors.down.isDown){
+        player.originY = 0.62;
+        if(player.flipX){
+            player.originX = 0.7;
+        } else {
+            player.originX = 0.3;
+        }
         states = 'heavyAttack';
     }
 
@@ -227,10 +260,17 @@ function update() {
         states = 'jump';
      }
 
+    if(player.body.velocity.y < 0){
+        states = 'jump';
+    }
     if(cursors.up.isDown && player.body.onWall()){
+        if(player.flipX){
+        player.originX = 0.3;
+        } else {
+            player.originX = 0.7; 
+        }
         states = 'wallGlide';
         player.setVelocityY(-400);
     }
-    
     console.log(states)
 }
