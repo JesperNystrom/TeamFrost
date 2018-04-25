@@ -22,7 +22,7 @@ var gamepad;
 var states;
 var fallBuffert;
 var timer;
-var counter;
+var count = 0;
 var cursors;
 var layer;
 var tileset;
@@ -33,6 +33,7 @@ var platforms;
 var map;
 var spacefield;
 var backgroundv;
+var timedEvent;
 var game = new Phaser.Game(config);
 
 function preload() {
@@ -70,12 +71,6 @@ function preload() {
 }
 
 function create() {
-    //create hit timer
-    counter = 0;
-   //timer = this.time.create(false);
-    
-
-
 
     //Background
     spacefield = this.add.tileSprite(0,0,1137,640,'background');
@@ -91,6 +86,7 @@ function create() {
 
     //Tile collision
     map.setCollisionBetween(0, 15);
+    weaponHitBox = this.physics.add.staticGroup();
 
     //Make player a phys object and player/platforms/enemies collide
     player = this.physics.add.sprite(200, 200, 'playerRun');
@@ -103,6 +99,7 @@ function create() {
     this.physics.add.collider(player, layer);
     this.physics.add.collider(enemies, layer);
     this.physics.add.collider(player, enemies);
+    this.physics.add.collider(weaponHitBox, enemies);
     
 
     
@@ -266,13 +263,14 @@ function update() {
         if (key_Z.isDown && !cursors.down.isDown){
             player.originY = 0.5;
             if(player.flipX){
-                weaponHitBox = this.add.image(player.body.x-40, player.body.y+110, 'weaponHitBox');
-                weaponHitBox = this.add.image(player.body.x-65, player.body.y+65, 'weaponHitBox');
+                timedEvent = this.time.addEvent({ delay: 0, callback: onEvent, 
+                    callbackScope: this, repeat: 0, startAt: 0 });
                 //this.physics.add.collider(weaponHitBox, enemies);
                 player.originX = 0.7;
             } else {
-                weaponHitBox = this.add.image(player.body.x+58, player.body.y+110, 'weaponHitBox');
-                weaponHitBox = this.add.image(player.body.x+87, player.body.y+65, 'weaponHitBox');
+                timedEvent = this.time.addEvent({ delay: 0, callback: onEvent, 
+                    callbackScope: this, repeat: 0, startAt: 0 });
+                player.originX = 0.3;
                 //this.physics.add.collider(weaponHitBox, enemies);
             }
             states = 'lightAttack';
@@ -281,15 +279,13 @@ function update() {
         if (key_X.isDown && !cursors.down.isDown){
             player.originY = 0.62;
             if(player.flipX){
-                weaponHitBox = this.add.image(player.body.x-25, player.body.y-20, 'weaponHitBox');
-                weaponHitBox = this.add.image(player.body.x-50, player.body.y+22, 'weaponHitBox');
-                weaponHitBox = this.add.image(player.body.x-65, player.body.y+65, 'weaponHitBox');
+                timedEvent = this.time.addEvent({ delay: 0, callback: onEvent, 
+                    callbackScope: this, repeat: 0, startAt: 0 });
                 //this.physics.add.collider(weaponHitBox, enemies);
                 player.originX = 0.7;
             } else {
-                weaponHitBox = this.add.image(player.body.x+90, player.body.y-20, 'weaponHitBox');
-                weaponHitBox = this.add.image(player.body.x+115, player.body.y+22, 'weaponHitBox');
-                weaponHitBox = this.add.image(player.body.x+130, player.body.y+65, 'weaponHitBox');
+                timedEvent = this.time.addEvent({ delay: 0, callback: onEvent, 
+                    callbackScope: this, repeat: 0, startAt: 0 });
                 //this.physics.add.collider(weaponHitBox, enemies);
                 player.originX = 0.3;
             }
@@ -408,4 +404,52 @@ function update() {
         gamepad = false;
     //CONTROL END
     console.log(states)
+}
+
+function onEvent ()
+{
+    if(states == 'lightAttack'){
+        if(player.flipX){
+            setTimeout(function(){
+                weaponHitBox.create(player.body.x-40, player.body.y+110, 'weaponHitBox');
+            }, 100);
+            setTimeout(function(){
+                weaponHitBox.create(player.body.x-65, player.body.y+65, 'weaponHitBox');
+            }, 160);
+        } else {
+            setTimeout(function(){
+                weaponHitBox.create(player.body.x+105, player.body.y+110, 'weaponHitBox');
+            }, 100);
+            setTimeout(function(){
+                weaponHitBox.create(player.body.x+130, player.body.y+65, 'weaponHitBox');
+            }, 160);
+        }
+
+    }
+    if(states == 'heavyAttack'){
+        if(player.flipX){
+            setTimeout(function(){
+                weaponHitBox.create(player.body.x-25, player.body.y-20, 'weaponHitBox');
+            }, 200);
+            setTimeout(function(){
+                weaponHitBox.create(player.body.x-50, player.body.y+22, 'weaponHitBox');
+            }, 260);
+            setTimeout(function(){
+                weaponHitBox.create(player.body.x-65, player.body.y+65, 'weaponHitBox');
+            }, 320);
+        } else {
+            setTimeout(function(){
+                weaponHitBox.create(player.body.x+90, player.body.y-20, 'weaponHitBox');
+            }, 200);
+            setTimeout(function(){
+                weaponHitBox.create(player.body.x+115, player.body.y+22, 'weaponHitBox');
+            }, 260);
+            setTimeout(function(){
+                weaponHitBox.create(player.body.x+130, player.body.y+65, 'weaponHitBox');
+            }, 320);
+        }
+
+    }
+
+
 }
