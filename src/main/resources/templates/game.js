@@ -22,6 +22,7 @@ var cursors;
 var layer;
 var tileset;
 var player;
+var weaponHitBox;
 var enemies;
 var platforms;
 var map;
@@ -50,7 +51,7 @@ function preload() {
 
     //Enemy sprites
     this.load.spritesheet('enemyGhost', '../sprites/EnemyGhost.png',
-        { frameWidth: 64, frameHeight: 64 });    
+        { frameWidth: 64, frameHeight: 100});    
 
 
     this.load.image('dirtGrass', '../sprites/ground.png');
@@ -59,6 +60,8 @@ function preload() {
     this.load.image('tiles', '../sprites/allTiles.png');
     this.load.tilemapCSV('map', '../maps/GlideLevel.csv');
 
+    //Weapon hitbox
+    this.load.image('weaponHitBox', '../sprites/WeaponHitBoxTest.png')
 }
 
 function create() {
@@ -83,19 +86,18 @@ function create() {
 
     //Make player a phys object and player/platforms/enemies collide
     player = this.physics.add.sprite(200, 200, 'playerRun');
-    player.body.setSize(64, 138)
+    player.body.setSize(64, 138);
 
     //Create enemies
     enemies = this.physics.add.sprite(400, 200,'enemyGhost');
-    enemies.body.setSize(64,64)
+    enemies.body.setSize(64,90);
 
     this.physics.add.collider(player, layer);
     this.physics.add.collider(enemies, layer);
     this.physics.add.collider(player, enemies);
+    //this.physics.add.collider(weaponHitBox, enemies);
 
     
-
-
     //"Key listener"
     cursors = game.input.keyboard.createCursorKeys();
     key_X = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.X);
@@ -198,6 +200,7 @@ function update() {
         break;
         case 'lightAttack':
         player.anims.play('lightAttack', true);
+        weaponHitBox = this.physics.add.image(player.body.x, player.body.y, 'weaponHitBox');
         break;
         case 'heavyAttack':
         player.anims.play('heavyAttack', true);
