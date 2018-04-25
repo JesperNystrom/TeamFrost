@@ -1,6 +1,9 @@
 package com.hellfreeze.demo.Domain;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -10,8 +13,14 @@ public class GameUser {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long gameUserID;
+    @NotNull
+    @Size(min=2,max=60)
     private String gameUserName;
+    @NotNull
     private String password;
+    @NotNull
+    @Size(min=2,max=60)
+    @Pattern(regexp = "^[A-Za-z0-9+_.-]+@(.+)$")
     private String email;
 
     @OneToOne
@@ -40,16 +49,16 @@ public class GameUser {
         this.outfits = outfits;
     }
 
-    public Long getUserID() {
+    public Long getGameUserID() {
         return gameUserID;
     }
 
-    public String getUserName() {
+    public String getGameUserName() {
         return gameUserName;
     }
 
-    public void setUserName(String userName) {
-        this.gameUserName = userName;
+    public void setGameUserName(String gameUserName) {
+        this.gameUserName = gameUserName;
     }
 
     public String getPassword() {
@@ -88,10 +97,5 @@ public class GameUser {
         this.outfits.add(outfit);
     }
 
-    @Override
-    public String toString() {
-        return "GameUser{" +
-                "outfits=" + outfits +
-                '}';
-    }
+
 }
