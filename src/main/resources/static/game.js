@@ -310,6 +310,7 @@ function update() {
     spacefield.y = player.y;
     spacefield.tilePositionY += backgroundv;
 
+    document.getElementById('Health').innerHTML = 'Health:' + health;
     healthText.x = player.x - 550;
     healthText.y = player.y - 275;
 
@@ -700,4 +701,5 @@ function checkOverlapPlayer(player, enemy) {
     if(health == 0) {
         player.disableBody(true, true);
     }
+    document.getElementById('Health').innerHTML = 'Health:' + health;
 }
