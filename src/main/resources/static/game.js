@@ -30,6 +30,10 @@ var tileset;
 var player;
 var weaponHitBox;
 var enemies;
+var health;
+//var healthBar;
+var healthValue = 100;
+var healthText;
 var map;
 var spacefield;
 var backgroundv;
@@ -63,6 +67,8 @@ function preload() {
     this.load.spritesheet('enemyFlurry', '../sprites/EnemyFlurry.png',
         { frameWidth: 64, frameHeight: 64 });
 
+    
+    this.load.image('healthBar', '../sprites/healthBar.png');
 
     this.load.image('dirtGrass', '../sprites/ground.png');
     this.load.image('background', '../sprites/testBackground.png');
@@ -75,6 +81,11 @@ function preload() {
 }
 
 function create() {
+
+    //Player health
+    health = 100;
+
+
 
     //Background
     spacefield = this.add.tileSprite(0, 0, 1137, 640, 'background');
@@ -95,6 +106,13 @@ function create() {
     //Make player a phys object and player/platforms/ghostEnemies collide
     player = this.physics.add.sprite(100, 200, 'playerRun');
     player.body.setSize(64, 138);
+
+    //Create healthBar
+    /* healthBar = this.add.image(this.width/2, this.height/2, 'healthBar');
+    Phaser.Display.Align.In.TopLeft(spacefield, healthBar); */
+    healthText = this.add.text(16,16, 'Health: 100',  { fontSize: '32px', fill: '#999' });
+
+
 
     //Create ghostEnemies
     ghostEnemies = this.physics.add.group();
@@ -124,7 +142,7 @@ function create() {
 
 
     //Camera
-    this.cameras.main.setSize(1137, 640);
+    this.cameras.main.setSize(1137, 640); 
     //this.cameras.add(400,0);
     this.cameras.main.startFollow(player);
 
@@ -219,6 +237,9 @@ function update() {
     spacefield.x = player.x;
     spacefield.y = player.y;
     spacefield.tilePositionY += backgroundv;
+
+    healthText.x = player.x - 550;
+    healthText.y = player.y - 275;
 
     if (!player.body.onFloor()) {
         fallBuffert--;
@@ -539,6 +560,15 @@ function checkOverlapHitBox(weaponHitBox, enemy) {
     enemy.disableBody(true, true);
 }
 function checkOverlapPlayer(player, enemy) {
+    
     states = 'hurt';
     player.setVelocityX(100);
+    health -=1;
+    healthText.setText('Health:' + health)
+    setTimeout(function() {
+    }, 3500);
+    console.log(health);
+    if(health == 0) {
+        player.disableBody(true, true);
+    }
 }
