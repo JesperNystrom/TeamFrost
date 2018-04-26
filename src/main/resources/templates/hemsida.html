@@ -16,7 +16,8 @@
 <h4 th:text="'Inloggad som ' + ${#httpServletRequest.remoteUser}"></h4>
 <form th:action="@{/logout}" method="post">
     <input type="submit" value="Logout"/>
+    <div id="Health"></div>
 </form>
-    <script src ="game.js"></script>
+    <script src ="../static/game.js"></script>
 </body>
 </html>
