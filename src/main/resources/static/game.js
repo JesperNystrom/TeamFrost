@@ -107,6 +107,26 @@ function create() {
     var tileset = map.addTilesetImage('tiles');
     var layer = map.createStaticLayer(0, tileset, 0, -50);
 
+    map1 = this.make.tilemap({ key: 'map1', tileWidth: 64, tileHeight: 64 });
+    var tileset = map1.addTilesetImage('tiles');
+    var layer = map1.createStaticLayer(0, tileset, 0, -50);
+
+    map2 = this.make.tilemap({ key: 'map2', tileWidth: 64, tileHeight: 64 });
+    var tileset = map2.addTilesetImage('tiles');
+    var layer = map2.createStaticLayer(0, tileset, 0, -50);
+
+    map3 = this.make.tilemap({ key: 'map3', tileWidth: 64, tileHeight: 64 });
+    var tileset = map3.addTilesetImage('tiles');
+    var layer = map3.createStaticLayer(0, tileset, 0, -50);
+
+    mapHub = this.make.tilemap({ key: 'mapHub', tileWidth: 64, tileHeight: 64 });
+    var tileset = mapHub.addTilesetImage('tiles');
+    var layer = mapHub.createStaticLayer(0, tileset, 0, -50);
+
+    mapBoss = this.make.tilemap({ key: 'mapBoss', tileWidth: 64, tileHeight: 64 });
+    var tileset = mapBoss.addTilesetImage('tiles');
+    var layer = mapBoss.createStaticLayer(0, tileset, 0, -50);
+
     //Tile collision
     map.setCollisionBetween(0, 15);
     weaponHitBox = this.physics.add.staticGroup();
