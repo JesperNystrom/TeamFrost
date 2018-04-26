@@ -698,7 +698,7 @@ function checkOverlapPlayer(player, enemy) {
     setTimeout(function() {
     }, 3500);
     console.log(health);
-    if(health == 0) {
+    if(health <= 0) {
         player.disableBody(true, true);
     }
     document.getElementById('Health').innerHTML = 'Health:' + health;
