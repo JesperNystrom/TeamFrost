@@ -268,40 +268,28 @@ function update() {
     if (key_Z.isDown && !cursors.down.isDown) {
         player.originY = 0.5;
         if (player.flipX) {
-            timedEvent = this.time.addEvent({
-                delay: 0, callback: onEvent,
-                callbackScope: this, repeat: 0, startAt: 0
-            });
-            //this.physics.add.collider(weaponHitBox, enemies);
             player.originX = 0.7;
         } else {
-            timedEvent = this.time.addEvent({
-                delay: 0, callback: onEvent,
-                callbackScope: this, repeat: 0, startAt: 0
-            });
             player.originX = 0.3;
-            //this.physics.add.collider(weaponHitBox, enemies);
         }
+        timedEvent = this.time.addEvent({
+            delay: 0, callback: onEvent,
+            callbackScope: this, repeat: 0, startAt: 0
+        });
         states = 'lightAttack';
     }
 
     if (key_X.isDown && !cursors.down.isDown) {
         player.originY = 0.62;
         if (player.flipX) {
-            timedEvent = this.time.addEvent({
-                delay: 0, callback: onEvent,
-                callbackScope: this, repeat: 0, startAt: 0
-            });
-            //this.physics.add.collider(weaponHitBox, enemies);
             player.originX = 0.7;
         } else {
-            timedEvent = this.time.addEvent({
-                delay: 0, callback: onEvent,
-                callbackScope: this, repeat: 0, startAt: 0
-            });
-            //this.physics.add.collider(weaponHitBox, enemies);
             player.originX = 0.3;
         }
+        timedEvent = this.time.addEvent({
+            delay: 0, callback: onEvent,
+            callbackScope: this, repeat: 0, startAt: 0
+        });
         states = 'heavyAttack';
 
     }
