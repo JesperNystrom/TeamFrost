@@ -84,15 +84,10 @@ function preload() {
 
     this.load.image('background', '../sprites/testBackground.png');
     //LOAD TERRAIN
-<<<<<<< HEAD:src/main/resources/templates/game.js
-    this.load.image('tiles', '../sprites/TileSetComplete.png');
-    this.load.tilemapCSV('map', '../maps/EnemyMap2.csv');
-=======
     this.load.image('oldTiles', '../sprites/allTiles.png');
     this.load.image('tiles', '../sprites/TileSetComplete.png');
-    this.load.tilemapCSV('mapGlide', '../maps/GlideLevel.csv');
+    this.load.tilemapCSV('mapGlide', '../maps/EnemyMap2.csv');
     this.load.tilemapCSV('mapHub', '../maps/Hub.csv');
->>>>>>> 4b36527ab3668350e7d7412462c707e267c4568a:src/main/resources/static/game.js
 
     //Weapon hitbox
     this.load.image('weaponHitBox', '../sprites/WeaponHitBox.png')
@@ -114,7 +109,7 @@ function create() {
 
     //Creating Map and tile collision
     mapGlide = this.make.tilemap({ key: 'mapGlide', tileWidth: 64, tileHeight: 64 });
-    var tileset = mapGlide.addTilesetImage('oldTiles');
+    var tileset = mapGlide.addTilesetImage('tiles');
     var layer = mapGlide.createStaticLayer(0, tileset, 0, -50);
     mapGlide.setCollisionBetween(0,15);
 
@@ -161,12 +156,12 @@ function create() {
     //Create ghostEnemies
     ghostEnemies = this.physics.add.group();
     var ghostSpawn = [];
-    var lastGhostSpawn = {x:map.findByIndex(16,0,true).x*64, y:map.findByIndex(16,0,true).y*64}
+    var lastGhostSpawn = {x:mapGlide.findByIndex(16,0,true).x*64, y:mapGlide.findByIndex(16,0,true).y*64}
     var currentGhostSpawn;
     var i=0;
     do {
-        ghostSpawn.push({x:map.findByIndex(16,i).x*64, y:map.findByIndex(16,i).y*64});
-        currentGhostSpawn = {x:map.findByIndex(16,i).x*64, y:map.findByIndex(16,i).y*64};
+        ghostSpawn.push({x:mapGlide.findByIndex(16,i).x*64, y:mapGlide.findByIndex(16,i).y*64});
+        currentGhostSpawn = {x:mapGlide.findByIndex(16,i).x*64, y:mapGlide.findByIndex(16,i).y*64};
         i++;
     } while(lastGhostSpawn.x != currentGhostSpawn.x && lastGhostSpawn.y != currentGhostSpawn.y)
     for(spawn of ghostSpawn){
@@ -187,11 +182,7 @@ function create() {
 
     //Create yetiEnemies
     yetiEnemies = this.physics.add.group();
-<<<<<<< HEAD:src/main/resources/templates/game.js
     //yetiEnemies.create(600, 150, 'enemyYeti');
-=======
-    yetiEnemies.create(100, 150, 'enemyYeti');
->>>>>>> 4b36527ab3668350e7d7412462c707e267c4568a:src/main/resources/static/game.js
 
     //Create zombieEnemies
     zombieEnemies = this.physics.add.group();
