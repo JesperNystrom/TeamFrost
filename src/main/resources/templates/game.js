@@ -29,7 +29,7 @@ var layer;
 var tileset;
 var player;
 var weaponHitBox;
-var enemies;
+var ghostEnemies;
 var platforms;
 var map;
 var spacefield;
@@ -55,10 +55,14 @@ function preload() {
         { frameWidth: 128, frameHeight: 150 });
     this.load.spritesheet('playerWallGlide', '../sprites/PlayerWallGlide.png',
         { frameWidth: 129, frameHeight: 210 });
+    this.load.spritesheet('playerHurt', '../sprites/PlayerHurt.png',
+        { frameWidth: 128, frameHeight: 140 });
 
     //Enemy sprites
     this.load.spritesheet('enemyGhost', '../sprites/EnemyGhost.png',
         { frameWidth: 64, frameHeight: 100 });
+    this.load.spritesheet('enemyFlurry', '../sprites/EnemyFlurry.png',
+        { frameWidth: 64, frameHeight: 64 });
 
 
     this.load.image('dirtGrass', '../sprites/ground.png');
@@ -68,7 +72,7 @@ function preload() {
     this.load.tilemapCSV('map', '../maps/GlideLevel.csv');
 
     //Weapon hitbox
-    this.load.image('weaponHitBox', '../sprites/WeaponHitBoxTest.png')
+    this.load.image('weaponHitBox', '../sprites/WeaponHitBox.png')
 }
 
 function create() {
@@ -89,24 +93,29 @@ function create() {
     map.setCollisionBetween(0, 15);
     weaponHitBox = this.physics.add.staticGroup();
 
-    //Make player a phys object and player/platforms/enemies collide
-    player = this.physics.add.sprite(200, 200, 'playerRun');
+    //Make player a phys object and player/platforms/ghostEnemies collide
+    player = this.physics.add.sprite(100, 200, 'playerRun');
     player.body.setSize(64, 138);
 
-    //Create enemies
-    enemies = this.physics.add.group();
-    enemies.create(400,200, 'enemyGhost');
-    enemies.create(500,200, 'enemyGhost');
-    //enemies.body.setSize(64, 90);
+    //Create ghostEnemies
+    ghostEnemies = this.physics.add.group();
+    ghostEnemies.create(400, 200, 'enemyGhost');
+    ghostEnemies.create(500, 200, 'enemyGhost');
+
+    //Create flurryEnemies
+    flurryEnemies = this.physics.add.group();
+    flurryEnemies.create(250, 100, 'enemyFlurry');
+
 
     //this.physics.add.collider(player, layer);
     this.physics.add.collider(player, layer);
-    this.physics.add.collider(enemies, layer);
-    //this.physics.add.collider(player, enemies);
-    this.physics.add.overlap(weaponHitBox,enemies,checkOverlap,null,this);
+    //this.physics.add.collider(ghostEnemies, layer);
+    this.physics.add.collider(flurryEnemies, layer);
+    this.physics.add.overlap(player, ghostEnemies, checkOverlapPlayer, null, this);
+    this.physics.add.overlap(weaponHitBox, ghostEnemies, checkOverlapHitBox, null, this);
 
 
-    
+
 
 
     //"Key listener"
@@ -180,6 +189,28 @@ function create() {
         frameRate: 20,
         repeat: 1
     });
+    this.anims.create({
+        key: 'hurt',
+        frames: this.anims.generateFrameNumbers('playerHurt', { start: 0, end: 6 }),
+        frameRate: 60,
+        repeat: 0
+    });
+
+    //Animations for ghostEnemies
+    this.anims.create({
+        key: 'ghost',
+        frames: this.anims.generateFrameNumbers('enemyGhost', { start: 0, end: 15 }),
+        frameRate: 20,
+        repeat: 1
+    });
+
+    //Animations for flurryEnemies
+    this.anims.create({
+        key: 'flurry',
+        frames: this.anims.generateFrameNumbers('enemyFlurry', { start: 0, end: 21 }),
+        frameRate: 20,
+        repeat: 1
+    });
 
     //GAMEPAD TESTING
     config = Phaser.Input.Gamepad.Configs.DUALSHOCK_4;
@@ -201,7 +232,7 @@ function update() {
     }
 
 
-    //Plays animation'
+    //Player animation
     switch (states) {
         case 'glide':
             player.anims.play('glide', true);
@@ -229,9 +260,50 @@ function update() {
         case 'fall':
             player.anims.play('fall', true);
             break;
+        case 'hurt':
+            player.anims.play('hurt', true);
+            break;
         default:
             player.anims.play('idle', true);
     }
+
+    //Enemy animations and movement
+
+    //Ghost
+    var ghostEnemy = ghostEnemies.getChildren();
+    for (child of ghostEnemy) {
+        child.anims.play('ghost', true);
+        if (child.body.x < player.body.x) {
+            child.flipX = true;
+            child.setVelocityX(200);
+        }
+        else {
+            child.flipX = false;
+            child.setVelocityX(-200);
+        }
+
+        if (child.body.y < player.body.y + 30) {
+            child.setVelocityY(50);
+        }
+        else {
+            child.setVelocityY(-50);
+        }
+    }
+
+    //Flurry
+    var flurryEnemy = flurryEnemies.getChildren();
+    for (child of flurryEnemy) {
+        child.anims.play('flurry', true);
+        if (child.body.x < player.body.x) {
+            child.flipX = true;
+            child.setVelocityX(200);
+        }
+        else {
+            child.flipX = false;
+            child.setVelocityX(-200);
+        }
+    }
+
 
     //CONTROLS
     if (cursors.down.isDown && fallBuffert > 0) {
@@ -402,9 +474,9 @@ function update() {
         }
     }
 
-    //Hitting enemies
+    //Hitting ghostEnemies
     //if(weaponHitBox.body.onCollide()){
-    //    enemies.clear(true);
+    //    ghostEnemies.clear(true);
     //  }
 
 
@@ -426,7 +498,7 @@ function onEvent() {
             }, 160);
             setTimeout(function () {
                 weaponHitBox.clear(true);
-            },250);
+            }, 250);
 
         } else {
             setTimeout(function () {
@@ -437,7 +509,7 @@ function onEvent() {
             }, 160);
             setTimeout(function () {
                 weaponHitBox.clear(true);
-            },250);
+            }, 250);
         }
 
 
@@ -455,7 +527,7 @@ function onEvent() {
             }, 320);
             setTimeout(function () {
                 weaponHitBox.clear(true);
-            },350);
+            }, 350);
 
         } else {
             setTimeout(function () {
@@ -469,12 +541,16 @@ function onEvent() {
             }, 320);
             setTimeout(function () {
                 weaponHitBox.clear(true);
-            },350);
+            }, 350);
 
         }
 
     }
 }
-function checkOverlap(weaponHitBox, enemy){
+function checkOverlapHitBox(weaponHitBox, enemy) {
     enemy.disableBody(true, true);
+}
+function checkOverlapPlayer(player, enemy) {
+    states = 'hurt';
+    player.setVelocityX(100);
 }
