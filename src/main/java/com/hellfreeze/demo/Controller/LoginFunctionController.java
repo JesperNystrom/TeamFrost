@@ -57,13 +57,15 @@ public class LoginFunctionController {
         if(gameUser1 != null || gameUser2 != null){
             return new ModelAndView("registration").addObject("gameUser",new GameUser());
         }
-        
+
         //send in password and encode it
         PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
         gameUser.setPassword(passwordEncoder.encode(gameUser.getPassword()));
 
         gameUserRepository.save(gameUser);
-        return new ModelAndView("redirect:success");
+        String greeting = "Thank you "+gameUser.getGameUserName()+" for your registration";
+        return new ModelAndView("login")
+                .addObject("greeting",greeting);
     }
 
 }
