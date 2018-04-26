@@ -18,7 +18,7 @@ var config = {
         }
     }
 };
-var hit;
+
 var gamepad;
 var states;
 var fallBuffert;
@@ -30,7 +30,6 @@ var tileset;
 var player;
 var weaponHitBox;
 var enemies;
-var platforms;
 var map;
 var spacefield;
 var backgroundv;
@@ -107,8 +106,6 @@ function create() {
 
 
     
-
-
     //"Key listener"
     cursors = game.input.keyboard.createCursorKeys();
     key_X = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.X);
@@ -120,8 +117,6 @@ function create() {
     this.cameras.main.setSize(1137, 640);
     //this.cameras.add(400,0);
     this.cameras.main.startFollow(player);
-
-
 
 
     //Animations for player
@@ -183,7 +178,6 @@ function create() {
 
     //GAMEPAD TESTING
     config = Phaser.Input.Gamepad.Configs.DUALSHOCK_4;
-
     this.input.gamepad.on('down', function (pad, button, value, data) {
         gamepad = pad;
     });
@@ -199,7 +193,6 @@ function update() {
     } else if (player.body.onFloor()) {
         fallBuffert = 25;
     }
-
 
     //Plays animation'
     switch (states) {
@@ -413,12 +406,6 @@ function update() {
             player.setVelocityY(-400);
         }
     }
-
-    //Hitting enemies
-    //if(weaponHitBox.body.onCollide()){
-    //    enemies.clear(true);
-    //  }
-
 
     if (cursors.right.isDown)
         gamepad = false;
