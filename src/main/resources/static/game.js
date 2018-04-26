@@ -132,7 +132,7 @@ function create() {
     weaponHitBox = this.physics.add.staticGroup();
 
     //Make player a phys object and player/platforms/ghostEnemies collide
-    player = this.physics.add.sprite(100, 200, 'playerRun');
+    player = this.physics.add.sprite(400, 200, 'playerRun');
     player.body.setSize(64, 138);
 
     //Create healthBar
@@ -160,7 +160,7 @@ function create() {
 
     //Create yetiEnemies
     yetiEnemies = this.physics.add.group();
-    yetiEnemies.create(600, 150, 'enemyYeti');
+    yetiEnemies.create(100, 150, 'enemyYeti');
 
     //Create zombieEnemies
     zombieEnemies = this.physics.add.group();
@@ -447,11 +447,11 @@ function update() {
         child.anims.play('yeti', true);
         if (child.body.x < player.body.x) {
             child.flipX = true;
-            child.setVelocityX(300);
+            child.setVelocityX(600);
         }
         else {
             child.flipX = false;
-            child.setVelocityX(-300);
+            child.setVelocityX(-600);
         }
     }
 
