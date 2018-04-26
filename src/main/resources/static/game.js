@@ -30,7 +30,16 @@ var tileset;
 var player;
 var weaponHitBox;
 var enemies;
+var health;
+//var healthBar;
+var healthValue = 100;
+var healthText;
 var map;
+var map1;
+var map2;
+var map3;
+var mapHub;
+var mapBoss;
 var spacefield;
 var backgroundv;
 var timedEvent;
@@ -72,17 +81,29 @@ function preload() {
         { frameWidth: 64, frameHeight: 128 });
 
 
-    this.load.image('dirtGrass', '../sprites/ground.png');
+
     this.load.image('background', '../sprites/testBackground.png');
     //LOAD TERRAIN
+<<<<<<< HEAD:src/main/resources/templates/game.js
     this.load.image('tiles', '../sprites/TileSetComplete.png');
     this.load.tilemapCSV('map', '../maps/EnemyMap2.csv');
+=======
+    this.load.image('oldTiles', '../sprites/allTiles.png');
+    this.load.image('tiles', '../sprites/TileSetComplete.png');
+    this.load.tilemapCSV('mapGlide', '../maps/GlideLevel.csv');
+    this.load.tilemapCSV('mapHub', '../maps/Hub.csv');
+>>>>>>> 4b36527ab3668350e7d7412462c707e267c4568a:src/main/resources/static/game.js
 
     //Weapon hitbox
     this.load.image('weaponHitBox', '../sprites/WeaponHitBox.png')
 }
 
 function create() {
+
+    //Player health
+    health = 100;
+
+
 
     //Background
     spacefield = this.add.tileSprite(0, 0, 1137, 640, 'background');
@@ -91,18 +112,51 @@ function create() {
     //FloorCounter
     fallBuffert = 25;
 
-    //Creating Map
-    map = this.make.tilemap({ key: 'map', tileWidth: 64, tileHeight: 64 });
-    var tileset = map.addTilesetImage('tiles');
-    var layer = map.createStaticLayer(0, tileset, 0, -50);
+    //Creating Map and tile collision
+    mapGlide = this.make.tilemap({ key: 'mapGlide', tileWidth: 64, tileHeight: 64 });
+    var tileset = mapGlide.addTilesetImage('oldTiles');
+    var layer = mapGlide.createStaticLayer(0, tileset, 0, -50);
+    mapGlide.setCollisionBetween(0,15);
 
-    //Tile collision
-    map.setCollisionBetween(0, 15);
+    /* map1 = this.make.tilemap({ key: 'map1', tileWidth: 64, tileHeight: 64 });
+    var tileset = map1.addTilesetImage('tiles');
+    var layer = map1.createStaticLayer(0, tileset, 0, -50);
+    map1.setCollisionBetween(0, 15); */
+
+    /* map2 = this.make.tilemap({ key: 'map2', tileWidth: 64, tileHeight: 64 });
+    var tileset = map2.addTilesetImage('tiles');
+    var layer = map2.createStaticLayer(0, tileset, 0, -50);
+    map2.setCollisionBetween(0, 15); */
+
+    /* map3 = this.make.tilemap({ key: 'map3', tileWidth: 64, tileHeight: 64 });
+    var tileset3 = map3.addTilesetImage('tiles');
+    var layer3 = map3.createStaticLayer(0, tileset, 0, -50);
+    map3.setCollisionBetween(0, 15);  */
+
+    /* mapHub = this.make.tilemap({ key: 'mapHub', tileWidth: 64, tileHeight: 64 });
+    var tileset = mapHub.addTilesetImage('tiles');
+    var layer = mapHub.createStaticLayer(0, tileset, 0, -50);
+    mapHub.setCollisionByExclusion(13); */
+    
+
+    /* mapBoss = this.make.tilemap({ key: 'mapBoss', tileWidth: 64, tileHeight: 64 });
+    var tilesetBoss = mapBoss.addTilesetImage('tiles');
+    var layerBoss = mapBoss.createStaticLayer(0, tileset, 0, -50);
+    mapBoss.setCollisionBetween(0, 15); */
+
+    
     weaponHitBox = this.physics.add.staticGroup();
 
     //Make player a phys object and player/platforms/ghostEnemies collide
-    player = this.physics.add.sprite(100, 200, 'playerRun');
+    player = this.physics.add.sprite(400, 200, 'playerRun');
     player.body.setSize(64, 138);
+
+    //Create healthBar
+    /* healthBar = this.add.image(this.width/2, this.height/2, 'healthBar');
+    Phaser.Display.Align.In.TopLeft(spacefield, healthBar); */
+    healthText = this.add.text(16,16, 'Health: 100',  { fontSize: '32px', fill: '#999' });
+
+
 
     //Create ghostEnemies
     ghostEnemies = this.physics.add.group();
@@ -133,7 +187,11 @@ function create() {
 
     //Create yetiEnemies
     yetiEnemies = this.physics.add.group();
+<<<<<<< HEAD:src/main/resources/templates/game.js
     //yetiEnemies.create(600, 150, 'enemyYeti');
+=======
+    yetiEnemies.create(100, 150, 'enemyYeti');
+>>>>>>> 4b36527ab3668350e7d7412462c707e267c4568a:src/main/resources/static/game.js
 
     //Create zombieEnemies
     zombieEnemies = this.physics.add.group();
@@ -175,7 +233,7 @@ function create() {
 
 
     //Camera
-    this.cameras.main.setSize(1137, 640);
+    this.cameras.main.setSize(1137, 640); 
     //this.cameras.add(400,0);
     this.cameras.main.startFollow(player);
 
@@ -303,6 +361,10 @@ function update() {
     spacefield.y = player.y;
     spacefield.tilePositionY += backgroundv;
 
+    document.getElementById('Health').innerHTML = 'Health:' + health;
+    healthText.x = player.x - 550;
+    healthText.y = player.y - 275;
+
     if (!player.body.onFloor()) {
         fallBuffert--;
     } else if (player.body.onFloor()) {
@@ -416,11 +478,11 @@ function update() {
         child.anims.play('yeti', true);
         if (child.body.x < player.body.x) {
             child.flipX = true;
-            child.setVelocityX(300);
+            child.setVelocityX(600);
         }
         else {
             child.flipX = false;
-            child.setVelocityX(-300);
+            child.setVelocityX(-600);
         }
     }
 
@@ -679,6 +741,16 @@ function checkOverlapHitBox(weaponHitBox, enemy) {
     enemy.disableBody(true, true);
 }
 function checkOverlapPlayer(player, enemy) {
+    
     states = 'hurt';
     player.setVelocityX(100);
+    health -=1;
+    healthText.setText('Health:' + health)
+    setTimeout(function() {
+    }, 3500);
+    console.log(health);
+    if(health <= 0) {
+        player.disableBody(true, true);
+    }
+    document.getElementById('Health').innerHTML = 'Health:' + health;
 }
