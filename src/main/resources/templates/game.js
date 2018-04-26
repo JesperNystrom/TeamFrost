@@ -75,8 +75,8 @@ function preload() {
     this.load.image('dirtGrass', '../sprites/ground.png');
     this.load.image('background', '../sprites/testBackground.png');
     //LOAD TERRAIN
-    this.load.image('tiles', '../sprites/allTiles.png');
-    this.load.tilemapCSV('map', '../maps/GlideLevel.csv');
+    this.load.image('tiles', '../sprites/TileSetComplete.png');
+    this.load.tilemapCSV('map', '../maps/EnemyMap2.csv');
 
     //Weapon hitbox
     this.load.image('weaponHitBox', '../sprites/WeaponHitBox.png')
@@ -106,7 +106,18 @@ function create() {
 
     //Create ghostEnemies
     ghostEnemies = this.physics.add.group();
-    ghostEnemies.create(9999, 200, 'enemyGhost');
+    var ghostSpawn = [];
+    var lastGhostSpawn = {x:map.findByIndex(16,0,true).x*64, y:map.findByIndex(16,0,true).y*64}
+    var currentGhostSpawn;
+    var i=0;
+    do {
+        ghostSpawn.push({x:map.findByIndex(16,i).x*64, y:map.findByIndex(16,i).y*64});
+        currentGhostSpawn = {x:map.findByIndex(16,i).x*64, y:map.findByIndex(16,i).y*64};
+        i++;
+    } while(lastGhostSpawn.x != currentGhostSpawn.x && lastGhostSpawn.y != currentGhostSpawn.y)
+    for(spawn of ghostSpawn){
+    ghostEnemies.create(spawn.x, spawn.y, 'enemyGhost');
+    }
 
     //Create flurryEnemies
     flurryEnemies = this.physics.add.group();
@@ -122,7 +133,7 @@ function create() {
 
     //Create yetiEnemies
     yetiEnemies = this.physics.add.group();
-    yetiEnemies.create(600, 150, 'enemyYeti');
+    //yetiEnemies.create(600, 150, 'enemyYeti');
 
     //Create zombieEnemies
     zombieEnemies = this.physics.add.group();
