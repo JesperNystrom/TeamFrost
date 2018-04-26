@@ -18,6 +18,7 @@ var config = {
         }
     }
 };
+var hit;
 var gamepad;
 var states;
 var fallBuffert;
@@ -74,7 +75,7 @@ function create() {
 
     //Background
     spacefield = this.add.tileSprite(0, 0, 1137, 640, 'background');
-    backgroundv = -5;
+    backgroundv = -2;
 
     //FloorCounter
     fallBuffert = 25;
@@ -93,18 +94,19 @@ function create() {
     player.body.setSize(64, 138);
 
     //Create enemies
-    enemies = this.physics.add.staticGroup();
+    enemies = this.physics.add.group();
     enemies.create(400,200, 'enemyGhost');
     enemies.create(500,200, 'enemyGhost');
     //enemies.body.setSize(64, 90);
 
+    //this.physics.add.collider(player, layer);
     this.physics.add.collider(player, layer);
     this.physics.add.collider(enemies, layer);
-    this.physics.add.collider(player, enemies);
-    this.physics.add.collider(weaponHitBox, enemies);
-    console.log(this.physics.add.collider(weaponHitBox, enemies));
-    console.log(this.physics.add.collider(player, layer));
+    //this.physics.add.collider(player, enemies);
+    this.physics.add.overlap(weaponHitBox,enemies,checkOverlap,null,this);
 
+
+    
 
 
     //"Key listener"
@@ -188,21 +190,6 @@ function create() {
 }
 
 function update() {
-
-    var enemyChildren = enemies.getChildren();
-    var weaponChildren = weaponHitBox.getChildren();
-    for(enemyChild of enemyChildren) {
-        for (child of weaponChildren) {
-        if(child.getBounds() == enemyChild.getBounds()) {
-            enemies.clear();
-            console.log("failure");
-        }
-    }
-}
-
-
-
-
     spacefield.x = player.x;
     spacefield.y = player.y;
     spacefield.tilePositionY += backgroundv;
@@ -281,40 +268,28 @@ function update() {
     if (key_Z.isDown && !cursors.down.isDown) {
         player.originY = 0.5;
         if (player.flipX) {
-            timedEvent = this.time.addEvent({
-                delay: 0, callback: onEvent,
-                callbackScope: this, repeat: 0, startAt: 0
-            });
-            //this.physics.add.collider(weaponHitBox, enemies);
             player.originX = 0.7;
         } else {
-            timedEvent = this.time.addEvent({
-                delay: 0, callback: onEvent,
-                callbackScope: this, repeat: 0, startAt: 0
-            });
             player.originX = 0.3;
-            //this.physics.add.collider(weaponHitBox, enemies);
         }
+        timedEvent = this.time.addEvent({
+            delay: 0, callback: onEvent,
+            callbackScope: this, repeat: 0, startAt: 0
+        });
         states = 'lightAttack';
     }
 
     if (key_X.isDown && !cursors.down.isDown) {
         player.originY = 0.62;
         if (player.flipX) {
-            timedEvent = this.time.addEvent({
-                delay: 0, callback: onEvent,
-                callbackScope: this, repeat: 0, startAt: 0
-            });
-            //this.physics.add.collider(weaponHitBox, enemies);
             player.originX = 0.7;
         } else {
-            timedEvent = this.time.addEvent({
-                delay: 0, callback: onEvent,
-                callbackScope: this, repeat: 0, startAt: 0
-            });
-            //this.physics.add.collider(weaponHitBox, enemies);
             player.originX = 0.3;
         }
+        timedEvent = this.time.addEvent({
+            delay: 0, callback: onEvent,
+            callbackScope: this, repeat: 0, startAt: 0
+        });
         states = 'heavyAttack';
 
     }
@@ -499,6 +474,7 @@ function onEvent() {
         }
 
     }
-
-
+}
+function checkOverlap(weaponHitBox, enemy){
+    enemy.disableBody(true, true);
 }
