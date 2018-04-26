@@ -58,10 +58,18 @@ function preload() {
         { frameWidth: 128, frameHeight: 140 });
 
     //Enemy sprites
+    this.load.spritesheet('enemyFlurry', '../sprites/EnemyFlurry.png',
+        { frameWidth: 44, frameHeight: 40 });
     this.load.spritesheet('enemyGhost', '../sprites/EnemyGhost.png',
         { frameWidth: 64, frameHeight: 100 });
-    this.load.spritesheet('enemyFlurry', '../sprites/EnemyFlurry.png',
+    this.load.spritesheet('enemyImp', '../sprites/EnemyImp.png',
         { frameWidth: 64, frameHeight: 64 });
+    this.load.spritesheet('enemyWraith', '../sprites/EnemyWraith.png',
+        { frameWidth: 83, frameHeight: 164 });
+    this.load.spritesheet('enemyYeti', '../sprites/EnemyYeti.png',
+        { frameWidth: 232, frameHeight: 236 });
+    this.load.spritesheet('enemyZombie', '../sprites/EnemyZombie.png',
+        { frameWidth: 64, frameHeight: 128 });
 
 
     this.load.image('dirtGrass', '../sprites/ground.png');
@@ -98,24 +106,56 @@ function create() {
 
     //Create ghostEnemies
     ghostEnemies = this.physics.add.group();
-    ghostEnemies.create(400, 200, 'enemyGhost');
-    ghostEnemies.create(500, 200, 'enemyGhost');
+    ghostEnemies.create(9999, 200, 'enemyGhost');
 
     //Create flurryEnemies
     flurryEnemies = this.physics.add.group();
-    flurryEnemies.create(250, 100, 'enemyFlurry');
+    flurryEnemies.create(400, 100, 'enemyFlurry');
 
+    //Create impEnemies
+    impEnemies = this.physics.add.group();
+    impEnemies.create(9999, 150, 'enemyImp');
 
-    //this.physics.add.collider(player, layer);
+    //Create wraithEnemies
+    wraithEnemies = this.physics.add.group();
+    wraithEnemies.create(9999, 150, 'enemyWraith');
+
+    //Create yetiEnemies
+    yetiEnemies = this.physics.add.group();
+    yetiEnemies.create(600, 150, 'enemyYeti');
+
+    //Create zombieEnemies
+    zombieEnemies = this.physics.add.group();
+    zombieEnemies.create(9999, 150, 'enemyZombie');
+
+    //Colliders
     this.physics.add.collider(player, layer);
-    //this.physics.add.collider(ghostEnemies, layer);
     this.physics.add.collider(flurryEnemies, layer);
+    //this.physics.add.collider(ghostEnemies, layer);
+    this.physics.add.collider(impEnemies, layer);
+    this.physics.add.collider(wraithEnemies, layer);
+    this.physics.add.collider(yetiEnemies, layer);
+    this.physics.add.collider(zombieEnemies, layer);
+
+    //Damage
+    //this.physics.add.overlap(player, flurryEnemies, checkOverlapPlayer, null, this);
     this.physics.add.overlap(player, ghostEnemies, checkOverlapPlayer, null, this);
+    this.physics.add.overlap(player, impEnemies, checkOverlapPlayer, null, this);
+    this.physics.add.overlap(player, wraithEnemies, checkOverlapPlayer, null, this);
+    this.physics.add.overlap(player, yetiEnemies, checkOverlapPlayer, null, this);
+    this.physics.add.overlap(player, zombieEnemies, checkOverlapPlayer, null, this);
+
+    //Hitbox/kill-able
+    //this.physics.add.overlap(weaponHitBox, flurryEnemies, checkOverlapHitBox, null, this);
     this.physics.add.overlap(weaponHitBox, ghostEnemies, checkOverlapHitBox, null, this);
+    this.physics.add.overlap(weaponHitBox, impEnemies, checkOverlapHitBox, null, this);
+    this.physics.add.overlap(weaponHitBox, wraithEnemies, checkOverlapHitBox, null, this);
+    this.physics.add.overlap(weaponHitBox, yetiEnemies, checkOverlapHitBox, null, this);
+    this.physics.add.overlap(weaponHitBox, zombieEnemies, checkOverlapHitBox, null, this);
 
 
 
-    
+
     //"Key listener"
     cursors = game.input.keyboard.createCursorKeys();
     key_X = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.X);
@@ -208,6 +248,38 @@ function create() {
         repeat: 1
     });
 
+    //Animations for impEnemies
+    this.anims.create({
+        key: 'imp',
+        frames: this.anims.generateFrameNumbers('enemyImp', { start: 0, end: 10 }),
+        frameRate: 20,
+        repeat: 1
+    });
+
+    //Animations for wraithEnemies
+    this.anims.create({
+        key: 'wraith',
+        frames: this.anims.generateFrameNumbers('enemyWraith', { start: 0, end: 19 }),
+        frameRate: 20,
+        repeat: 1
+    });
+
+    //Animations for yetiEnemies
+    this.anims.create({
+        key: 'yeti',
+        frames: this.anims.generateFrameNumbers('enemyYeti', { start: 0, end: 14 }),
+        frameRate: 20,
+        repeat: 1
+    });
+
+    //Animations for zombieEnemies
+    this.anims.create({
+        key: 'zombie',
+        frames: this.anims.generateFrameNumbers('enemyZombie', { start: 0, end: 11 }),
+        frameRate: 20,
+        repeat: 1
+    });
+
     //GAMEPAD TESTING
     config = Phaser.Input.Gamepad.Configs.DUALSHOCK_4;
     this.input.gamepad.on('down', function (pad, button, value, data) {
@@ -263,6 +335,21 @@ function update() {
 
     //Enemy animations and movement
 
+    //Flurry
+    var flurryEnemy = flurryEnemies.getChildren();
+    for (child of flurryEnemy) {
+        child.anims.play('flurry', true);
+        if (child.body.x < player.body.x) {
+            child.flipX = true;
+            child.setVelocityX(75);
+        }
+        else {
+            child.flipX = false;
+            child.setVelocityX(-75);
+        }
+        
+    }
+
     //Ghost
     var ghostEnemy = ghostEnemies.getChildren();
     for (child of ghostEnemy) {
@@ -284,17 +371,59 @@ function update() {
         }
     }
 
-    //Flurry
-    var flurryEnemy = flurryEnemies.getChildren();
-    for (child of flurryEnemy) {
-        child.anims.play('flurry', true);
+    //Imp
+    var impEnemy = impEnemies.getChildren();
+    for (child of impEnemy) {
+        child.anims.play('imp', true);
+        if (child.body.x < player.body.x) {
+            child.flipX = false;
+            child.setVelocityX(90);
+        }
+        else {
+            child.flipX = true;
+            child.setVelocityX(-90);
+        }
+    }
+
+    //Wraith
+    var wraithEnemy = wraithEnemies.getChildren();
+    for (child of wraithEnemy) {
+        child.anims.play('wraith', true);
+        if (child.body.x < player.body.x) {
+            child.flipX = false;
+            child.setVelocityX(175);
+        }
+        else {
+            child.flipX = true;
+            child.setVelocityX(-175);
+        }
+    }
+
+    //Yeti
+    var yetiEnemy = yetiEnemies.getChildren();
+    for (child of yetiEnemy) {
+        child.anims.play('yeti', true);
         if (child.body.x < player.body.x) {
             child.flipX = true;
-            child.setVelocityX(200);
+            child.setVelocityX(300);
         }
         else {
             child.flipX = false;
-            child.setVelocityX(-200);
+            child.setVelocityX(-300);
+        }
+    }
+
+    //Zombie
+    var zombieEnemy = zombieEnemies.getChildren();
+    for (child of zombieEnemy) {
+        child.anims.play('zombie', true);
+        if (child.body.x < player.body.x) {
+            child.flipX = true;
+            child.setVelocityX(120);
+        }
+        else {
+            child.flipX = false;
+            child.setVelocityX(-120);
         }
     }
 
