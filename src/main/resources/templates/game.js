@@ -75,7 +75,7 @@ function create() {
 
     //Background
     spacefield = this.add.tileSprite(0, 0, 1137, 640, 'background');
-    backgroundv = -5;
+    backgroundv = -2;
 
     //FloorCounter
     fallBuffert = 25;
@@ -99,15 +99,14 @@ function create() {
     enemies.create(500,200, 'enemyGhost');
     //enemies.body.setSize(64, 90);
 
+    //this.physics.add.collider(player, layer);
     this.physics.add.collider(player, layer);
     this.physics.add.collider(enemies, layer);
-    this.physics.add.collider(player, enemies);
-    this.physics.add.collider(weaponHitBox, enemies);
-    console.log(this.physics.add.collider(weaponHitBox, enemies));
-    console.log(this.physics.add.collider(player, layer));
+    //this.physics.add.collider(player, enemies);
+    this.physics.add.overlap(weaponHitBox,enemies,checkOverlap,null,this);
 
-    hit = this.physics.add.overlap(weaponHitBox, enemies,  null, this);
 
+    
 
 
     //"Key listener"
@@ -191,11 +190,6 @@ function create() {
 }
 
 function update() {
-
-
-
-
-
     spacefield.x = player.x;
     spacefield.y = player.y;
     spacefield.tilePositionY += backgroundv;
@@ -493,7 +487,6 @@ function onEvent() {
 
     }
 }
-
-function removeEnemy(player, enemies) {
-    enemies.disableBody(true, true);
+function checkOverlap(weaponHitBox, enemy){
+    enemy.disableBody(true, true);
 }
