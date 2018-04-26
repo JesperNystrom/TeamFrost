@@ -35,6 +35,11 @@ var health;
 var healthValue = 100;
 var healthText;
 var map;
+var map1;
+var map2;
+var map3;
+var mapHub;
+var mapBoss;
 var spacefield;
 var backgroundv;
 var timedEvent;
@@ -75,14 +80,14 @@ function preload() {
     this.load.spritesheet('enemyZombie', '../sprites/EnemyZombie.png',
         { frameWidth: 64, frameHeight: 128 });
 
-    
-    this.load.image('healthBar', '../sprites/healthBar.png');
 
-    this.load.image('dirtGrass', '../sprites/ground.png');
+
     this.load.image('background', '../sprites/testBackground.png');
     //LOAD TERRAIN
-    this.load.image('tiles', '../sprites/allTiles.png');
-    this.load.tilemapCSV('map', '../maps/GlideLevel.csv');
+    this.load.image('oldTiles', '../sprites/allTiles.png');
+    this.load.image('tiles', '../sprites/TileSetComplete.png');
+    this.load.tilemapCSV('mapGlide', '../maps/GlideLevel.csv');
+    this.load.tilemapCSV('mapHub', '../maps/Hub.csv');
 
     //Weapon hitbox
     this.load.image('weaponHitBox', '../sprites/WeaponHitBox.png')
@@ -102,33 +107,39 @@ function create() {
     //FloorCounter
     fallBuffert = 25;
 
-    //Creating Map
-    map = this.make.tilemap({ key: 'map', tileWidth: 64, tileHeight: 64 });
-    var tileset = map.addTilesetImage('tiles');
-    var layer = map.createStaticLayer(0, tileset, 0, -50);
+    //Creating Map and tile collision
+    mapGlide = this.make.tilemap({ key: 'mapGlide', tileWidth: 64, tileHeight: 64 });
+    var tileset = mapGlide.addTilesetImage('oldTiles');
+    var layer = mapGlide.createStaticLayer(0, tileset, 0, -50);
+    mapGlide.setCollisionBetween(0,15);
 
-    map1 = this.make.tilemap({ key: 'map1', tileWidth: 64, tileHeight: 64 });
+    /* map1 = this.make.tilemap({ key: 'map1', tileWidth: 64, tileHeight: 64 });
     var tileset = map1.addTilesetImage('tiles');
     var layer = map1.createStaticLayer(0, tileset, 0, -50);
+    map1.setCollisionBetween(0, 15); */
 
-    map2 = this.make.tilemap({ key: 'map2', tileWidth: 64, tileHeight: 64 });
+    /* map2 = this.make.tilemap({ key: 'map2', tileWidth: 64, tileHeight: 64 });
     var tileset = map2.addTilesetImage('tiles');
     var layer = map2.createStaticLayer(0, tileset, 0, -50);
+    map2.setCollisionBetween(0, 15); */
 
-    map3 = this.make.tilemap({ key: 'map3', tileWidth: 64, tileHeight: 64 });
-    var tileset = map3.addTilesetImage('tiles');
-    var layer = map3.createStaticLayer(0, tileset, 0, -50);
+    /* map3 = this.make.tilemap({ key: 'map3', tileWidth: 64, tileHeight: 64 });
+    var tileset3 = map3.addTilesetImage('tiles');
+    var layer3 = map3.createStaticLayer(0, tileset, 0, -50);
+    map3.setCollisionBetween(0, 15);  */
 
-    mapHub = this.make.tilemap({ key: 'mapHub', tileWidth: 64, tileHeight: 64 });
+    /* mapHub = this.make.tilemap({ key: 'mapHub', tileWidth: 64, tileHeight: 64 });
     var tileset = mapHub.addTilesetImage('tiles');
     var layer = mapHub.createStaticLayer(0, tileset, 0, -50);
+    mapHub.setCollisionByExclusion(13); */
+    
 
-    mapBoss = this.make.tilemap({ key: 'mapBoss', tileWidth: 64, tileHeight: 64 });
-    var tileset = mapBoss.addTilesetImage('tiles');
-    var layer = mapBoss.createStaticLayer(0, tileset, 0, -50);
+    /* mapBoss = this.make.tilemap({ key: 'mapBoss', tileWidth: 64, tileHeight: 64 });
+    var tilesetBoss = mapBoss.addTilesetImage('tiles');
+    var layerBoss = mapBoss.createStaticLayer(0, tileset, 0, -50);
+    mapBoss.setCollisionBetween(0, 15); */
 
-    //Tile collision
-    map.setCollisionBetween(0, 15);
+    
     weaponHitBox = this.physics.add.staticGroup();
 
     //Make player a phys object and player/platforms/ghostEnemies collide
