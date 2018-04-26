@@ -29,12 +29,7 @@ var layer;
 var tileset;
 var player;
 var weaponHitBox;
-<<<<<<< HEAD
 var enemies;
-=======
-var ghostEnemies;
-var platforms;
->>>>>>> d92768437fe572a07e21ed2d79ef0c6ae50439de
 var map;
 var spacefield;
 var backgroundv;
@@ -120,12 +115,7 @@ function create() {
 
 
 
-<<<<<<< HEAD
     
-=======
-
-
->>>>>>> d92768437fe572a07e21ed2d79ef0c6ae50439de
     //"Key listener"
     cursors = game.input.keyboard.createCursorKeys();
     key_X = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.X);
@@ -236,12 +226,7 @@ function update() {
         fallBuffert = 25;
     }
 
-<<<<<<< HEAD
     //Plays animation'
-=======
-
-    //Player animation
->>>>>>> d92768437fe572a07e21ed2d79ef0c6ae50439de
     switch (states) {
         case 'glide':
             player.anims.play('glide', true);
@@ -483,15 +468,6 @@ function update() {
         }
     }
 
-<<<<<<< HEAD
-=======
-    //Hitting ghostEnemies
-    //if(weaponHitBox.body.onCollide()){
-    //    ghostEnemies.clear(true);
-    //  }
-
-
->>>>>>> d92768437fe572a07e21ed2d79ef0c6ae50439de
     if (cursors.right.isDown)
         gamepad = false;
 
