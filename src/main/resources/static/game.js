@@ -493,10 +493,10 @@ function update() {
     }
 
     //Ghost
-    /*var ghostEnemy = ghostEnemies.getChildren();
+    var ghostEnemy = ghostEnemies.getChildren();
     for (child of ghostEnemy) {
         child.anims.play('ghost', true);
-        if (child.body.x < player.body.x) {
+        /*if (child.body.x < player.body.x) {
             child.flipX = true;
             child.setVelocityX(200);
         }
@@ -510,36 +510,36 @@ function update() {
         }
         else {
             child.setVelocityY(-50);
-        }
-    }*/
+        }*/
+    }
 
     //Imp
-    /*var impEnemy = impEnemies.getChildren();
+    var impEnemy = impEnemies.getChildren();
     for (child of impEnemy) {
         child.anims.play('imp', true);
-        if (child.body.x < player.body.x) {
+        /*if (child.body.x < player.body.x) {
             child.flipX = false;
             child.setVelocityX(90);
         }
         else {
             child.flipX = true;
             child.setVelocityX(-90);
-        }
-    }*/
+        }*/
+    }
 
     //Wraith
-    /*var wraithEnemy = wraithEnemies.getChildren();
+    var wraithEnemy = wraithEnemies.getChildren();
     for (child of wraithEnemy) {
         child.anims.play('wraith', true);
-        if (child.body.x < player.body.x) {
+        /*if (child.body.x < player.body.x) {
             child.flipX = false;
             child.setVelocityX(175);
         }
         else {
             child.flipX = true;
             child.setVelocityX(-175);
-        }
-    }*/
+        }*/
+    }
 
     //Yeti
     /*var yetiEnemy = yetiEnemies.getChildren();
@@ -556,18 +556,18 @@ function update() {
     }*/
 
     //Zombie
-    /*var zombieEnemy = zombieEnemies.getChildren();
+    var zombieEnemy = zombieEnemies.getChildren();
     for (child of zombieEnemy) {
         child.anims.play('zombie', true);
-        if (child.body.x < player.body.x) {
+        /*if (child.body.x < player.body.x) {
             child.flipX = true;
             child.setVelocityX(120);
         }
         else {
             child.flipX = false;
             child.setVelocityX(-120);
-        }
-    }*/
+        }*/
+    }
 
 
     //CONTROLS
