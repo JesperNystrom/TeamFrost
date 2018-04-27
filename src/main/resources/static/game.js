@@ -35,17 +35,19 @@ var health;
 var healthValue = 100;
 var healthText;
 var map;
-var map1;
-var map2;
-var map3;
-var mapHub;
-var mapBoss;
 var spacefield;
 var backgroundv;
 var timedEvent;
+var innKeeper;
+var portal;
+var portal1;
+var portal2;
+var portal3;
+var portal4;
 var game = new Phaser.Game(config);
 
 function preload() {
+    this.load.image('bkGround', '../sprites/Background.png');
     //Player sprites
     this.load.spritesheet('playerRun', '../sprites/PlayerRun.png',
         { frameWidth: 128, frameHeight: 140 });
@@ -84,66 +86,65 @@ function preload() {
 
     this.load.image('background', '../sprites/testBackground.png');
     //LOAD TERRAIN
-    this.load.image('oldTiles', '../sprites/allTiles.png');
     this.load.image('tiles', '../sprites/TileSetComplete.png');
-    this.load.tilemapCSV('mapGlide', '../maps/EnemyMap2.csv');
-    this.load.tilemapCSV('mapHub', '../maps/Hub.csv');
+    this.load.tilemapCSV('map', '../maps/World.csv');
 
     //Weapon hitbox
-    this.load.image('weaponHitBox', '../sprites/WeaponHitBox.png')
+    this.load.image('weaponHitBox', '../sprites/WeaponHitBox.png');
+    this.load.image('portalTest', '../sprites/WeaponHitboxTest.png');
 }
 
-function create() {
 
+//Spawn places
+//Hub: 12,5
+//map1: 120,3
+//map2: 205,4
+//map3: 427,6
+//map4: 128,5
+
+//portal places
+//map1: 169,27
+//map2: 323,34
+//map3: 703,9
+//map4: 981,44
+function create() {
+    spacefield = this.add.image(0, 0, 'bkGround');
     //Player health
     health = 100;
 
 
 
     //Background
-    spacefield = this.add.tileSprite(0, 0, 1137, 640, 'background');
-    backgroundv = -2;
+    snowfield = this.add.tileSprite(0, 0, 1137, 640, 'background');
 
     //FloorCounter
     fallBuffert = 25;
 
     //Creating Map and tile collision
-    mapGlide = this.make.tilemap({ key: 'mapGlide', tileWidth: 64, tileHeight: 64 });
-    var tileset = mapGlide.addTilesetImage('tiles');
-    var layer = mapGlide.createStaticLayer(0, tileset, 0, -50);
-    mapGlide.setCollisionBetween(0,15);
-
-    /* map1 = this.make.tilemap({ key: 'map1', tileWidth: 64, tileHeight: 64 });
-    var tileset = map1.addTilesetImage('tiles');
-    var layer = map1.createStaticLayer(0, tileset, 0, -50);
-    map1.setCollisionBetween(0, 15); */
-
-    /* map2 = this.make.tilemap({ key: 'map2', tileWidth: 64, tileHeight: 64 });
-    var tileset = map2.addTilesetImage('tiles');
-    var layer = map2.createStaticLayer(0, tileset, 0, -50);
-    map2.setCollisionBetween(0, 15); */
-
-    /* map3 = this.make.tilemap({ key: 'map3', tileWidth: 64, tileHeight: 64 });
-    var tileset3 = map3.addTilesetImage('tiles');
-    var layer3 = map3.createStaticLayer(0, tileset, 0, -50);
-    map3.setCollisionBetween(0, 15);  */
-
-    /* mapHub = this.make.tilemap({ key: 'mapHub', tileWidth: 64, tileHeight: 64 });
-    var tileset = mapHub.addTilesetImage('tiles');
-    var layer = mapHub.createStaticLayer(0, tileset, 0, -50);
-    mapHub.setCollisionByExclusion(13); */
-    
-
-    /* mapBoss = this.make.tilemap({ key: 'mapBoss', tileWidth: 64, tileHeight: 64 });
-    var tilesetBoss = mapBoss.addTilesetImage('tiles');
-    var layerBoss = mapBoss.createStaticLayer(0, tileset, 0, -50);
-    mapBoss.setCollisionBetween(0, 15); */
-
+    map = this.make.tilemap({ key: 'map', tileWidth: 64, tileHeight: 64 });
+    var tileset = map.addTilesetImage('tiles');
+    var layer = map.createStaticLayer(0, tileset, 0, -50);
+    map.setCollision([0,1,2,3,4,5,6,7,8,9,10,11,12,14]);
     
     weaponHitBox = this.physics.add.staticGroup();
 
+    //Portal
+    portal = this.physics.add.group();
+    portal.create(768,320, 'portalTest');
+
+    portal1 = this.physics.add.group();
+    portal1.create(10816, 1650, 'portalTest');
+
+    portal2 = this.physics.add.group();
+    portal2.create(20672, 2100, 'portalTest');
+
+    portal3 = this.physics.add.group();
+    portal3.create(44992, 500, 'portalTest');
+
+    portal4 = this.physics.add.group();
+    portal4.create(62784, 2750, 'portalTest');
     //Make player a phys object and player/platforms/ghostEnemies collide
-    player = this.physics.add.sprite(400, 200, 'playerRun');
+    player = this.physics.add.sprite(768,320, 'playerRun');
     player.body.setSize(64, 138);
 
     //Create healthBar
@@ -155,18 +156,18 @@ function create() {
 
     //Create ghostEnemies
     ghostEnemies = this.physics.add.group();
-    var ghostSpawn = [];
-    var lastGhostSpawn = {x:mapGlide.findByIndex(16,0,true).x*64, y:mapGlide.findByIndex(16,0,true).y*64}
+    /* var ghostSpawn = [];
+    var lastGhostSpawn = {x:map.findByIndex(16,0,true).x*64, y:map.findByIndex(16,0,true).y*64}
     var currentGhostSpawn;
     var i=0;
     do {
-        ghostSpawn.push({x:mapGlide.findByIndex(16,i).x*64, y:mapGlide.findByIndex(16,i).y*64});
-        currentGhostSpawn = {x:mapGlide.findByIndex(16,i).x*64, y:mapGlide.findByIndex(16,i).y*64};
+        ghostSpawn.push({x:map.findByIndex(16,i).x*64, y:map.findByIndex(16,i).y*64});
+        currentGhostSpawn = {x:map.findByIndex(16,i).x*64, y:map.findByIndex(16,i).y*64};
         i++;
     } while(lastGhostSpawn.x != currentGhostSpawn.x && lastGhostSpawn.y != currentGhostSpawn.y)
     for(spawn of ghostSpawn){
     ghostEnemies.create(spawn.x, spawn.y, 'enemyGhost');
-    }
+    } */
 
     //Create flurryEnemies
     flurryEnemies = this.physics.add.group();
@@ -196,6 +197,11 @@ function create() {
     this.physics.add.collider(wraithEnemies, layer);
     this.physics.add.collider(yetiEnemies, layer);
     this.physics.add.collider(zombieEnemies, layer);
+    this.physics.add.collider(portal, layer);
+    this.physics.add.collider(portal1, layer);
+    this.physics.add.collider(portal2, layer);
+    this.physics.add.collider(portal3, layer);
+    this.physics.add.collider(portal4, layer);
 
     //Damage
     //this.physics.add.overlap(player, flurryEnemies, checkOverlapPlayer, null, this);
@@ -212,7 +218,12 @@ function create() {
     this.physics.add.overlap(weaponHitBox, wraithEnemies, checkOverlapHitBox, null, this);
     this.physics.add.overlap(weaponHitBox, yetiEnemies, checkOverlapHitBox, null, this);
     this.physics.add.overlap(weaponHitBox, zombieEnemies, checkOverlapHitBox, null, this);
-
+    this.physics.add.overlap(player, portal, checkOverlapPortal, null, this);
+    this.physics.add.overlap(player, portal1, checkOverlapPortal1, null, this);
+    this.physics.add.overlap(player, portal2, checkOverlapPortal2, null, this);
+    this.physics.add.overlap(player, portal3, checkOverlapPortal3, null, this);
+    this.physics.add.overlap(player, portal4, checkOverlapPortal4, null, this);
+    
 
 
 
@@ -348,9 +359,12 @@ function create() {
 }
 
 function update() {
+
+
     spacefield.x = player.x;
-    spacefield.y = player.y;
-    spacefield.tilePositionY += backgroundv;
+    snowfield.x = player.x;
+    snowfield.y = player.y;
+    snowfield.tilePositionY -= 2;
 
     document.getElementById('Health').innerHTML = 'Health:' + health;
     healthText.x = player.x - 550;
@@ -726,6 +740,37 @@ function onEvent() {
 
         }
 
+    }
+    
+}
+function checkOverlapPortal(player, portal) {
+    if(cursors.up.isDown){
+    player.body.x = 7680;
+    player.body.y = 120;
+    }
+}
+function checkOverlapPortal1(player, portal1) {
+    if(cursors.up.isDown){
+    player.body.x = 13120;
+    player.body.y = 250;
+    }
+}
+function checkOverlapPortal2(player, portal2) {
+    if(cursors.up.isDown){
+    player.body.x = 27328;
+    player.body.y = 380;
+    }
+}
+function checkOverlapPortal3(player, portal3) {
+    if(cursors.up.isDown){
+    player.body.x = 8192;
+    player.body.y = 310;
+    }
+}
+function checkOverlapPortal4(player, portal4) {
+    if(cursors.up.isDown){
+    player.body.x = 7680;
+    player.body.y = 120;
     }
 }
 function checkOverlapHitBox(weaponHitBox, enemy) {
