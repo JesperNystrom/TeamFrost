@@ -114,7 +114,7 @@ function create() {
     map = this.make.tilemap({ key: 'map', tileWidth: 64, tileHeight: 64 });
     var tileset = map.addTilesetImage('tiles');
     var layer = map.createStaticLayer(0, tileset, 0, -50);
-    map.setCollisionByExclusion(13);
+    map.setCollision([0,1,2,3,4,5,6,7,8,9,10,11,12,14]);
     
     weaponHitBox = this.physics.add.staticGroup();
 
@@ -716,7 +716,7 @@ function onEvent() {
 function checkOverlapPortal(player, portal) {
     if(cursors.up.isDown){
     player.body.x = 7680;
-    player.body.y = 192;
+    player.body.y = 120;
 }
 }
 function checkOverlapHitBox(weaponHitBox, enemy) {
