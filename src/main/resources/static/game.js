@@ -115,7 +115,7 @@ function create() {
 
 
     //Background
-    //spacefield = this.add.tileSprite(0, 0, 1137, 640, 'background');
+    snowfield = this.add.tileSprite(0, 0, 1137, 640, 'background');
 
     //FloorCounter
     fallBuffert = 25;
@@ -362,6 +362,9 @@ function update() {
 
 
     spacefield.x = player.x;
+    snowfield.x = player.x;
+    snowfield.y = player.y;
+    snowfield.tilePositionY -= 2;
 
     document.getElementById('Health').innerHTML = 'Health:' + health;
     healthText.x = player.x - 550;
