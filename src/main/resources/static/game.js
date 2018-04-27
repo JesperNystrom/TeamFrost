@@ -82,13 +82,20 @@ function preload() {
     this.load.image('background', '../sprites/testBackground.png');
     //LOAD TERRAIN
     this.load.image('tiles', '../sprites/TileSetComplete.png');
-    this.load.tilemapCSV('map', '../maps/Level1.csv');
+    this.load.tilemapCSV('map', '../maps/WorldMap.csv');
 
     //Weapon hitbox
     this.load.image('weaponHitBox', '../sprites/WeaponHitBox.png');
     this.load.image('portalTest', '../sprites/WeaponHitboxTest.png');
 }
 
+
+//Spawn places
+//Hub: 12,5
+//map1: 120,3
+//map2: 205,4
+//map3: 427,6
+//map4: 128,5
 function create() {
 
     //Player health
@@ -107,16 +114,16 @@ function create() {
     map = this.make.tilemap({ key: 'map', tileWidth: 64, tileHeight: 64 });
     var tileset = map.addTilesetImage('tiles');
     var layer = map.createStaticLayer(0, tileset, 0, -50);
-    map.setCollisionBetween(0,15);
+    map.setCollisionByExclusion(13);
     
     weaponHitBox = this.physics.add.staticGroup();
 
     //Portal
     portal = this.physics.add.group();
-    portal.create(200,200, 'portalTest');
+    portal.create(768,320, 'portalTest');
 
     //Make player a phys object and player/platforms/ghostEnemies collide
-    player = this.physics.add.sprite(400, 200, 'playerRun');
+    player = this.physics.add.sprite(768,320, 'playerRun');
     player.body.setSize(64, 138);
 
     //Create healthBar
@@ -707,9 +714,10 @@ function onEvent() {
     
 }
 function checkOverlapPortal(player, portal) {
-    console.log("Press up key")
-    if(cursors.up.isDown)
-    player.body.x = 500;
+    if(cursors.up.isDown){
+    player.body.x = 7680;
+    player.body.y = 192;
+}
 }
 function checkOverlapHitBox(weaponHitBox, enemy) {
     enemy.disableBody(true, true);
