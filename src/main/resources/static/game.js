@@ -40,6 +40,10 @@ var backgroundv;
 var timedEvent;
 var innKeeper;
 var portal;
+var portal1;
+var portal2;
+var portal3;
+var portal4;
 var game = new Phaser.Game(config);
 
 function preload() {
@@ -96,6 +100,12 @@ function preload() {
 //map2: 205,4
 //map3: 427,6
 //map4: 128,5
+
+//portal places
+//map1: 169,27
+//map2: 323,34
+//map3: 703,9
+//map4: 981,44
 function create() {
 
     //Player health
@@ -122,8 +132,19 @@ function create() {
     portal = this.physics.add.group();
     portal.create(768,320, 'portalTest');
 
+    portal1 = this.physics.add.group();
+    portal1.create(10816, 1650, 'portalTest');
+
+    portal2 = this.physics.add.group();
+    portal2.create(20672, 2100, 'portalTest');
+
+    portal3 = this.physics.add.group();
+    portal3.create(44992, 500, 'portalTest');
+
+    portal4 = this.physics.add.group();
+    portal4.create(62784, 2750, 'portalTest');
     //Make player a phys object and player/platforms/ghostEnemies collide
-    player = this.physics.add.sprite(768,320, 'playerRun');
+    player = this.physics.add.sprite(62784,2750, 'playerRun');
     player.body.setSize(64, 138);
 
     //Create healthBar
@@ -177,6 +198,10 @@ function create() {
     this.physics.add.collider(yetiEnemies, layer);
     this.physics.add.collider(zombieEnemies, layer);
     this.physics.add.collider(portal, layer);
+    this.physics.add.collider(portal1, layer);
+    this.physics.add.collider(portal2, layer);
+    this.physics.add.collider(portal3, layer);
+    this.physics.add.collider(portal4, layer);
 
     //Damage
     //this.physics.add.overlap(player, flurryEnemies, checkOverlapPlayer, null, this);
@@ -194,6 +219,10 @@ function create() {
     this.physics.add.overlap(weaponHitBox, yetiEnemies, checkOverlapHitBox, null, this);
     this.physics.add.overlap(weaponHitBox, zombieEnemies, checkOverlapHitBox, null, this);
     this.physics.add.overlap(player, portal, checkOverlapPortal, null, this);
+    this.physics.add.overlap(player, portal1, checkOverlapPortal1, null, this);
+    this.physics.add.overlap(player, portal2, checkOverlapPortal2, null, this);
+    this.physics.add.overlap(player, portal3, checkOverlapPortal3, null, this);
+    this.physics.add.overlap(player, portal4, checkOverlapPortal4, null, this);
     
 
 
@@ -717,7 +746,31 @@ function checkOverlapPortal(player, portal) {
     if(cursors.up.isDown){
     player.body.x = 7680;
     player.body.y = 120;
+    }
 }
+function checkOverlapPortal1(player, portal1) {
+    if(cursors.up.isDown){
+    player.body.x = 13120;
+    player.body.y = 250;
+    }
+}
+function checkOverlapPortal2(player, portal2) {
+    if(cursors.up.isDown){
+    player.body.x = 27328;
+    player.body.y = 380;
+    }
+}
+function checkOverlapPortal3(player, portal3) {
+    if(cursors.up.isDown){
+    player.body.x = 8192;
+    player.body.y = 310;
+    }
+}
+function checkOverlapPortal4(player, portal4) {
+    if(cursors.up.isDown){
+    player.body.x = 7680;
+    player.body.y = 120;
+    }
 }
 function checkOverlapHitBox(weaponHitBox, enemy) {
     enemy.disableBody(true, true);
