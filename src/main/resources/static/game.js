@@ -103,7 +103,7 @@ function preload() {
 //map1: 120,3
 //map2: 205,4
 //map3: 427,6
-//map4: 128,5
+//map4: 729,5
 
 //portal places
 //map1: 169,27
@@ -833,7 +833,7 @@ function checkOverlapPortal3(player, portal3) {
 }
 function checkOverlapPortal4(player, portal4) {
     if(cursors.up.isDown){
-    player.body.x = 7680;
+    player.body.x = 46656;
     player.body.y = 120;
     }
 }
