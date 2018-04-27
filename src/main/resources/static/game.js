@@ -81,6 +81,9 @@ function preload() {
     this.load.spritesheet('enemyZombie', '../sprites/EnemyZombie.png',
         { frameWidth: 64, frameHeight: 128 });
 
+    //Npc Sprites
+    this.load.spritesheet('innKeeper', '../sprites/InnKeeper.png',
+        { frameWidth: 384, frameHeight: 256 });
 
 
     this.load.image('background', '../sprites/testBackground.png');
@@ -143,9 +146,7 @@ function create() {
 
     portal4 = this.physics.add.group();
     portal4.create(62784, 2750, 'portalTest');
-    //Make player a phys object and player/platforms/ghostEnemies collide
-    player = this.physics.add.sprite(768,320, 'playerRun');
-    player.body.setSize(64, 138);
+    
 
     //Create healthBar
     /* healthBar = this.add.image(this.width/2, this.height/2, 'healthBar');
@@ -169,6 +170,9 @@ function create() {
     ghostEnemies.create(spawn.x, spawn.y, 'enemyGhost');
     } */
 
+    //Create Innkeeper
+    innKeeper = this.physics.add.sprite(1200, 320, 'innKeeper');
+
     //Create flurryEnemies
     flurryEnemies = this.physics.add.group();
     flurryEnemies.create(400, 100, 'enemyFlurry');
@@ -189,6 +193,10 @@ function create() {
     zombieEnemies = this.physics.add.group();
     zombieEnemies.create(9999, 150, 'enemyZombie');
 
+    //Make player a phys object and player/platforms/ghostEnemies collide
+    player = this.physics.add.sprite(768,320, 'playerRun');
+    player.body.setSize(64, 138);
+
     //Colliders
     this.physics.add.collider(player, layer);
     this.physics.add.collider(flurryEnemies, layer);
@@ -202,6 +210,7 @@ function create() {
     this.physics.add.collider(portal2, layer);
     this.physics.add.collider(portal3, layer);
     this.physics.add.collider(portal4, layer);
+    this.physics.add.collider(innKeeper, layer);
 
     //Damage
     //this.physics.add.overlap(player, flurryEnemies, checkOverlapPlayer, null, this);
@@ -351,15 +360,26 @@ function create() {
         repeat: 1
     });
 
+    //Animation for NPCs
+    this.anims.create({
+        key: 'keeper',
+        frames: this.anims.generateFrameNumbers('innKeeper', { start: 0, end: 9 }),
+        frameRate: 8,
+        repeat: 1
+    });
+
     //GAMEPAD TESTING
     config = Phaser.Input.Gamepad.Configs.DUALSHOCK_4;
     this.input.gamepad.on('down', function (pad, button, value, data) {
         gamepad = pad;
     });
+
+    
 }
 
 function update() {
 
+    innKeeper.anims.play('keeper', true);
 
     spacefield.x = player.x;
     spacefield.y = player.y;
@@ -763,7 +783,7 @@ function checkOverlapPortal2(player, portal2) {
 function checkOverlapPortal3(player, portal3) {
     if(cursors.up.isDown){
     player.body.x = 8192;
-    player.body.y = 310;
+    player.body.y = 280;
     }
 }
 function checkOverlapPortal4(player, portal4) {
