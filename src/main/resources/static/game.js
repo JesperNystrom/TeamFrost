@@ -548,18 +548,18 @@ function update() {
     }
 
     //Yeti
-    /*var yetiEnemy = yetiEnemies.getChildren();
+    var yetiEnemy = yetiEnemies.getChildren();
     for (child of yetiEnemy) {
         child.anims.play('yeti', true);
-        if (child.body.x < player.body.x) {
+        /*if (child.body.x < player.body.x) {
             child.flipX = true;
             child.setVelocityX(600);
         }
         else {
             child.flipX = false;
             child.setVelocityX(-600);
-        }
-    }*/
+        }*/
+    }
 
     //Zombie
     var zombieEnemy = zombieEnemies.getChildren();
