@@ -43,6 +43,7 @@ var portal;
 var game = new Phaser.Game(config);
 
 function preload() {
+    this.load.image('bkGround', '../sprites/Background.png');
     //Player sprites
     this.load.spritesheet('playerRun', '../sprites/PlayerRun.png',
         { frameWidth: 128, frameHeight: 140 });
@@ -97,15 +98,14 @@ function preload() {
 //map3: 427,6
 //map4: 128,5
 function create() {
-
+    spacefield = this.add.image(0, 0, 'bkGround');
     //Player health
     health = 100;
 
 
 
     //Background
-    spacefield = this.add.tileSprite(0, 0, 1137, 640, 'background');
-    backgroundv = -2;
+    //spacefield = this.add.tileSprite(0, 0, 1137, 640, 'background');
 
     //FloorCounter
     fallBuffert = 25;
@@ -333,8 +333,6 @@ function update() {
 
 
     spacefield.x = player.x;
-    spacefield.y = player.y;
-    spacefield.tilePositionY += backgroundv;
 
     document.getElementById('Health').innerHTML = 'Health:' + health;
     healthText.x = player.x - 550;
