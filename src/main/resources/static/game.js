@@ -35,14 +35,11 @@ var health;
 var healthValue = 100;
 var healthText;
 var map;
-var map1;
-var map2;
-var map3;
-var mapHub;
-var mapBoss;
 var spacefield;
 var backgroundv;
 var timedEvent;
+var innKeeper;
+var portal;
 var game = new Phaser.Game(config);
 
 function preload() {
@@ -84,13 +81,12 @@ function preload() {
 
     this.load.image('background', '../sprites/testBackground.png');
     //LOAD TERRAIN
-    this.load.image('oldTiles', '../sprites/allTiles.png');
     this.load.image('tiles', '../sprites/TileSetComplete.png');
-    this.load.tilemapCSV('mapGlide', '../maps/EnemyMap2.csv');
-    this.load.tilemapCSV('mapHub', '../maps/Hub.csv');
+    this.load.tilemapCSV('map', '../maps/Level1.csv');
 
     //Weapon hitbox
-    this.load.image('weaponHitBox', '../sprites/WeaponHitBox.png')
+    this.load.image('weaponHitBox', '../sprites/WeaponHitBox.png');
+    this.load.image('portalTest', '../sprites/WeaponHitboxTest.png');
 }
 
 function create() {
@@ -108,39 +104,16 @@ function create() {
     fallBuffert = 25;
 
     //Creating Map and tile collision
-    mapGlide = this.make.tilemap({ key: 'mapGlide', tileWidth: 64, tileHeight: 64 });
-    var tileset = mapGlide.addTilesetImage('tiles');
-    var layer = mapGlide.createStaticLayer(0, tileset, 0, -50);
-    mapGlide.setCollisionBetween(0,15);
-
-    /* map1 = this.make.tilemap({ key: 'map1', tileWidth: 64, tileHeight: 64 });
-    var tileset = map1.addTilesetImage('tiles');
-    var layer = map1.createStaticLayer(0, tileset, 0, -50);
-    map1.setCollisionBetween(0, 15); */
-
-    /* map2 = this.make.tilemap({ key: 'map2', tileWidth: 64, tileHeight: 64 });
-    var tileset = map2.addTilesetImage('tiles');
-    var layer = map2.createStaticLayer(0, tileset, 0, -50);
-    map2.setCollisionBetween(0, 15); */
-
-    /* map3 = this.make.tilemap({ key: 'map3', tileWidth: 64, tileHeight: 64 });
-    var tileset3 = map3.addTilesetImage('tiles');
-    var layer3 = map3.createStaticLayer(0, tileset, 0, -50);
-    map3.setCollisionBetween(0, 15);  */
-
-    /* mapHub = this.make.tilemap({ key: 'mapHub', tileWidth: 64, tileHeight: 64 });
-    var tileset = mapHub.addTilesetImage('tiles');
-    var layer = mapHub.createStaticLayer(0, tileset, 0, -50);
-    mapHub.setCollisionByExclusion(13); */
-    
-
-    /* mapBoss = this.make.tilemap({ key: 'mapBoss', tileWidth: 64, tileHeight: 64 });
-    var tilesetBoss = mapBoss.addTilesetImage('tiles');
-    var layerBoss = mapBoss.createStaticLayer(0, tileset, 0, -50);
-    mapBoss.setCollisionBetween(0, 15); */
-
+    map = this.make.tilemap({ key: 'map', tileWidth: 64, tileHeight: 64 });
+    var tileset = map.addTilesetImage('tiles');
+    var layer = map.createStaticLayer(0, tileset, 0, -50);
+    map.setCollisionBetween(0,15);
     
     weaponHitBox = this.physics.add.staticGroup();
+
+    //Portal
+    portal = this.physics.add.group();
+    portal.create(200,200, 'portalTest');
 
     //Make player a phys object and player/platforms/ghostEnemies collide
     player = this.physics.add.sprite(400, 200, 'playerRun');
@@ -155,18 +128,18 @@ function create() {
 
     //Create ghostEnemies
     ghostEnemies = this.physics.add.group();
-    var ghostSpawn = [];
-    var lastGhostSpawn = {x:mapGlide.findByIndex(16,0,true).x*64, y:mapGlide.findByIndex(16,0,true).y*64}
+    /* var ghostSpawn = [];
+    var lastGhostSpawn = {x:map.findByIndex(16,0,true).x*64, y:map.findByIndex(16,0,true).y*64}
     var currentGhostSpawn;
     var i=0;
     do {
-        ghostSpawn.push({x:mapGlide.findByIndex(16,i).x*64, y:mapGlide.findByIndex(16,i).y*64});
-        currentGhostSpawn = {x:mapGlide.findByIndex(16,i).x*64, y:mapGlide.findByIndex(16,i).y*64};
+        ghostSpawn.push({x:map.findByIndex(16,i).x*64, y:map.findByIndex(16,i).y*64});
+        currentGhostSpawn = {x:map.findByIndex(16,i).x*64, y:map.findByIndex(16,i).y*64};
         i++;
     } while(lastGhostSpawn.x != currentGhostSpawn.x && lastGhostSpawn.y != currentGhostSpawn.y)
     for(spawn of ghostSpawn){
     ghostEnemies.create(spawn.x, spawn.y, 'enemyGhost');
-    }
+    } */
 
     //Create flurryEnemies
     flurryEnemies = this.physics.add.group();
@@ -196,6 +169,7 @@ function create() {
     this.physics.add.collider(wraithEnemies, layer);
     this.physics.add.collider(yetiEnemies, layer);
     this.physics.add.collider(zombieEnemies, layer);
+    this.physics.add.collider(portal, layer);
 
     //Damage
     //this.physics.add.overlap(player, flurryEnemies, checkOverlapPlayer, null, this);
@@ -212,7 +186,8 @@ function create() {
     this.physics.add.overlap(weaponHitBox, wraithEnemies, checkOverlapHitBox, null, this);
     this.physics.add.overlap(weaponHitBox, yetiEnemies, checkOverlapHitBox, null, this);
     this.physics.add.overlap(weaponHitBox, zombieEnemies, checkOverlapHitBox, null, this);
-
+    this.physics.add.overlap(player, portal, checkOverlapPortal, null, this);
+    
 
 
 
@@ -348,6 +323,8 @@ function create() {
 }
 
 function update() {
+
+
     spacefield.x = player.x;
     spacefield.y = player.y;
     spacefield.tilePositionY += backgroundv;
@@ -727,6 +704,12 @@ function onEvent() {
         }
 
     }
+    
+}
+function checkOverlapPortal(player, portal) {
+    console.log("Press up key")
+    if(cursors.up.isDown)
+    player.body.x = 500;
 }
 function checkOverlapHitBox(weaponHitBox, enemy) {
     enemy.disableBody(true, true);
