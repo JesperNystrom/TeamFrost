@@ -1,7 +1,7 @@
 package com.hellfreeze.demo.Controller;
 
-import com.hellfreeze.demo.Domain.GameUser;
-import com.hellfreeze.demo.Repository.GameUserRepository;
+import com.hellfreeze.demo.Domain.*;
+import com.hellfreeze.demo.Repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -11,6 +11,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
@@ -19,7 +20,28 @@ import javax.validation.Valid;
 public class LoginFunctionController {
 
     @Autowired
+    GameMapRepository gameMapRepository;
+
+    @Autowired
     GameUserRepository gameUserRepository;
+
+    @Autowired
+    HighscoreRepository highscoreRepository;
+
+    @Autowired
+    InventoryRepository inventoryRepository;
+
+    @Autowired
+    MeleeWeaponRepository meleeWeaponRepository;
+
+    @Autowired
+    OutfitRepository outfitRepository;
+
+    @Autowired
+    PlayerRepository playerRepository;
+
+    @Autowired
+    RangedWeaponRepository rangedWeaponRepository;
 
     @GetMapping("/")
     public String indexPage(){
@@ -62,7 +84,32 @@ public class LoginFunctionController {
         PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
         gameUser.setPassword(passwordEncoder.encode(gameUser.getPassword()));
 
+        //Set default values for a player and assign it to the user
+        Outfit outfit= outfitRepository.findById(8L).get();
+
+        GameMap gameMap = gameMapRepository.findById(1L).get();
+
+        Player player = new Player(0L,100,0,outfit.getOutfitColor(),gameMap);
+
+        playerRepository.save(player);
+
+        Highscore highscore = new Highscore(0L,player);
+
+        highscoreRepository.save(highscore);
+
+        MeleeWeapon meleeWeapon = meleeWeaponRepository.findById(1L).get();
+
+        RangedWeapon rangedWeapon = rangedWeaponRepository.findById(1L).get();
+        Inventory inventory = new Inventory(3,player,meleeWeapon,rangedWeapon);
+
+        inventoryRepository.save(inventory);
+
+        gameUser.addOutfit(outfit);
+
+        gameUser.setPlayer(player);
+
         gameUserRepository.save(gameUser);
+
         String greeting = "Thank you "+gameUser.getGameUserName()+" for your registration";
         return new ModelAndView("login")
                 .addObject("greeting",greeting);
