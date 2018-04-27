@@ -47,6 +47,7 @@ var portal4;
 var game = new Phaser.Game(config);
 
 function preload() {
+    this.load.image('bkGround', '../sprites/Background.png');
     //Player sprites
     this.load.spritesheet('playerRun', '../sprites/PlayerRun.png',
         { frameWidth: 128, frameHeight: 140 });
@@ -110,15 +111,14 @@ function preload() {
 //map3: 703,9
 //map4: 981,44
 function create() {
-
+    spacefield = this.add.image(0, 0, 'bkGround');
     //Player health
     health = 100;
 
 
 
     //Background
-    spacefield = this.add.tileSprite(0, 0, 1137, 640, 'background');
-    backgroundv = -2;
+    snowfield = this.add.tileSprite(0, 0, 1137, 640, 'background');
 
     //FloorCounter
     fallBuffert = 25;
@@ -382,8 +382,9 @@ function update() {
     innKeeper.anims.play('keeper', true);
 
     spacefield.x = player.x;
-    spacefield.y = player.y;
-    spacefield.tilePositionY += backgroundv;
+    snowfield.x = player.x;
+    snowfield.y = player.y;
+    snowfield.tilePositionY -= 2;
 
     document.getElementById('Health').innerHTML = 'Health:' + health;
     healthText.x = player.x - 550;
