@@ -132,20 +132,26 @@ function create() {
     weaponHitBox = this.physics.add.staticGroup();
 
     //Portal
+    portalHub = this.physics.add.group();
+    portalHub.create(10816,1650, 'portalTest');
+    portalHub.create(20672,2100, 'portalTest');
+    portalHub.create(44992,500, 'portalTest');
+    portalHub.create(62784,2750, 'portalTest');
+
     portal = this.physics.add.group();
-    portal.create(768,320, 'portalTest');
+    portal.create(1750,320, 'portalTest');
 
     portal1 = this.physics.add.group();
-    portal1.create(10816, 1650, 'portalTest');
+    portal1.create(2000, 320, 'portalTest');
 
     portal2 = this.physics.add.group();
-    portal2.create(20672, 2100, 'portalTest');
+    portal2.create(2250, 320, 'portalTest');
 
     portal3 = this.physics.add.group();
-    portal3.create(44992, 500, 'portalTest');
+    portal3.create(2500, 320, 'portalTest');
 
     portal4 = this.physics.add.group();
-    portal4.create(62784, 2750, 'portalTest');
+    portal4.create(2750, 320, 'portalTest');
     
 
     //Create healthBar
@@ -807,6 +813,13 @@ function onEvent() {
     }
     
 }
+function checkOverlapPortal(player, portalHub) {
+    if(cursors.up.isDown){
+    player.body.x = 768;
+    player.body.y = 300;
+    }
+}
+
 function checkOverlapPortal(player, portal) {
     if(cursors.up.isDown){
     player.body.x = 7680;
@@ -827,8 +840,8 @@ function checkOverlapPortal2(player, portal2) {
 }
 function checkOverlapPortal3(player, portal3) {
     if(cursors.up.isDown){
-    player.body.x = 8192;
-    player.body.y = 280;
+    player.body.x = 46656;
+    player.body.y = 120;
     }
 }
 function checkOverlapPortal4(player, portal4) {
