@@ -86,7 +86,7 @@ function preload() {
     this.load.image('background', '../sprites/testBackground.png');
     //LOAD TERRAIN
     this.load.image('tiles', '../sprites/TileSetComplete.png');
-    this.load.tilemapCSV('map', '../maps/WorldMap.csv');
+    this.load.tilemapCSV('map', '../maps/World.csv');
 
     //Weapon hitbox
     this.load.image('weaponHitBox', '../sprites/WeaponHitBox.png');
@@ -144,7 +144,7 @@ function create() {
     portal4 = this.physics.add.group();
     portal4.create(62784, 2750, 'portalTest');
     //Make player a phys object and player/platforms/ghostEnemies collide
-    player = this.physics.add.sprite(62784,2750, 'playerRun');
+    player = this.physics.add.sprite(768,320, 'playerRun');
     player.body.setSize(64, 138);
 
     //Create healthBar
