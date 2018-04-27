@@ -103,7 +103,7 @@ function preload() {
 //map1: 120,3
 //map2: 205,4
 //map3: 427,6
-//map4: 128,5
+//map4: 729,5
 
 //portal places
 //map1: 169,27
@@ -157,7 +157,7 @@ function create() {
 
     //Create ghostEnemies
     ghostEnemies = this.physics.add.group();
-    /* var ghostSpawn = [];
+    var ghostSpawn = [];
     var lastGhostSpawn = {x:map.findByIndex(16,0,true).x*64, y:map.findByIndex(16,0,true).y*64}
     var currentGhostSpawn;
     var i=0;
@@ -168,7 +168,7 @@ function create() {
     } while(lastGhostSpawn.x != currentGhostSpawn.x && lastGhostSpawn.y != currentGhostSpawn.y)
     for(spawn of ghostSpawn){
     ghostEnemies.create(spawn.x, spawn.y, 'enemyGhost');
-    } */
+    }
 
     //Create Innkeeper
     innKeeper = this.physics.add.sprite(1200, 320, 'innKeeper');
@@ -179,19 +179,63 @@ function create() {
 
     //Create impEnemies
     impEnemies = this.physics.add.group();
-    impEnemies.create(9999, 150, 'enemyImp');
+    var impSpawn = [];
+    var lastImpSpawn = {x:map.findByIndex(15,0,true).x*64, y:map.findByIndex(15,0,true).y*64}
+    var currentImpSpawn;
+    var i=0;
+    do {
+        impSpawn.push({x:map.findByIndex(15,i).x*64, y:map.findByIndex(15,i).y*64});
+        currentImpSpawn = {x:map.findByIndex(15,i).x*64, y:map.findByIndex(15,i).y*64};
+        i++;
+    } while(lastImpSpawn.x != currentImpSpawn.x && lastImpSpawn.y != currentImpSpawn.y)
+    for(spawn of impSpawn){
+    impEnemies.create(spawn.x, spawn.y, 'enemyImp');
+    }
 
     //Create wraithEnemies
     wraithEnemies = this.physics.add.group();
-    wraithEnemies.create(9999, 150, 'enemyWraith');
+    var wraithSpawn = [];
+    var lastWraithSpawn = {x:map.findByIndex(20,0,true).x*64, y:map.findByIndex(20,0,true).y*64}
+    var currentWraithSpawn;
+    var i=0;
+    do {
+        wraithSpawn.push({x:map.findByIndex(20,i).x*64, y:map.findByIndex(20,i).y*64});
+        currentWraithSpawn = {x:map.findByIndex(20,i).x*64, y:map.findByIndex(20,i).y*64};
+        i++;
+    } while(lastWraithSpawn.x != currentWraithSpawn.x && lastWraithSpawn.y != currentWraithSpawn.y)
+    for(spawn of wraithSpawn){
+    wraithEnemies.create(spawn.x, spawn.y, 'enemyWraith');
+    }
 
     //Create yetiEnemies
     yetiEnemies = this.physics.add.group();
-    //yetiEnemies.create(600, 150, 'enemyYeti');
+    var yetiSpawn = [];
+    var lastYetiSpawn = {x:map.findByIndex(19,0,true).x*64, y:map.findByIndex(19,0,true).y*64}
+    var currentYetiSpawn;
+    var i=0;
+    do {
+        yetiSpawn.push({x:map.findByIndex(19,i).x*64, y:map.findByIndex(19,i).y*64});
+        currentYetiSpawn = {x:map.findByIndex(19,i).x*64, y:map.findByIndex(19,i).y*64};
+        i++;
+    } while(lastYetiSpawn.x != currentYetiSpawn.x && lastYetiSpawn.y != currentYetiSpawn.y)
+    for(spawn of yetiSpawn){
+    yetiEnemies.create(spawn.x, spawn.y, 'enemyYeti');
+    }
 
     //Create zombieEnemies
     zombieEnemies = this.physics.add.group();
-    zombieEnemies.create(9999, 150, 'enemyZombie');
+    var zombieSpawn = [];
+    var lastZombieSpawn = {x:map.findByIndex(18,0,true).x*64, y:map.findByIndex(18,0,true).y*64}
+    var currentZombieSpawn;
+    var i=0;
+    do {
+        zombieSpawn.push({x:map.findByIndex(18,i).x*64, y:map.findByIndex(18,i).y*64});
+        currentZombieSpawn = {x:map.findByIndex(18,i).x*64, y:map.findByIndex(18,i).y*64};
+        i++;
+    } while(lastZombieSpawn.x != currentZombieSpawn.x && lastZombieSpawn.y != currentZombieSpawn.y)
+    for(spawn of zombieSpawn){
+    zombieEnemies.create(spawn.x, spawn.y, 'enemyZombie');
+    }
 
     //Make player a phys object and player/platforms/ghostEnemies collide
     player = this.physics.add.sprite(768,320, 'playerRun');
@@ -200,7 +244,7 @@ function create() {
     //Colliders
     this.physics.add.collider(player, layer);
     this.physics.add.collider(flurryEnemies, layer);
-    //this.physics.add.collider(ghostEnemies, layer);
+    this.physics.add.collider(ghostEnemies, layer);
     this.physics.add.collider(impEnemies, layer);
     this.physics.add.collider(wraithEnemies, layer);
     this.physics.add.collider(yetiEnemies, layer);
@@ -452,7 +496,7 @@ function update() {
     var ghostEnemy = ghostEnemies.getChildren();
     for (child of ghostEnemy) {
         child.anims.play('ghost', true);
-        if (child.body.x < player.body.x) {
+        /*if (child.body.x < player.body.x) {
             child.flipX = true;
             child.setVelocityX(200);
         }
@@ -466,39 +510,39 @@ function update() {
         }
         else {
             child.setVelocityY(-50);
-        }
+        }*/
     }
 
     //Imp
     var impEnemy = impEnemies.getChildren();
     for (child of impEnemy) {
         child.anims.play('imp', true);
-        if (child.body.x < player.body.x) {
+        /*if (child.body.x < player.body.x) {
             child.flipX = false;
             child.setVelocityX(90);
         }
         else {
             child.flipX = true;
             child.setVelocityX(-90);
-        }
+        }*/
     }
 
     //Wraith
     var wraithEnemy = wraithEnemies.getChildren();
     for (child of wraithEnemy) {
         child.anims.play('wraith', true);
-        if (child.body.x < player.body.x) {
+        /*if (child.body.x < player.body.x) {
             child.flipX = false;
             child.setVelocityX(175);
         }
         else {
             child.flipX = true;
             child.setVelocityX(-175);
-        }
+        }*/
     }
 
     //Yeti
-    var yetiEnemy = yetiEnemies.getChildren();
+    /*var yetiEnemy = yetiEnemies.getChildren();
     for (child of yetiEnemy) {
         child.anims.play('yeti', true);
         if (child.body.x < player.body.x) {
@@ -509,20 +553,20 @@ function update() {
             child.flipX = false;
             child.setVelocityX(-600);
         }
-    }
+    }*/
 
     //Zombie
     var zombieEnemy = zombieEnemies.getChildren();
     for (child of zombieEnemy) {
         child.anims.play('zombie', true);
-        if (child.body.x < player.body.x) {
+        /*if (child.body.x < player.body.x) {
             child.flipX = true;
             child.setVelocityX(120);
         }
         else {
             child.flipX = false;
             child.setVelocityX(-120);
-        }
+        }*/
     }
 
 
@@ -789,7 +833,7 @@ function checkOverlapPortal3(player, portal3) {
 }
 function checkOverlapPortal4(player, portal4) {
     if(cursors.up.isDown){
-    player.body.x = 7680;
+    player.body.x = 46656;
     player.body.y = 120;
     }
 }
