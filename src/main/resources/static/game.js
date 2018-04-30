@@ -33,7 +33,6 @@ var enemies;
 var health;
 var healthValue = 100;
 var enemyHealth = 100;
-var enemyHealthValue = 100;
 //var healthBar;
 var healthText;
 var map;
@@ -108,27 +107,22 @@ function preload() {
 
     //Music
     this.load.audio('themeMusic', [
-        '../static/HubMusic.ogg',
         '../static/HubMusic.mp3'
     ]);
 
     this.load.audio('level1Music', [
-        '../static/Level1Music.mp3',
         '../static/Level1Music.mp3'
     ]);
 
     this.load.audio('level2Music', [
-        '../static/Level2Music.mp3',
         '../static/Level2Music.mp3'
     ]);
 
     this.load.audio('level3Music', [
-        '../static/Level3Music.mp3',
         '../static/Level3Music.mp3'
     ]);
 
     this.load.audio('level4Music', [
-        '../static/Level3Music.mp3',
         '../static/Level3Music.mp3'
     ]);
 
@@ -306,7 +300,6 @@ function create() {
 
     //Camera
     this.cameras.main.setSize(1137, 640); 
-    //this.cameras.add(400,0);
     this.cameras.main.startFollow(player);
 
 
@@ -879,7 +872,7 @@ function onEvent() {
     
 }
 
-//
+//Portal overlaps
 function checkOverlapPortalHub(player, portalHub) {
     if(cursors.up.isDown){
     player.body.x = 768;
@@ -911,14 +904,13 @@ function checkOverlapPortal3(player, portal3) {
     player.body.y = 120;
     }
 }
-
-//62784,2816
 function checkOverlapPortal4(player, portal4) {
     if(cursors.up.isDown){
     player.body.x = 65024;
     player.body.y = 896;
     }
 }
+//Hitbox overlap
 function checkOverlapHitBox(weaponHitBox, enemy) {
     if(states == 'lightAttack') {
     enemyHealth -=1;
@@ -929,6 +921,7 @@ function checkOverlapHitBox(weaponHitBox, enemy) {
     enemy.disableBody(true, true);
 }
 
+//Enemy player overlap
 function checkOverlapPlayer(player, enemy) {
     
     states = 'hurt';
