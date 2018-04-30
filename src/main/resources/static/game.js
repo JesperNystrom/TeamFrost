@@ -32,8 +32,10 @@ var player;
 var weaponHitBox;
 var enemies;
 var health;
-//var healthBar;
 var healthValue = 100;
+var enemyHealth = 100;
+var enemyHealthValue = 100;
+//var healthBar;
 var healthText;
 var map;
 var spacefield;
@@ -48,6 +50,11 @@ var portal4;
 var game = new Phaser.Game(config);
 var stamina;
 var shopActive
+var musicTheme;
+var music1;
+var music2;
+var music3;
+var music4;
 
 function preload() {
     this.load.image('bkGround', '../sprites/Background.png');
@@ -100,6 +107,33 @@ function preload() {
 
     //Weapon hitbox
     this.load.image('weaponHitBox', '../sprites/WeaponHitBox.png');
+    this.load.image('portalTest', '../sprites/WeaponHitboxTest.png');
+
+    //Music
+    this.load.audio('themeMusic', [
+        '../static/Level1Music.mp3',
+        '../static/HubMusic.mp3'
+    ]);
+
+    this.load.audio('level1Music', [
+        '../static/Level1Music.mp3',
+        '../static/Level1Music.mp3'
+    ]);
+
+    this.load.audio('level2Music', [
+        '../static/Level2Music.mp3',
+        '../static/Level2Music.mp3'
+    ]);
+
+    this.load.audio('level3Music', [
+        '../static/Level3Music.mp3',
+        '../static/Level3Music.mp3'
+    ]);
+
+    this.load.audio('level4Music', [
+        '../static/Level3Music.mp3',
+        '../static/Level3Music.mp3'
+    ]);
 
     //Portals
     this.load.spritesheet('portals', '../sprites/Port.png',
@@ -141,18 +175,17 @@ function create() {
     weaponHitBox = this.physics.add.staticGroup();
 
     //Portal
-    portalHub = this.physics.add.group();
-    portalHub.create(10816,1650, 'portals');
-    portalHub.create(20672,2100, 'portals');
-    portalHub.create(44992,500, 'portals');
-    portalHub.create(62784,2750, 'portals');
-    portalHub.create(65024,1024, 'portals');
-
+    portalHub = this.physics.add.sprite(10816,1650,'portals');
+    portalHub1 = this.physics.add.sprite(20672,2100,'portals');
+    portalHub2 = this.physics.add.sprite(44992,500,'portals');
+    portalHub3 = this.physics.add.sprite(62816,2600,'portals');
+    portalHub4 = this.physics.add.sprite(65024,1024,'portals');
+    
     portal = this.physics.add.sprite(1750,320,'portals');
-    portal1 = this.physics.add.sprite(2070,320,'portals');
-    portal2 = this.physics.add.sprite(2390,320,'portals');
-    portal3 = this.physics.add.sprite(2710,320,'portals');
-    portal4 = this.physics.add.sprite(3030,320,'portals');
+    portal1 = this.physics.add.sprite(2166,320,'portals');
+    portal2 = this.physics.add.sprite(2582,320,'portals');
+    portal3 = this.physics.add.sprite(2998,320,'portals');
+    portal4 = this.physics.add.sprite(3414,320,'portals');
     
 
     //Create healthBar
@@ -214,7 +247,7 @@ function create() {
     }
 
     //Make player a phys object and player/platforms/ghostEnemies collide
-    player = this.physics.add.sprite(768,320, 'playerRun');
+    player = this.physics.add.sprite(800,320, 'playerRun');
     player.body.setSize(64, 138);
     stamina = 80;
 
@@ -227,6 +260,10 @@ function create() {
     this.physics.add.collider(yetiEnemies, layer);
     this.physics.add.collider(zombieEnemies, layer);
     this.physics.add.collider(portalHub, layer);
+    this.physics.add.collider(portalHub1, layer);
+    this.physics.add.collider(portalHub2, layer);
+    this.physics.add.collider(portalHub3, layer);
+    this.physics.add.collider(portalHub4, layer);
     this.physics.add.collider(portal, layer);
     this.physics.add.collider(portal1, layer);
     this.physics.add.collider(portal2, layer);
@@ -253,6 +290,10 @@ function create() {
     this.physics.add.overlap(weaponHitBox, yetiEnemies, checkOverlapHitBox, null, this);
     this.physics.add.overlap(weaponHitBox, zombieEnemies, checkOverlapHitBox, null, this);
     this.physics.add.overlap(player, portalHub, checkOverlapPortalHub, null, this);
+    this.physics.add.overlap(player, portalHub1, checkOverlapPortalHub, null, this);
+    this.physics.add.overlap(player, portalHub2, checkOverlapPortalHub, null, this);
+    this.physics.add.overlap(player, portalHub3, checkOverlapPortalHub, null, this);
+    this.physics.add.overlap(player, portalHub4, checkOverlapPortalHub, null, this);
     this.physics.add.overlap(player, portal, checkOverlapPortal, null, this);
     this.physics.add.overlap(player, portal1, checkOverlapPortal1, null, this);
     this.physics.add.overlap(player, portal2, checkOverlapPortal2, null, this);
@@ -396,6 +437,12 @@ function create() {
 
     //Portals
     this.anims.create({
+        key: 'portalHub',
+        frames: this.anims.generateFrameNumbers('portals', { start: 5, end: 5 }),
+        frameRate: 8,
+        repeat: 1
+    });
+    this.anims.create({
         key: 'portal1',
         frames: this.anims.generateFrameNumbers('portals', { start: 0, end: 0 }),
         frameRate: 8,
@@ -431,15 +478,17 @@ function create() {
     this.input.gamepad.on('down', function (pad, button, value, data) {
         gamepad = pad;
     });
-
-
-
-    
+ 
 }
 
 function update() {
     innKeeper.anims.play('keeper', true);
 
+    portalHub.anims.play('portalHub', true);
+    portalHub1.anims.play('portalHub', true);
+    portalHub2.anims.play('portalHub', true);
+    portalHub3.anims.play('portalHub', true);
+    portalHub4.anims.play('portalHub', true);
     portal.anims.play('portal1',true);
     portal1.anims.play('portal2', true);
     portal2.anims.play('portal3', true);
@@ -448,7 +497,7 @@ function update() {
 
     if (stamina < 80)
         stamina++;
-
+    //console.log(player.body.y);
     if(player.body.velocity.y > 900)
         player.body.velocity.y = 900;
     if(player.body.y >= 3200)
@@ -515,11 +564,11 @@ function update() {
         var distanceY = child.body.y + 500;
         var distanceX = child.body.x - player.body.x;
         if (Math.abs(distanceX) < 650 && player.body.x < child.body.x && distanceY > player.body.y) {
-            child.flipX = true;
+            child.flipX = false;
             child.setVelocityX(-75);
         }
         else if (Math.abs(distanceX) < 650 && player.body.x > child.body.x && distanceY > player.body.y) {
-            child.flipX = false;
+            child.flipX = true;
             child.setVelocityX(75);
         }
         else child.setVelocityX(0);
@@ -581,11 +630,11 @@ function update() {
         child.anims.play('yeti', true);
         var distanceY = child.body.y + 500;
         var distanceX = child.body.x - player.body.x;
-        if (Math.abs(distanceX) < 2000 && player.body.x < child.body.x && distanceY > player.body.y) {
+        if (Math.abs(distanceX) < 1500 && player.body.x < child.body.x && distanceY > player.body.y) {
             child.flipX = false;
             child.setVelocityX(-450);
         }
-        else if (Math.abs(distanceX) < 2000 && player.body.x > child.body.x && distanceY > player.body.y) {
+        else if (Math.abs(distanceX) < 1500 && player.body.x > child.body.x && distanceY > player.body.y) {
             child.flipX = true;
             child.setVelocityX(450);
         }
@@ -841,6 +890,8 @@ function onEvent() {
     }
     
 }
+
+//
 function checkOverlapPortalHub(player, portalHub) {
     if(cursors.up.isDown){
     player.body.x = 768;
@@ -872,15 +923,24 @@ function checkOverlapPortal3(player, portal3) {
     player.body.y = 120;
     }
 }
+
+//62784,2816
 function checkOverlapPortal4(player, portal4) {
     if(cursors.up.isDown){
-    player.body.x = 46656;
-    player.body.y = 120;
+    player.body.x = 65024;
+    player.body.y = 896;
     }
 }
 function checkOverlapHitBox(weaponHitBox, enemy) {
+    if(states == 'lightAttack') {
+    enemyHealth -=1;
+} else if (states == 'heavyAttack') {
+    enemyHealth -=3;
+}
+    if(enemyHealth <= 0)
     enemy.disableBody(true, true);
 }
+
 function checkOverlapPlayer(player, enemy) {
     
     states = 'hurt';
@@ -917,7 +977,7 @@ function checkAttackState(newState, xOrigin, yOrigin){
             player.originX = xOrigin;
             player.originY = yOrigin;
             states=goIntoState;
-        },200);} 
+        },200);}
     else if(states == 'heavyAttack' && goIntoState != 'heavyAttack'){
         setTimeout(function () {
             player.originX = xOrigin;
