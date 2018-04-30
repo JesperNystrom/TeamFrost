@@ -92,10 +92,10 @@ function preload() {
     //LOAD TERRAIN
     this.load.image('tiles', '../sprites/TileSetComplete.png');
     this.load.tilemapCSV('map', '../maps/World.csv');
+    this.load.image('portalTest', '../sprites/WeaponHitboxTest.png');
 
     //Weapon hitbox
     this.load.image('weaponHitBox', '../sprites/WeaponHitBox.png');
-    this.load.image('portalTest', '../sprites/WeaponHitboxTest.png');
 }
 
 
@@ -403,9 +403,12 @@ function create() {
 function update() {
     if (stamina < 80)
         stamina++;
-    console.log(stamina);
+    console.log(player.body.y);
     if(player.body.velocity.y > 900)
         player.body.velocity.y = 900;
+    if(player.body.y >= 3200)
+        player.disableBody(true, true);
+    
     innKeeper.anims.play('keeper', true);
 
     spacefield.x = player.x;
@@ -493,14 +496,14 @@ function update() {
     var impEnemy = impEnemies.getChildren();
     for (child of impEnemy) {
         child.anims.play('imp', true);
-        if (child.body.x < player.body.x) {
+        /*if (child.body.x < player.body.x) {
             child.flipX = false;
             child.setVelocityX(90);
         }
         else {
             child.flipX = true;
             child.setVelocityX(-90);
-        }
+        }*/
     }
 
     //Wraith
@@ -574,7 +577,7 @@ function update() {
         player.setVelocityX(0);
     }
     if (key_Z.isDown && !cursors.down.isDown && stamina >= 40) {
-        stamina -= 10;
+        stamina -= 41;
         if (player.flipX) {
             checkAttackState('lightAttack', 0.7, 0.5);
         } else {
@@ -587,7 +590,7 @@ function update() {
     }
 
     if (key_X.isDown && !cursors.down.isDown && stamina >= 80) {
-        stamina -= 40;
+        stamina -= 50;
         if (player.flipX) {
             checkAttackState('heavyAttack', 0.7, 0.62);
         } else {
@@ -624,89 +627,86 @@ function update() {
     //GAMEPAD CONTROLS
     if (gamepad) {
         if (gamepad.buttons[config.R1].pressed && fallBuffert > 0) {
-            states = 'glide';
-            player.originY = 0.58;
             if (player.flipX) {
+                checkAttackState('glide', 0.2, 0.58);
                 player.setVelocityX(-650)
-                player.originX = 0.2;
             } else {
+                checkAttackState('glide', 0.8, 0.58);
                 player.setVelocityX(650)
-                player.originX = 0.8;
             }
 
         } else if (gamepad.buttons[config.LEFT].pressed) {
             player.setVelocityX(-260);
-
-            if (player.body.onFloor())
-                states = 'run';
-
             player.flipX = true;
+            if (player.body.onFloor()){
+                checkAttackState('run',0.5,0.5);
+            }
         } else if (gamepad.buttons[config.RIGHT].pressed) {
             player.setVelocityX(260);
             player.flipX = false;
             if (player.body.onFloor()) {
-                states = 'run';
+                checkAttackState('run',0.5,0.5);
             }
         } else {
-            player.originX = 0.5;
-            player.originY = 0.5;
+            checkAttackState('idle', 0.5, 0.5);
             player.setVelocityX(0);
-            states = 4;
         }
         if (gamepad.buttons[config.SQUARE].pressed && !gamepad.buttons[config.R1].pressed) {
-            player.originY = 0.5;
+            stamina -= 41;
             if (player.flipX) {
-                player.originX = 0.7;
+                checkAttackState('lightAttack', 0.7, 0.5);
             } else {
-                player.originX = 0.3;
+                checkAttackState('lightAttack', 0.3, 0.5);
             }
-            states = 'lightAttack';
+            timedEvent = this.time.addEvent({
+                delay: 0, callback: onEvent,
+                callbackScope: this, repeat: 0, startAt: 0
+            });
         }
 
         if (gamepad.buttons[config.TRIANGLE].pressed && !gamepad.buttons[config.R1].pressed) {
-            player.originY = 0.62;
-            if (player.flipX) {
-                player.originX = 0.7;
-            } else {
-                player.originX = 0.3;
-            }
-            states = 'heavyAttack';
+            stamina -= 50;
+        if (player.flipX) {
+            checkAttackState('heavyAttack', 0.7, 0.62);
+        } else {
+            checkAttackState('heavyAttack', 0.3, 0.62);
+        }
+        timedEvent = this.time.addEvent({
+            delay: 0, callback: onEvent,
+            callbackScope: this, repeat: 0, startAt: 0
+        });
         }
 
         if (gamepad.buttons[config.X].pressed && player.body.onFloor()) {
             player.setVelocityY(-400);
             if (player.body.velocity.y < 0 && player.body.velocity.x != 0)
-                states = 'jump';
+                checkAttackState('jump', 0.5, 0.5);
             fallBuffert = 0;
         }
 
         if (player.body.velocity.y > 0 && !gamepad.buttons[config.TRIANGLE].pressed && !gamepad.buttons[config.SQUARE].pressed) {
-            states = 'fall';
+            checkAttackState('fall', 0.5, 0.5);
         }
-        if (player.body.velocity.y < 0 && !gamepad.buttons[config.UP].pressed) {
-            states = 'jump';
+        if (player.body.velocity.y < 0) {
+            checkAttackState('jump', 0.5, 0.5);
         }
 
-        if (player.body.velocity.y < 0 && !gamepad.buttons[config.TRIANGLE].pressed && !gamepad.buttons[config.SQUARE].pressed) {
+        /*if (player.body.velocity.y < 0 && !gamepad.buttons[config.TRIANGLE].pressed && !gamepad.buttons[config.SQUARE].pressed) {
             states = 'jump';
-        }
+        }*/
         if (gamepad.buttons[config.UP].pressed && gamepad.buttons[config.R1].pressed && player.body.onWall()) {
-            player.originY = 0.5;
             if (player.flipX) {
-                player.originX = 0.3;
-                player.setVelocityX(-260);
+                checkAttackState('wallGlide', 0.3, 0.5);
             } else {
-                player.originX = 0.7;
-                player.setVelocityX(260);
+                checkAttackState('wallGlide', 0.7, 0.5);
             }
-            states = 'wallGlide';
+            if(states != 'lightAttack' && states != 'heavyAttack')
             player.setVelocityY(-400);
         }
     }
 
     if (cursors.right.isDown)
         gamepad = false;
-
     //CONTROL END
 }
 
