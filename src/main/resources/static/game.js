@@ -106,33 +106,33 @@ function preload() {
 
     //Music
     this.load.audio('themeMusic', [
-        '../static/HubMusic.ogg',
-        '../static/HubMusic.mp3'
+        // '../static/HubMusic.ogg',
+        'C:/Users/Administrator/Desktop/Stava med Maria/StavaMedMaria/src/main/resources/static/images'
     ]);
 
     this.load.audio('level1Music', [
-        '../static/Level1Music.mp3',
+        // '../static/Level1Music.ogg',
         '../static/Level1Music.mp3'
     ]);
 
     this.load.audio('level2Music', [
-        '../static/Level2Music.mp3',
+        // '../static/Level2Music.ogg',
         '../static/Level2Music.mp3'
     ]);
 
     this.load.audio('level3Music', [
-        '../static/Level3Music.mp3',
+        // '../static/Level3Music.ogg',
         '../static/Level3Music.mp3'
     ]);
 
     this.load.audio('level4Music', [
-        '../static/Level3Music.mp3',
+        // '../static/Level3Music.ogg,',
         '../static/Level3Music.mp3'
     ]);
 
     //Portals
     this.load.spritesheet('portals', '../sprites/Port.png',
-    { frameWidth: 192, frameHeight: 256 });
+        { frameWidth: 192, frameHeight: 256 });
 }
 
 
@@ -165,28 +165,28 @@ function create() {
     map = this.make.tilemap({ key: 'map', tileWidth: 64, tileHeight: 64 });
     var tileset = map.addTilesetImage('tiles');
     var layer = map.createStaticLayer(0, tileset, 0, -50);
-    map.setCollision([0,1,2,3,4,5,6,7,8,9,10,11,12,14]);
-    
+    map.setCollision([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14]);
+
     weaponHitBox = this.physics.add.staticGroup();
 
     //Portal
-    portalHub = this.physics.add.sprite(10816,1650,'portals');
-    portalHub1 = this.physics.add.sprite(20672,2100,'portals');
-    portalHub2 = this.physics.add.sprite(44992,500,'portals');
-    portalHub3 = this.physics.add.sprite(62816,2600,'portals');
-    portalHub4 = this.physics.add.sprite(65024,1024,'portals');
-    
-    portal = this.physics.add.sprite(1750,320,'portals');
-    portal1 = this.physics.add.sprite(2166,320,'portals');
-    portal2 = this.physics.add.sprite(2582,320,'portals');
-    portal3 = this.physics.add.sprite(2998,320,'portals');
-    portal4 = this.physics.add.sprite(3414,320,'portals');
-    
+    portalHub = this.physics.add.sprite(10816, 1650, 'portals');
+    portalHub1 = this.physics.add.sprite(20672, 2100, 'portals');
+    portalHub2 = this.physics.add.sprite(44992, 500, 'portals');
+    portalHub3 = this.physics.add.sprite(62816, 2600, 'portals');
+    portalHub4 = this.physics.add.sprite(65024, 1024, 'portals');
+
+    portal = this.physics.add.sprite(1750, 320, 'portals');
+    portal1 = this.physics.add.sprite(2166, 320, 'portals');
+    portal2 = this.physics.add.sprite(2582, 320, 'portals');
+    portal3 = this.physics.add.sprite(2998, 320, 'portals');
+    portal4 = this.physics.add.sprite(3414, 320, 'portals');
+
 
     //Create healthBar
     /* healthBar = this.add.image(this.width/2, this.height/2, 'healthBar');
     Phaser.Display.Align.In.TopLeft(spacefield, healthBar); */
-    healthText = this.add.text(16,16, 'Health: 100',  { fontSize: '32px', fill: '#999' });
+    healthText = this.add.text(16, 16, 'Health: 100', { fontSize: '32px', fill: '#999' });
 
     //Create Innkeeper
     innKeeper = this.physics.add.sprite(1200, 320, 'innKeeper');
@@ -201,48 +201,48 @@ function create() {
     zombieEnemies = this.physics.add.group();
 
     //imp = 15, ghost = 16, flurr = 17 , Zombie == 18, yeti = 19, wraith = 20 
-    var enemiesArray = [impEnemies, ghostEnemies, flurryEnemies, 
-                        zombieEnemies, yetiEnemies, wraithEnemies];
+    var enemiesArray = [impEnemies, ghostEnemies, flurryEnemies,
+        zombieEnemies, yetiEnemies, wraithEnemies];
     var enemyIndex = 15;
     var enemyName;
-    for(enemyType of enemiesArray){
-        switch(enemyIndex){
+    for (enemyType of enemiesArray) {
+        switch (enemyIndex) {
             case 15:
-                enemyName ='enemyImp'
+                enemyName = 'enemyImp'
                 break;
             case 16:
-                enemyName ='enemyGhost'
+                enemyName = 'enemyGhost'
                 break;
             case 17:
-                enemyName ='enemyFlurry'
+                enemyName = 'enemyFlurry'
                 break;
             case 18:
-                enemyName ='enemyZombie'
+                enemyName = 'enemyZombie'
                 break;
             case 19:
-                enemyName ='enemyYeti'
+                enemyName = 'enemyYeti'
                 break;
             case 20:
-                enemyName ='enemyWraith'
+                enemyName = 'enemyWraith'
                 break;
         }
         var enemyTypeSpawn = [];
-        var lastEnemyTypeSpawn = {x:map.findByIndex(enemyIndex,0,true).x*64, y:map.findByIndex(enemyIndex,0,true).y*64}
+        var lastEnemyTypeSpawn = { x: map.findByIndex(enemyIndex, 0, true).x * 64, y: map.findByIndex(enemyIndex, 0, true).y * 64 }
         var currentEnemyTypeSpawn;
-        var j=0;
+        var j = 0;
         do {
-            enemyTypeSpawn.push({x:map.findByIndex(enemyIndex,j).x*64, y:map.findByIndex(enemyIndex,j).y*64});
-            currentEnemyTypeSpawn = {x:map.findByIndex(enemyIndex,j).x*64, y:map.findByIndex(enemyIndex,j).y*64};
+            enemyTypeSpawn.push({ x: map.findByIndex(enemyIndex, j).x * 64, y: map.findByIndex(enemyIndex, j).y * 64 });
+            currentEnemyTypeSpawn = { x: map.findByIndex(enemyIndex, j).x * 64, y: map.findByIndex(enemyIndex, j).y * 64 };
             j++;
-        } while(lastEnemyTypeSpawn.x != currentEnemyTypeSpawn.x && lastEnemyTypeSpawn.y != currentEnemyTypeSpawn.y)
-        for(spawn of enemyTypeSpawn){
+        } while (lastEnemyTypeSpawn.x != currentEnemyTypeSpawn.x && lastEnemyTypeSpawn.y != currentEnemyTypeSpawn.y)
+        for (spawn of enemyTypeSpawn) {
             enemyType.create(spawn.x, spawn.y, enemyName);
         }
         enemyIndex++;
     }
 
     //Make player a phys object and player/platforms/ghostEnemies collide
-    player = this.physics.add.sprite(800,320, 'playerRun');
+    player = this.physics.add.sprite(800, 320, 'playerRun');
     player.body.setSize(64, 138);
     stamina = 80;
 
@@ -291,7 +291,7 @@ function create() {
     this.physics.add.overlap(player, portal2, checkOverlapPortal2, null, this);
     this.physics.add.overlap(player, portal3, checkOverlapPortal3, null, this);
     this.physics.add.overlap(player, portal4, checkOverlapPortal4, null, this);
-    
+
 
 
 
@@ -303,7 +303,7 @@ function create() {
 
 
     //Camera
-    this.cameras.main.setSize(1137, 640); 
+    this.cameras.main.setSize(1137, 640);
     //this.cameras.add(400,0);
     this.cameras.main.startFollow(player);
 
@@ -470,7 +470,14 @@ function create() {
     this.input.gamepad.on('down', function (pad, button, value, data) {
         gamepad = pad;
     });
-    
+
+    //Music
+    music1 = this.sound.add('hubMusic');
+    music1 = this.sound.add('level1Music');
+    music1 = this.sound.add('level2Music');
+    music1 = this.sound.add('level3Music');
+    music1 = this.sound.add('level4Music');
+
 }
 
 function update() {
@@ -481,7 +488,7 @@ function update() {
     portalHub2.anims.play('portalHub', true);
     portalHub3.anims.play('portalHub', true);
     portalHub4.anims.play('portalHub', true);
-    portal.anims.play('portal1',true);
+    portal.anims.play('portal1', true);
     portal1.anims.play('portal2', true);
     portal2.anims.play('portal3', true);
     portal3.anims.play('portal4', true);
@@ -490,11 +497,11 @@ function update() {
     if (stamina < 80)
         stamina++;
     console.log(player.body.y);
-    if(player.body.velocity.y > 900)
+    if (player.body.velocity.y > 900)
         player.body.velocity.y = 900;
-    if(player.body.y >= 3200)
+    if (player.body.y >= 3200)
         player.disableBody(true, true);
-    
+
     innKeeper.anims.play('keeper', true);
 
     spacefield.x = player.x;
@@ -564,7 +571,7 @@ function update() {
             child.setVelocityX(75);
         }
         else child.setVelocityX(0);
-        
+
     }
 
     //Ghost
@@ -613,7 +620,7 @@ function update() {
             child.setVelocityX(175);
         }
         else child.setVelocityX(0);
-        
+
     }
 
     //Yeti
@@ -631,7 +638,7 @@ function update() {
             child.setVelocityX(450);
         }
         else child.setVelocityX(0);
-        
+
     }
 
     //Zombie
@@ -649,7 +656,7 @@ function update() {
             child.setVelocityX(120);
         }
         else child.setVelocityX(0);
-        
+
     }
     //console.log(states)
     //CONTROLS
@@ -665,14 +672,14 @@ function update() {
     } else if (cursors.left.isDown) {
         player.setVelocityX(-260);
         player.flipX = true;
-        if (player.body.onFloor()){
-            checkAttackState('run',0.5,0.5);
+        if (player.body.onFloor()) {
+            checkAttackState('run', 0.5, 0.5);
         }
     } else if (cursors.right.isDown) {
         player.setVelocityX(260);
         player.flipX = false;
         if (player.body.onFloor()) {
-            checkAttackState('run',0.5,0.5);
+            checkAttackState('run', 0.5, 0.5);
         }
 
     } else {
@@ -724,8 +731,8 @@ function update() {
         } else {
             checkAttackState('wallGlide', 0.7, 0.5);
         }
-        if(states != 'lightAttack' && states != 'heavyAttack')
-        player.setVelocityY(-400);
+        if (states != 'lightAttack' && states != 'heavyAttack')
+            player.setVelocityY(-400);
     }
     //GAMEPAD CONTROLS
     if (gamepad) {
@@ -741,14 +748,14 @@ function update() {
         } else if (gamepad.buttons[config.LEFT].pressed) {
             player.setVelocityX(-260);
             player.flipX = true;
-            if (player.body.onFloor()){
-                checkAttackState('run',0.5,0.5);
+            if (player.body.onFloor()) {
+                checkAttackState('run', 0.5, 0.5);
             }
         } else if (gamepad.buttons[config.RIGHT].pressed) {
             player.setVelocityX(260);
             player.flipX = false;
             if (player.body.onFloor()) {
-                checkAttackState('run',0.5,0.5);
+                checkAttackState('run', 0.5, 0.5);
             }
         } else {
             checkAttackState('idle', 0.5, 0.5);
@@ -769,15 +776,15 @@ function update() {
 
         if (gamepad.buttons[config.TRIANGLE].pressed && !gamepad.buttons[config.R1].pressed) {
             stamina -= 50;
-        if (player.flipX) {
-            checkAttackState('heavyAttack', 0.7, 0.62);
-        } else {
-            checkAttackState('heavyAttack', 0.3, 0.62);
-        }
-        timedEvent = this.time.addEvent({
-            delay: 0, callback: onEvent,
-            callbackScope: this, repeat: 0, startAt: 0
-        });
+            if (player.flipX) {
+                checkAttackState('heavyAttack', 0.7, 0.62);
+            } else {
+                checkAttackState('heavyAttack', 0.3, 0.62);
+            }
+            timedEvent = this.time.addEvent({
+                delay: 0, callback: onEvent,
+                callbackScope: this, repeat: 0, startAt: 0
+            });
         }
 
         if (gamepad.buttons[config.X].pressed && player.body.onFloor()) {
@@ -803,8 +810,8 @@ function update() {
             } else {
                 checkAttackState('wallGlide', 0.7, 0.5);
             }
-            if(states != 'lightAttack' && states != 'heavyAttack')
-            player.setVelocityY(-400);
+            if (states != 'lightAttack' && states != 'heavyAttack')
+                player.setVelocityY(-400);
         }
     }
 
@@ -812,6 +819,10 @@ function update() {
         gamepad = false;
     //CONTROL END
 
+    //Music
+    if (player.body.x == 800 && player.body.y == 320) {
+        musicTheme.play();
+    }
 
 }
 
@@ -874,84 +885,86 @@ function onEvent() {
         }
 
     }
-    
+
 }
 
 //
 function checkOverlapPortalHub(player, portalHub) {
-    if(cursors.up.isDown){
-    player.body.x = 768;
-    player.body.y = 300;
+    if (cursors.up.isDown) {
+        player.body.x = 768;
+        player.body.y = 300;
     }
 }
 
 function checkOverlapPortal(player, portal) {
-    if(cursors.up.isDown){
-    player.body.x = 7680;
-    player.body.y = 120;
+    if (cursors.up.isDown) {
+        player.body.x = 7680;
+        player.body.y = 120;
     }
 }
 function checkOverlapPortal1(player, portal1) {
-    if(cursors.up.isDown){
-    player.body.x = 13120;
-    player.body.y = 250;
+    if (cursors.up.isDown) {
+        player.body.x = 13120;
+        player.body.y = 250;
     }
 }
 function checkOverlapPortal2(player, portal2) {
-    if(cursors.up.isDown){
-    player.body.x = 27328;
-    player.body.y = 380;
+    if (cursors.up.isDown) {
+        player.body.x = 27328;
+        player.body.y = 380;
     }
 }
 function checkOverlapPortal3(player, portal3) {
-    if(cursors.up.isDown){
-    player.body.x = 46656;
-    player.body.y = 120;
+    if (cursors.up.isDown) {
+        player.body.x = 46656;
+        player.body.y = 120;
     }
 }
 
 //62784,2816
 function checkOverlapPortal4(player, portal4) {
-    if(cursors.up.isDown){
-    player.body.x = 65024;
-    player.body.y = 896;
+    if (cursors.up.isDown) {
+        player.body.x = 65024;
+        player.body.y = 896;
     }
 }
 function checkOverlapHitBox(weaponHitBox, enemy) {
     enemy.disableBody(true, true);
 }
 function checkOverlapPlayer(player, enemy) {
-    
+
     states = 'hurt';
     player.setVelocityX(100);
-    health -=1;
+    health -= 1;
     healthText.setText('Health:' + health)
-    setTimeout(function() {
+    setTimeout(function () {
     }, 3500);
     console.log(health);
-    if(health <= 0) {
+    if (health <= 0) {
         player.disableBody(true, true);
     }
     document.getElementById('Health').innerHTML = 'Health:' + health;
 }
 
-function checkAttackState(newState, xOrigin, yOrigin){
+function checkAttackState(newState, xOrigin, yOrigin) {
     goIntoState = newState
-    if (states == 'lightAttack' && goIntoState != 'lightAttack'){
+    if (states == 'lightAttack' && goIntoState != 'lightAttack') {
         setTimeout(function () {
             player.originX = xOrigin;
             player.originY = yOrigin;
-            states=goIntoState;
-        },200);} 
-    else if(states == 'heavyAttack' && goIntoState != 'heavyAttack'){
+            states = goIntoState;
+        }, 200);
+    }
+    else if (states == 'heavyAttack' && goIntoState != 'heavyAttack') {
         setTimeout(function () {
             player.originX = xOrigin;
             player.originY = yOrigin;
-            states=goIntoState;
-        },350);} 
+            states = goIntoState;
+        }, 350);
+    }
     else {
         player.originX = xOrigin;
         player.originY = yOrigin;
         states = goIntoState;
-        }
+    }
 }
