@@ -18,6 +18,7 @@ var config = {
         }
     }
 };
+
 var goIntoState;
 var gamepad;
 var states;
@@ -31,8 +32,9 @@ var player;
 var weaponHitBox;
 var enemies;
 var health;
-//var healthBar;
 var healthValue = 100;
+var enemyHealth = 100;
+//var healthBar;
 var healthText;
 var map;
 var spacefield;
@@ -46,12 +48,12 @@ var portal3;
 var portal4;
 var game = new Phaser.Game(config);
 var stamina;
+var shopActive
 var musicTheme;
 var music1;
 var music2;
 var music3;
 var music4;
-
 
 function preload() {
     this.load.image('bkGround', '../sprites/Background.png');
@@ -92,6 +94,8 @@ function preload() {
     //Npc Sprites
     this.load.spritesheet('innKeeper', '../sprites/InnKeeper.png',
         { frameWidth: 384, frameHeight: 256 });
+    this.load.image('shopWindow', '../sprites/ShopWindow.png');
+    this.load.image('shopPointer', '../sprites/ShopPointer.png');
 
 
     this.load.image('background', '../sprites/testBackground.png');
@@ -106,27 +110,23 @@ function preload() {
 
     //Music
     this.load.audio('themeMusic', [
-        // '../static/HubMusic.ogg',
+        '../static/Level1Music.mp3',
         '../static/HubMusic.mp3'
     ]);
 
     this.load.audio('level1Music', [
-        // '../static/Level1Music.ogg',
         '../static/Level1Music.mp3'
     ]);
 
     this.load.audio('level2Music', [
-        // '../static/Level2Music.ogg',
         '../static/Level2Music.mp3'
     ]);
 
     this.load.audio('level3Music', [
-        // '../static/Level3Music.ogg',
         '../static/Level3Music.mp3'
     ]);
 
     this.load.audio('level4Music', [
-        // '../static/Level3Music.ogg,',
         '../static/Level3Music.mp3'
     ]);
 
@@ -265,6 +265,9 @@ function create() {
     this.physics.add.collider(portal3, layer);
     this.physics.add.collider(portal4, layer);
     this.physics.add.collider(innKeeper, layer);
+    //CHECKING FOR SHOP-------------------------------------------------------
+    shopActive = false;
+    this.physics.add.overlap(player, innKeeper, checkOverlapInnkeeper, null, this);
 
     //Damage
     //this.physics.add.overlap(player, flurryEnemies, checkOverlapPlayer, null, this);
@@ -477,7 +480,6 @@ function create() {
     music1 = this.sound.add('level2Music');
     music1 = this.sound.add('level3Music');
     music1 = this.sound.add('level4Music');
-
 }
 
 function update() {
@@ -496,8 +498,9 @@ function update() {
 
     if (stamina < 80)
         stamina++;
-    console.log(player.body.y);
-    if (player.body.velocity.y > 900)
+
+    //console.log(player.body.y);
+    if(player.body.velocity.y > 900)
         player.body.velocity.y = 900;
     if (player.body.y >= 3200)
         player.disableBody(true, true);
@@ -660,6 +663,7 @@ function update() {
     }
     //console.log(states)
     //CONTROLS
+    if(!shopActive){
     if (cursors.down.isDown && fallBuffert > 0 && stamina >= 60) {
         if (player.flipX) {
             checkAttackState('glide', 0.2, 0.58);
@@ -800,10 +804,6 @@ function update() {
         if (player.body.velocity.y < 0) {
             checkAttackState('jump', 0.5, 0.5);
         }
-
-        /*if (player.body.velocity.y < 0 && !gamepad.buttons[config.TRIANGLE].pressed && !gamepad.buttons[config.SQUARE].pressed) {
-            states = 'jump';
-        }*/
         if (gamepad.buttons[config.UP].pressed && gamepad.buttons[config.R1].pressed && player.body.onWall()) {
             if (player.flipX) {
                 checkAttackState('wallGlide', 0.3, 0.5);
@@ -814,6 +814,16 @@ function update() {
                 player.setVelocityY(-400);
         }
     }
+    } else {
+        console.log(shopPointer.y);
+        if(cursors.down.isDown && shopPointer.y != 375)
+            shopPointer.y += 48;
+        else if(cursors.up.isDown && shopPointer.y != 231)
+            shopPointer.y -= 48;
+
+        if(key_jump.isDown && shopPointer.y == 231)
+            console.log('You bought a potion!')
+    }
 
     if (cursors.right.isDown)
         gamepad = false;
@@ -823,7 +833,6 @@ function update() {
     if (player.body.x == 800 && player.body.y == 320) {
         musicTheme.play();
     }
-
 }
 
 function onEvent() {
@@ -888,11 +897,11 @@ function onEvent() {
 
 }
 
-//
+//Portal overlaps
 function checkOverlapPortalHub(player, portalHub) {
-    if (cursors.up.isDown) {
-        player.body.x = 768;
-        player.body.y = 300;
+    if(cursors.up.isDown){
+    player.body.x = 800;
+    player.body.y = 300;
     }
 }
 
@@ -920,17 +929,24 @@ function checkOverlapPortal3(player, portal3) {
         player.body.y = 120;
     }
 }
-
-//62784,2816
 function checkOverlapPortal4(player, portal4) {
     if (cursors.up.isDown) {
         player.body.x = 65024;
         player.body.y = 896;
     }
 }
+//Hitbox overlap
 function checkOverlapHitBox(weaponHitBox, enemy) {
+    if(states == 'lightAttack') {
+    enemyHealth -=1;
+} else if (states == 'heavyAttack') {
+    enemyHealth -=3;
+}
+    if(enemyHealth <= 0)
     enemy.disableBody(true, true);
 }
+
+//Enemy player overlap
 function checkOverlapPlayer(player, enemy) {
 
     states = 'hurt';
@@ -944,6 +960,20 @@ function checkOverlapPlayer(player, enemy) {
         player.disableBody(true, true);
     }
     document.getElementById('Health').innerHTML = 'Health:' + health;
+}
+function checkOverlapInnkeeper(player, Innkeeper) {
+    if(cursors.up.isDown && shopActive == false){
+        shopActive = true;
+        shop = this.add.image(innKeeper.x, innKeeper.y, 'shopWindow');
+        shopPointer = this.add.image(shop.x+130, shop.y-103, 'shopPointer');
+        shopping();
+
+    } //shop.y -55 = Hammer Upgrade   ||   shop.y-103 = HP-pot   ||   shop.y-8 = gemShop ||shop.y+40=exit
+}
+
+function shopping(){
+    if(cursors.up.isDown)
+        console.log('hej')
 }
 
 function checkAttackState(newState, xOrigin, yOrigin) {
