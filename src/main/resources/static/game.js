@@ -138,6 +138,7 @@ function create() {
     portalHub.create(20672,2100, 'portalTest');
     portalHub.create(44992,500, 'portalTest');
     portalHub.create(62784,2750, 'portalTest');
+    portalHub.create(65024,1024, 'portalTest');
 
     portal = this.physics.add.group();
     portal.create(1750,320, 'portalTest');
