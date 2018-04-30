@@ -138,6 +138,7 @@ function create() {
     portalHub.create(20672,2100, 'portalTest');
     portalHub.create(44992,500, 'portalTest');
     portalHub.create(62784,2750, 'portalTest');
+    portalHub.create(65024,1024, 'portalTest');
 
     portal = this.physics.add.group();
     portal.create(1750,320, 'portalTest');
@@ -467,14 +468,17 @@ function update() {
     var flurryEnemy = flurryEnemies.getChildren();
     for (child of flurryEnemy) {
         child.anims.play('flurry', true);
-        if (child.body.x < player.body.x) {
+        var distanceY = child.body.y + 500;
+        var distanceX = child.body.x - player.body.x;
+        if (Math.abs(distanceX) < 650 && player.body.x < child.body.x && distanceY > player.body.y) {
             child.flipX = true;
-            child.setVelocityX(75);
-        }
-        else {
-            child.flipX = false;
             child.setVelocityX(-75);
         }
+        else if (Math.abs(distanceX) < 650 && player.body.x > child.body.x && distanceY > player.body.y) {
+            child.flipX = false;
+            child.setVelocityX(75);
+        }
+        else child.setVelocityX(0);
         
     }
 
@@ -496,58 +500,72 @@ function update() {
     var impEnemy = impEnemies.getChildren();
     for (child of impEnemy) {
         child.anims.play('imp', true);
-        /*if (child.body.x < player.body.x) {
+        var distanceY = child.body.y + 500;
+        var distanceX = child.body.x - player.body.x;
+        if (Math.abs(distanceX) < 650 && player.body.x < child.body.x && distanceY > player.body.y) {
             child.flipX = false;
+            child.setVelocityX(-90);
+        }
+        else if (Math.abs(distanceX) < 650 && player.body.x > child.body.x && distanceY > player.body.y) {
+            child.flipX = true;
             child.setVelocityX(90);
         }
-        else {
-            child.flipX = true;
-            child.setVelocityX(-90);
-        }*/
+        else child.setVelocityX(0);
     }
 
     //Wraith
     var wraithEnemy = wraithEnemies.getChildren();
     for (child of wraithEnemy) {
         child.anims.play('wraith', true);
-        /*if (child.body.x < player.body.x) {
+        var distanceY = child.body.y + 500;
+        var distanceX = child.body.x - player.body.x;
+        if (Math.abs(distanceX) < 650 && player.body.x < child.body.x && distanceY > player.body.y) {
             child.flipX = false;
+            child.setVelocityX(-175);
+        }
+        else if (Math.abs(distanceX) < 650 && player.body.x > child.body.x && distanceY > player.body.y) {
+            child.flipX = true;
             child.setVelocityX(175);
         }
-        else {
-            child.flipX = true;
-            child.setVelocityX(-175);
-        }*/
+        else child.setVelocityX(0);
+        
     }
 
     //Yeti
     var yetiEnemy = yetiEnemies.getChildren();
     for (child of yetiEnemy) {
         child.anims.play('yeti', true);
-        /*if (child.body.x < player.body.x) {
-            child.flipX = true;
-            child.setVelocityX(600);
-        }
-        else {
+        var distanceY = child.body.y + 500;
+        var distanceX = child.body.x - player.body.x;
+        if (Math.abs(distanceX) < 2000 && player.body.x < child.body.x && distanceY > player.body.y) {
             child.flipX = false;
-            child.setVelocityX(-600);
-        }*/
+            child.setVelocityX(-450);
+        }
+        else if (Math.abs(distanceX) < 2000 && player.body.x > child.body.x && distanceY > player.body.y) {
+            child.flipX = true;
+            child.setVelocityX(450);
+        }
+        else child.setVelocityX(0);
+        
     }
 
     //Zombie
     var zombieEnemy = zombieEnemies.getChildren();
     for (child of zombieEnemy) {
         child.anims.play('zombie', true);
-        /*if (child.body.x < player.body.x) {
+        var distanceY = child.body.y + 500;
+        var distanceX = child.body.x - player.body.x;
+        if (Math.abs(distanceX) < 650 && player.body.x < child.body.x && distanceY > player.body.y) {
+            child.flipX = false;
+            child.setVelocityX(-120);
+        }
+        else if (Math.abs(distanceX) < 650 && player.body.x > child.body.x && distanceY > player.body.y) {
             child.flipX = true;
             child.setVelocityX(120);
         }
-        else {
-            child.flipX = false;
-            child.setVelocityX(-120);
-        }*/
+        else child.setVelocityX(0);
+        
     }
-
     //console.log(states)
     //CONTROLS
     if (cursors.down.isDown && fallBuffert > 0 && stamina >= 60) {
