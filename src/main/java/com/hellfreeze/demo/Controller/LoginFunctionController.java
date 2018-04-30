@@ -8,12 +8,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @Controller
@@ -63,6 +61,24 @@ public class LoginFunctionController {
         return "success";
     }
 
+    @GetMapping("/success/{health}")
+    public String successPage2(@PathVariable int health, HttpServletRequest request){
+        GameUser gameUser = gameUserRepository.findByGameUserName(request.getRemoteUser());
+        Player player = gameUser.getPlayer();
+        player.setHealth(health);
+        playerRepository.save(player);
+        return "success";
+    }
+
+    @GetMapping("/getHealth")
+    @ResponseBody
+    public int returnHealth(HttpServletRequest request){
+        GameUser gameUser = gameUserRepository.findByGameUserName(request.getRemoteUser());
+        Player player = gameUser.getPlayer();
+        int health = player.getHealth();
+        return health;
+    }
+
     @GetMapping("/registration")
     public ModelAndView registrationPage(){
         return new ModelAndView("registration").addObject("gameUser",new GameUser());
@@ -84,7 +100,7 @@ public class LoginFunctionController {
         PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
         gameUser.setPassword(passwordEncoder.encode(gameUser.getPassword()));
 
-        //Set default values for a player and assign it to the user
+        //set default values for a player and assign it to the user
         Outfit outfit= outfitRepository.findById(8L).get();
 
         GameMap gameMap = gameMapRepository.findById(1L).get();
