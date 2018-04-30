@@ -110,8 +110,8 @@ function preload() {
 
     //Music
     this.load.audio('themeMusic', [
-        '../static/Level1Music.mp3',
-        '../static/HubMusic.mp3'
+        '../static/hubMusic.mp3'
+        
     ]);
 
     this.load.audio('level1Music', [
@@ -170,7 +170,7 @@ function create() {
     weaponHitBox = this.physics.add.staticGroup();
 
     //Portal
-    portalHub = this.physics.add.sprite(10816, 1650, 'portals');
+    portalHub = this.physics.add.sprite(10816, 1550, 'portals');
     portalHub1 = this.physics.add.sprite(20672, 2100, 'portals');
     portalHub2 = this.physics.add.sprite(44992, 500, 'portals');
     portalHub3 = this.physics.add.sprite(62816, 2600, 'portals');
@@ -475,11 +475,15 @@ function create() {
     });
 
     //Music
-    music1 = this.sound.add('hubMusic');
+    musicTheme = this.sound.add('themeMusic');
     music1 = this.sound.add('level1Music');
-    music1 = this.sound.add('level2Music');
-    music1 = this.sound.add('level3Music');
-    music1 = this.sound.add('level4Music');
+    music2 = this.sound.add('level2Music');
+    music3 = this.sound.add('level3Music');
+    music4 = this.sound.add('level4Music');
+
+    //Music
+    
+    musicTheme.play();
 }
 
 function update() {
@@ -829,10 +833,7 @@ function update() {
         gamepad = false;
     //CONTROL END
 
-    //Music
-    if (player.body.x == 800 && player.body.y == 320) {
-        musicTheme.play();
-    }
+   
 }
 
 function onEvent() {
