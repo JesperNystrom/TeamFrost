@@ -98,6 +98,7 @@ function preload() {
     //LOAD TERRAIN
     this.load.image('tiles', '../sprites/TileSetComplete.png');
     this.load.tilemapCSV('map', '../maps/World.csv');
+    this.load.image('portalTest', '../sprites/WeaponHitboxTest.png');
 
     //Weapon hitbox
     this.load.image('weaponHitBox', '../sprites/WeaponHitBox.png');
@@ -128,6 +129,10 @@ function preload() {
         '../static/Level3Music.mp3',
         '../static/Level3Music.mp3'
     ]);
+
+    //Portals
+    this.load.spritesheet('portals', '../sprites/Port.png',
+    { frameWidth: 192, frameHeight: 256 });
 }
 
 
@@ -165,26 +170,17 @@ function create() {
     weaponHitBox = this.physics.add.staticGroup();
 
     //Portal
-    portalHub = this.physics.add.group();
-    portalHub.create(10816,1650, 'portalTest');
-    portalHub.create(20672,2100, 'portalTest');
-    portalHub.create(44992,500, 'portalTest');
-    portalHub.create(62784,2750, 'portalTest');
-
-    portal = this.physics.add.group();
-    portal.create(1750,320, 'portalTest');
-
-    portal1 = this.physics.add.group();
-    portal1.create(2000, 320, 'portalTest');
-
-    portal2 = this.physics.add.group();
-    portal2.create(2250, 320, 'portalTest');
-
-    portal3 = this.physics.add.group();
-    portal3.create(2500, 320, 'portalTest');
-
-    portal4 = this.physics.add.group();
-    portal4.create(2750, 320, 'portalTest');
+    portalHub = this.physics.add.sprite(10816,1650,'portals');
+    portalHub1 = this.physics.add.sprite(20672,2100,'portals');
+    portalHub2 = this.physics.add.sprite(44992,500,'portals');
+    portalHub3 = this.physics.add.sprite(62816,2600,'portals');
+    portalHub4 = this.physics.add.sprite(65024,1024,'portals');
+    
+    portal = this.physics.add.sprite(1750,320,'portals');
+    portal1 = this.physics.add.sprite(2166,320,'portals');
+    portal2 = this.physics.add.sprite(2582,320,'portals');
+    portal3 = this.physics.add.sprite(2998,320,'portals');
+    portal4 = this.physics.add.sprite(3414,320,'portals');
     
 
     //Create healthBar
@@ -246,7 +242,7 @@ function create() {
     }
 
     //Make player a phys object and player/platforms/ghostEnemies collide
-    player = this.physics.add.sprite(768,320, 'playerRun');
+    player = this.physics.add.sprite(800,320, 'playerRun');
     player.body.setSize(64, 138);
     stamina = 80;
 
@@ -259,6 +255,10 @@ function create() {
     this.physics.add.collider(yetiEnemies, layer);
     this.physics.add.collider(zombieEnemies, layer);
     this.physics.add.collider(portalHub, layer);
+    this.physics.add.collider(portalHub1, layer);
+    this.physics.add.collider(portalHub2, layer);
+    this.physics.add.collider(portalHub3, layer);
+    this.physics.add.collider(portalHub4, layer);
     this.physics.add.collider(portal, layer);
     this.physics.add.collider(portal1, layer);
     this.physics.add.collider(portal2, layer);
@@ -282,6 +282,10 @@ function create() {
     this.physics.add.overlap(weaponHitBox, yetiEnemies, checkOverlapHitBox, null, this);
     this.physics.add.overlap(weaponHitBox, zombieEnemies, checkOverlapHitBox, null, this);
     this.physics.add.overlap(player, portalHub, checkOverlapPortalHub, null, this);
+    this.physics.add.overlap(player, portalHub1, checkOverlapPortalHub, null, this);
+    this.physics.add.overlap(player, portalHub2, checkOverlapPortalHub, null, this);
+    this.physics.add.overlap(player, portalHub3, checkOverlapPortalHub, null, this);
+    this.physics.add.overlap(player, portalHub4, checkOverlapPortalHub, null, this);
     this.physics.add.overlap(player, portal, checkOverlapPortal, null, this);
     this.physics.add.overlap(player, portal1, checkOverlapPortal1, null, this);
     this.physics.add.overlap(player, portal2, checkOverlapPortal2, null, this);
@@ -423,6 +427,44 @@ function create() {
         repeat: 1
     });
 
+    //Portals
+    this.anims.create({
+        key: 'portalHub',
+        frames: this.anims.generateFrameNumbers('portals', { start: 5, end: 5 }),
+        frameRate: 8,
+        repeat: 1
+    });
+    this.anims.create({
+        key: 'portal1',
+        frames: this.anims.generateFrameNumbers('portals', { start: 0, end: 0 }),
+        frameRate: 8,
+        repeat: 1
+    });
+    this.anims.create({
+        key: 'portal2',
+        frames: this.anims.generateFrameNumbers('portals', { start: 1, end: 1 }),
+        frameRate: 8,
+        repeat: 1
+    });
+    this.anims.create({
+        key: 'portal3',
+        frames: this.anims.generateFrameNumbers('portals', { start: 2, end: 2 }),
+        frameRate: 8,
+        repeat: 1
+    });
+    this.anims.create({
+        key: 'portal4',
+        frames: this.anims.generateFrameNumbers('portals', { start: 3, end: 3 }),
+        frameRate: 8,
+        repeat: 1
+    });
+    this.anims.create({
+        key: 'portal5',
+        frames: this.anims.generateFrameNumbers('portals', { start: 4, end: 4 }),
+        frameRate: 8,
+        repeat: 1
+    });
+
     //GAMEPAD TESTING
     config = Phaser.Input.Gamepad.Configs.DUALSHOCK_4;
     this.input.gamepad.on('down', function (pad, button, value, data) {
@@ -432,11 +474,27 @@ function create() {
 }
 
 function update() {
+    innKeeper.anims.play('keeper', true);
+
+    portalHub.anims.play('portalHub', true);
+    portalHub1.anims.play('portalHub', true);
+    portalHub2.anims.play('portalHub', true);
+    portalHub3.anims.play('portalHub', true);
+    portalHub4.anims.play('portalHub', true);
+    portal.anims.play('portal1',true);
+    portal1.anims.play('portal2', true);
+    portal2.anims.play('portal3', true);
+    portal3.anims.play('portal4', true);
+    portal4.anims.play('portal5', true);
+
     if (stamina < 80)
         stamina++;
-    console.log(stamina);
+    console.log(player.body.y);
     if(player.body.velocity.y > 900)
         player.body.velocity.y = 900;
+    if(player.body.y >= 3200)
+        player.disableBody(true, true);
+    
     innKeeper.anims.play('keeper', true);
 
     spacefield.x = player.x;
@@ -495,14 +553,17 @@ function update() {
     var flurryEnemy = flurryEnemies.getChildren();
     for (child of flurryEnemy) {
         child.anims.play('flurry', true);
-        if (child.body.x < player.body.x) {
-            child.flipX = true;
-            child.setVelocityX(75);
-        }
-        else {
+        var distanceY = child.body.y + 500;
+        var distanceX = child.body.x - player.body.x;
+        if (Math.abs(distanceX) < 650 && player.body.x < child.body.x && distanceY > player.body.y) {
             child.flipX = false;
             child.setVelocityX(-75);
         }
+        else if (Math.abs(distanceX) < 650 && player.body.x > child.body.x && distanceY > player.body.y) {
+            child.flipX = true;
+            child.setVelocityX(75);
+        }
+        else child.setVelocityX(0);
         
     }
 
@@ -524,58 +585,72 @@ function update() {
     var impEnemy = impEnemies.getChildren();
     for (child of impEnemy) {
         child.anims.play('imp', true);
-        if (child.body.x < player.body.x) {
-            child.flipX = false;
-            child.setVelocityX(90);
-        }
-        else {
+        var distanceY = child.body.y + 500;
+        var distanceX = child.body.x - player.body.x;
+        if (Math.abs(distanceX) < 650 && player.body.x < child.body.x && distanceY > player.body.y) {
             child.flipX = true;
             child.setVelocityX(-90);
         }
+        else if (Math.abs(distanceX) < 650 && player.body.x > child.body.x && distanceY > player.body.y) {
+            child.flipX = false;
+            child.setVelocityX(90);
+        }
+        else child.setVelocityX(0);
     }
 
     //Wraith
     var wraithEnemy = wraithEnemies.getChildren();
     for (child of wraithEnemy) {
         child.anims.play('wraith', true);
-        /*if (child.body.x < player.body.x) {
+        var distanceY = child.body.y + 500;
+        var distanceX = child.body.x - player.body.x;
+        if (Math.abs(distanceX) < 650 && player.body.x < child.body.x && distanceY > player.body.y) {
+            child.flipX = true;
+            child.setVelocityX(-175);
+        }
+        else if (Math.abs(distanceX) < 650 && player.body.x > child.body.x && distanceY > player.body.y) {
             child.flipX = false;
             child.setVelocityX(175);
         }
-        else {
-            child.flipX = true;
-            child.setVelocityX(-175);
-        }*/
+        else child.setVelocityX(0);
+        
     }
 
     //Yeti
     var yetiEnemy = yetiEnemies.getChildren();
     for (child of yetiEnemy) {
         child.anims.play('yeti', true);
-        /*if (child.body.x < player.body.x) {
-            child.flipX = true;
-            child.setVelocityX(600);
-        }
-        else {
+        var distanceY = child.body.y + 500;
+        var distanceX = child.body.x - player.body.x;
+        if (Math.abs(distanceX) < 1500 && player.body.x < child.body.x && distanceY > player.body.y) {
             child.flipX = false;
-            child.setVelocityX(-600);
-        }*/
+            child.setVelocityX(-450);
+        }
+        else if (Math.abs(distanceX) < 1500 && player.body.x > child.body.x && distanceY > player.body.y) {
+            child.flipX = true;
+            child.setVelocityX(450);
+        }
+        else child.setVelocityX(0);
+        
     }
 
     //Zombie
     var zombieEnemy = zombieEnemies.getChildren();
     for (child of zombieEnemy) {
         child.anims.play('zombie', true);
-        /*if (child.body.x < player.body.x) {
+        var distanceY = child.body.y + 500;
+        var distanceX = child.body.x - player.body.x;
+        if (Math.abs(distanceX) < 650 && player.body.x < child.body.x && distanceY > player.body.y) {
+            child.flipX = false;
+            child.setVelocityX(-120);
+        }
+        else if (Math.abs(distanceX) < 650 && player.body.x > child.body.x && distanceY > player.body.y) {
             child.flipX = true;
             child.setVelocityX(120);
         }
-        else {
-            child.flipX = false;
-            child.setVelocityX(-120);
-        }*/
+        else child.setVelocityX(0);
+        
     }
-
     //console.log(states)
     //CONTROLS
     if (cursors.down.isDown && fallBuffert > 0 && stamina >= 60) {
@@ -605,7 +680,7 @@ function update() {
         player.setVelocityX(0);
     }
     if (key_Z.isDown && !cursors.down.isDown && stamina >= 40) {
-        stamina -= 10;
+        stamina -= 41;
         if (player.flipX) {
             checkAttackState('lightAttack', 0.7, 0.5);
         } else {
@@ -618,7 +693,7 @@ function update() {
     }
 
     if (key_X.isDown && !cursors.down.isDown && stamina >= 80) {
-        stamina -= 40;
+        stamina -= 50;
         if (player.flipX) {
             checkAttackState('heavyAttack', 0.7, 0.62);
         } else {
@@ -655,89 +730,86 @@ function update() {
     //GAMEPAD CONTROLS
     if (gamepad) {
         if (gamepad.buttons[config.R1].pressed && fallBuffert > 0) {
-            states = 'glide';
-            player.originY = 0.58;
             if (player.flipX) {
+                checkAttackState('glide', 0.2, 0.58);
                 player.setVelocityX(-650)
-                player.originX = 0.2;
             } else {
+                checkAttackState('glide', 0.8, 0.58);
                 player.setVelocityX(650)
-                player.originX = 0.8;
             }
 
         } else if (gamepad.buttons[config.LEFT].pressed) {
             player.setVelocityX(-260);
-
-            if (player.body.onFloor())
-                states = 'run';
-
             player.flipX = true;
+            if (player.body.onFloor()){
+                checkAttackState('run',0.5,0.5);
+            }
         } else if (gamepad.buttons[config.RIGHT].pressed) {
             player.setVelocityX(260);
             player.flipX = false;
             if (player.body.onFloor()) {
-                states = 'run';
+                checkAttackState('run',0.5,0.5);
             }
         } else {
-            player.originX = 0.5;
-            player.originY = 0.5;
+            checkAttackState('idle', 0.5, 0.5);
             player.setVelocityX(0);
-            states = 4;
         }
         if (gamepad.buttons[config.SQUARE].pressed && !gamepad.buttons[config.R1].pressed) {
-            player.originY = 0.5;
+            stamina -= 41;
             if (player.flipX) {
-                player.originX = 0.7;
+                checkAttackState('lightAttack', 0.7, 0.5);
             } else {
-                player.originX = 0.3;
+                checkAttackState('lightAttack', 0.3, 0.5);
             }
-            states = 'lightAttack';
+            timedEvent = this.time.addEvent({
+                delay: 0, callback: onEvent,
+                callbackScope: this, repeat: 0, startAt: 0
+            });
         }
 
         if (gamepad.buttons[config.TRIANGLE].pressed && !gamepad.buttons[config.R1].pressed) {
-            player.originY = 0.62;
-            if (player.flipX) {
-                player.originX = 0.7;
-            } else {
-                player.originX = 0.3;
-            }
-            states = 'heavyAttack';
+            stamina -= 50;
+        if (player.flipX) {
+            checkAttackState('heavyAttack', 0.7, 0.62);
+        } else {
+            checkAttackState('heavyAttack', 0.3, 0.62);
+        }
+        timedEvent = this.time.addEvent({
+            delay: 0, callback: onEvent,
+            callbackScope: this, repeat: 0, startAt: 0
+        });
         }
 
         if (gamepad.buttons[config.X].pressed && player.body.onFloor()) {
             player.setVelocityY(-400);
             if (player.body.velocity.y < 0 && player.body.velocity.x != 0)
-                states = 'jump';
+                checkAttackState('jump', 0.5, 0.5);
             fallBuffert = 0;
         }
 
         if (player.body.velocity.y > 0 && !gamepad.buttons[config.TRIANGLE].pressed && !gamepad.buttons[config.SQUARE].pressed) {
-            states = 'fall';
+            checkAttackState('fall', 0.5, 0.5);
         }
-        if (player.body.velocity.y < 0 && !gamepad.buttons[config.UP].pressed) {
-            states = 'jump';
+        if (player.body.velocity.y < 0) {
+            checkAttackState('jump', 0.5, 0.5);
         }
 
-        if (player.body.velocity.y < 0 && !gamepad.buttons[config.TRIANGLE].pressed && !gamepad.buttons[config.SQUARE].pressed) {
+        /*if (player.body.velocity.y < 0 && !gamepad.buttons[config.TRIANGLE].pressed && !gamepad.buttons[config.SQUARE].pressed) {
             states = 'jump';
-        }
+        }*/
         if (gamepad.buttons[config.UP].pressed && gamepad.buttons[config.R1].pressed && player.body.onWall()) {
-            player.originY = 0.5;
             if (player.flipX) {
-                player.originX = 0.3;
-                player.setVelocityX(-260);
+                checkAttackState('wallGlide', 0.3, 0.5);
             } else {
-                player.originX = 0.7;
-                player.setVelocityX(260);
+                checkAttackState('wallGlide', 0.7, 0.5);
             }
-            states = 'wallGlide';
+            if(states != 'lightAttack' && states != 'heavyAttack')
             player.setVelocityY(-400);
         }
     }
 
     if (cursors.right.isDown)
         gamepad = false;
-
     //CONTROL END
 
 
@@ -804,6 +876,8 @@ function onEvent() {
     }
     
 }
+
+//
 function checkOverlapPortalHub(player, portalHub) {
     if(cursors.up.isDown){
     player.body.x = 768;
@@ -835,10 +909,12 @@ function checkOverlapPortal3(player, portal3) {
     player.body.y = 120;
     }
 }
+
+//62784,2816
 function checkOverlapPortal4(player, portal4) {
     if(cursors.up.isDown){
-    player.body.x = 46656;
-    player.body.y = 120;
+    player.body.x = 65024;
+    player.body.y = 896;
     }
 }
 function checkOverlapHitBox(weaponHitBox, enemy) {
