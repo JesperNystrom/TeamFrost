@@ -503,11 +503,11 @@ function update() {
         var distanceY = child.body.y + 500;
         var distanceX = child.body.x - player.body.x;
         if (Math.abs(distanceX) < 650 && player.body.x < child.body.x && distanceY > player.body.y) {
-            child.flipX = false;
+            child.flipX = true;
             child.setVelocityX(-90);
         }
         else if (Math.abs(distanceX) < 650 && player.body.x > child.body.x && distanceY > player.body.y) {
-            child.flipX = true;
+            child.flipX = false;
             child.setVelocityX(90);
         }
         else child.setVelocityX(0);
@@ -520,11 +520,11 @@ function update() {
         var distanceY = child.body.y + 500;
         var distanceX = child.body.x - player.body.x;
         if (Math.abs(distanceX) < 650 && player.body.x < child.body.x && distanceY > player.body.y) {
-            child.flipX = false;
+            child.flipX = true;
             child.setVelocityX(-175);
         }
         else if (Math.abs(distanceX) < 650 && player.body.x > child.body.x && distanceY > player.body.y) {
-            child.flipX = true;
+            child.flipX = false;
             child.setVelocityX(175);
         }
         else child.setVelocityX(0);
