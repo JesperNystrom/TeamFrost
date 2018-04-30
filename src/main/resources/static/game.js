@@ -48,6 +48,12 @@ var portal3;
 var portal4;
 var game = new Phaser.Game(config);
 var stamina;
+var musicTheme;
+var music1;
+var music2;
+var music3;
+var music4;
+
 
 function preload() {
     this.load.image('bkGround', '../sprites/Background.png');
@@ -98,6 +104,33 @@ function preload() {
 
     //Weapon hitbox
     this.load.image('weaponHitBox', '../sprites/WeaponHitBox.png');
+    this.load.image('portalTest', '../sprites/WeaponHitboxTest.png');
+
+    //Music
+    this.load.audio('themeMusic', [
+        '../static/HubMusic.ogg',
+        '../static/HubMusic.mp3'
+    ]);
+
+    this.load.audio('level1Music', [
+        '../static/Level1Music.mp3',
+        '../static/Level1Music.mp3'
+    ]);
+
+    this.load.audio('level2Music', [
+        '../static/Level2Music.mp3',
+        '../static/Level2Music.mp3'
+    ]);
+
+    this.load.audio('level3Music', [
+        '../static/Level3Music.mp3',
+        '../static/Level3Music.mp3'
+    ]);
+
+    this.load.audio('level4Music', [
+        '../static/Level3Music.mp3',
+        '../static/Level3Music.mp3'
+    ]);
 
     //Portals
     this.load.spritesheet('portals', '../sprites/Port.png',
@@ -439,8 +472,7 @@ function create() {
     this.input.gamepad.on('down', function (pad, button, value, data) {
         gamepad = pad;
     });
-
-
+ 
 }
 
 function update() {
@@ -781,6 +813,8 @@ function update() {
     if (cursors.right.isDown)
         gamepad = false;
     //CONTROL END
+
+
 }
 
 function onEvent() {
