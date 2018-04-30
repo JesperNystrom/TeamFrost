@@ -18,6 +18,7 @@ var config = {
         }
     }
 };
+
 var goIntoState;
 var gamepad;
 var states;
@@ -46,6 +47,7 @@ var portal3;
 var portal4;
 var game = new Phaser.Game(config);
 var stamina;
+var shopActive
 
 function preload() {
     this.load.image('bkGround', '../sprites/Background.png');
@@ -86,6 +88,8 @@ function preload() {
     //Npc Sprites
     this.load.spritesheet('innKeeper', '../sprites/InnKeeper.png',
         { frameWidth: 384, frameHeight: 256 });
+    this.load.image('shopWindow', '../sprites/ShopWindow.png');
+    this.load.image('shopPointer', '../sprites/ShopPointer.png');
 
 
     this.load.image('background', '../sprites/testBackground.png');
@@ -229,6 +233,9 @@ function create() {
     this.physics.add.collider(portal3, layer);
     this.physics.add.collider(portal4, layer);
     this.physics.add.collider(innKeeper, layer);
+    //CHECKING FOR SHOP-------------------------------------------------------
+    shopActive = false;
+    this.physics.add.overlap(player, innKeeper, checkOverlapInnkeeper, null, this);
 
     //Damage
     //this.physics.add.overlap(player, flurryEnemies, checkOverlapPlayer, null, this);
@@ -441,7 +448,7 @@ function update() {
 
     if (stamina < 80)
         stamina++;
-    console.log(player.body.y);
+
     if(player.body.velocity.y > 900)
         player.body.velocity.y = 900;
     if(player.body.y >= 3200)
@@ -605,6 +612,7 @@ function update() {
     }
     //console.log(states)
     //CONTROLS
+    if(!shopActive){
     if (cursors.down.isDown && fallBuffert > 0 && stamina >= 60) {
         if (player.flipX) {
             checkAttackState('glide', 0.2, 0.58);
@@ -745,10 +753,6 @@ function update() {
         if (player.body.velocity.y < 0) {
             checkAttackState('jump', 0.5, 0.5);
         }
-
-        /*if (player.body.velocity.y < 0 && !gamepad.buttons[config.TRIANGLE].pressed && !gamepad.buttons[config.SQUARE].pressed) {
-            states = 'jump';
-        }*/
         if (gamepad.buttons[config.UP].pressed && gamepad.buttons[config.R1].pressed && player.body.onWall()) {
             if (player.flipX) {
                 checkAttackState('wallGlide', 0.3, 0.5);
@@ -759,10 +763,21 @@ function update() {
             player.setVelocityY(-400);
         }
     }
+    } else {
+        console.log(shopPointer.y);
+        if(cursors.down.isDown && shopPointer.y != 375)
+            shopPointer.y += 48;
+        else if(cursors.up.isDown && shopPointer.y != 231)
+            shopPointer.y -= 48;
+
+        if(key_jump.isDown && shopPointer.y == 231)
+            console.log('You bought a potion!')
+    }
 
     if (cursors.right.isDown)
         gamepad = false;
     //CONTROL END
+
 }
 
 function onEvent() {
@@ -879,6 +894,20 @@ function checkOverlapPlayer(player, enemy) {
         player.disableBody(true, true);
     }
     document.getElementById('Health').innerHTML = 'Health:' + health;
+}
+function checkOverlapInnkeeper(player, Innkeeper) {
+    if(cursors.up.isDown && shopActive == false){
+        shopActive = true;
+        shop = this.add.image(innKeeper.x, innKeeper.y, 'shopWindow');
+        shopPointer = this.add.image(shop.x+130, shop.y-103, 'shopPointer');
+        shopping();
+
+    } //shop.y -55 = Hammer Upgrade   ||   shop.y-103 = HP-pot   ||   shop.y-8 = gemShop ||shop.y+40=exit
+}
+
+function shopping(){
+    if(cursors.up.isDown)
+        console.log('hej')
 }
 
 function checkAttackState(newState, xOrigin, yOrigin){
