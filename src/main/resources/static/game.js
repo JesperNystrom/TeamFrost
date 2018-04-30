@@ -888,7 +888,7 @@ function onEvent() {
 //Portal overlaps
 function checkOverlapPortalHub(player, portalHub) {
     if(cursors.up.isDown){
-    player.body.x = 768;
+    player.body.x = 800;
     player.body.y = 300;
     }
 }
