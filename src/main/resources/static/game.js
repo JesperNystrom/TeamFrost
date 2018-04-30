@@ -107,7 +107,7 @@ function preload() {
     //Music
     this.load.audio('themeMusic', [
         // '../static/HubMusic.ogg',
-        'C:/Users/Administrator/Desktop/Stava med Maria/StavaMedMaria/src/main/resources/static/images'
+        '../static/HubMusic.mp3'
     ]);
 
     this.load.audio('level1Music', [
