@@ -4,11 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="https://fonts.googleapis.com/css?family=VT323" rel="stylesheet">
     <title>Document</title>
     <script src="//cdn.jsdelivr.net/npm/phaser@3.6.0/dist/phaser.js"></script>
     <style type="text/css">
         body {
             margin: 0;
+        }
+        span {
+            margin-right:60px;
+            margin-left:8px;
+            font-size: 25px;
+            color: white;
+            font-family: 'VT323', monospace;
+        }
+        #Health {
+            margin-left:600px;
+        }
+        #statBar {
+            background-color: black;
+            width: 1137px;  
         }
     </style>
 </head>
@@ -16,7 +31,11 @@
 <h4 th:text="'Inloggad som ' + ${#httpServletRequest.remoteUser}"></h4>
 <form th:action="@{/logout}" method="post">
     <input type="submit" value="Logout"/>
-    <div id="Health"></div>
+    <div id="statBar">
+        <span id="Health"></span>
+        <span id="Coins"></span>
+        <span id="Score"></span>
+    </div>
 </form>
     <script src ="../static/game.js"></script>
 </body>

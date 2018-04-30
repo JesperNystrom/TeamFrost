@@ -31,6 +31,8 @@ var tileset;
 var player;
 var weaponHitBox;
 var enemies;
+var score;
+var coins;
 var health;
 var healthValue = 100;
 var enemyHealth = 100;
@@ -48,7 +50,7 @@ var portal3;
 var portal4;
 var game = new Phaser.Game(config);
 var stamina;
-var shopActive
+var shopActive;
 var musicTheme;
 var music1;
 var music2;
@@ -152,7 +154,8 @@ function create() {
     spacefield = this.add.image(0, 0, 'bkGround');
     //Player health
     health = 100;
-
+    coins = 9999;
+    score = 9999;
 
 
     //Background
@@ -303,7 +306,34 @@ function create() {
     key_X = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.X);
     key_Z = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z);
     key_jump = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
-
+   
+    //Shopcontrols  //327 = Hammer Upgrade   ||   375 = HP-pot   ||   279 = gemShop || 231=exit
+    key_BUY = this.input.keyboard.on('keydown_SPACE', function (event) {
+        if(shopActive){
+            if(shopPointer.y == 231)
+                coins -=20;
+            else if(shopPointer.y == 279)
+                coins -=40;
+            else if(shopPointer.y == 327)
+                console.log('Goto gem shop')
+            else if(shopPointer.y == 375){
+                shopActive = false;
+                shopPointer.destroy();
+                shop.destroy();
+            }
+                
+        }
+    });
+    key_UP = this.input.keyboard.on('keydown_UP', function (event) {
+        if(shopActive && shopPointer.y != 231){
+            shopPointer.y -= 48;
+        }
+    });
+    key_DOWN = this.input.keyboard.on('keydown_DOWN', function (event) {
+        if(shopActive && shopPointer.y != 375){
+            shopPointer.y += 48;
+        }
+    });
 
     //Camera
     this.cameras.main.setSize(1137, 640);
@@ -468,11 +498,39 @@ function create() {
         repeat: 1
     });
 
-    //GAMEPAD TESTING
+    //GAMEPAD ENABLEING
     config = Phaser.Input.Gamepad.Configs.DUALSHOCK_4;
     this.input.gamepad.on('down', function (pad, button, value, data) {
         gamepad = pad;
+        if(shopActive){
+            switch (button.index)
+            {
+                case config.UP:
+                    if(shopPointer.y != 231)
+                        shopPointer.y -= 48;
+                    break;
+
+                case config.DOWN:
+                    if(shopPointer.y != 375)
+                    shopPointer.y += 48;
+                    break;
+                case config.X:
+                    if(shopPointer.y == 231)
+                        coins -=20;
+                    else if(shopPointer.y == 279)
+                        coins -=40;
+                    else if(shopPointer.y == 327)
+                        console.log('Goto gem shop')
+                    else if(shopPointer.y == 375){
+                        shopActive = false;
+                        shopPointer.destroy();
+                        shop.destroy();
+                    }
+                    break;
+            }
+        }
     });
+
 
     //Music
     musicTheme = this.sound.add('themeMusic');
@@ -518,7 +576,9 @@ function update() {
     snowfield.y = player.y;
     snowfield.tilePositionY -= 2;
 
-    document.getElementById('Health').innerHTML = 'Health:' + health;
+    document.getElementById('Health').innerHTML = 'Health: ' + health;
+    document.getElementById('Score').innerHTML = 'Score: ' + score;
+    document.getElementById('Coins').innerHTML = 'Coins: ' + coins;
     healthText.x = player.x - 550;
     healthText.y = player.y - 275;
 
@@ -771,7 +831,7 @@ function update() {
             checkAttackState('idle', 0.5, 0.5);
             player.setVelocityX(0);
         }
-        if (gamepad.buttons[config.SQUARE].pressed && !gamepad.buttons[config.R1].pressed) {
+        if (gamepad.buttons[config.SQUARE].pressed && !gamepad.buttons[config.R1].pressed && stamina >= 40) {
             stamina -= 41;
             if (player.flipX) {
                 checkAttackState('lightAttack', 0.7, 0.5);
@@ -784,7 +844,7 @@ function update() {
             });
         }
 
-        if (gamepad.buttons[config.TRIANGLE].pressed && !gamepad.buttons[config.R1].pressed) {
+        if (gamepad.buttons[config.TRIANGLE].pressed && !gamepad.buttons[config.R1].pressed && stamina >= 80) {
             stamina -= 50;
             if (player.flipX) {
                 checkAttackState('heavyAttack', 0.7, 0.62);
@@ -813,48 +873,17 @@ function update() {
         if (gamepad.buttons[config.UP].pressed && gamepad.buttons[config.R1].pressed && player.body.onWall()) {
             if (player.flipX) {
                 checkAttackState('wallGlide', 0.3, 0.5);
+                player.setVelocityX(-10)
             } else {
                 checkAttackState('wallGlide', 0.7, 0.5);
+                player.setVelocityX(10)
             }
             if (states != 'lightAttack' && states != 'heavyAttack')
                 player.setVelocityY(-400);
         }
     }
-    } else {  //shop.y -55 = Hammer Upgrade   ||   shop.y-103 = HP-pot   ||   shop.y-8 = gemShop ||shop.y+40=exit
-        console.log(shopPointer.y);
-        if(cursors.down.isDown && shopPointer.y == 327)
-            setTimeout(function() {
-                shopPointer.y = 375;
-            }, 200);
-        else if(cursors.down.isDown && shopPointer.y == 279)
-            setTimeout(function() {
-                shopPointer.y = 327;
-            }, 200);
-        else if(cursors.down.isDown && shopPointer.y == 231)
-            setTimeout(function() {
-                shopPointer.y = 279;
-            }, 200);
-        else if(cursors.up.isDown && shopPointer.y == 279)
-            setTimeout(function() {
-                shopPointer.y = 231;
-            }, 200);
-        else if(cursors.up.isDown && shopPointer.y == 327)
-            setTimeout(function() {
-                shopPointer.y = 279;
-            }, 200);
-        else if(cursors.up.isDown && shopPointer.y == 375)
-            setTimeout(function() {
-                shopPointer.y = 327;
-            }, 200);
-            
-
-        if(key_jump.isDown && shopPointer.y == 231)
-            console.log('You bought a potion!')
-        else if(key_jump.isDown && shopPointer.y == 375){
-            shopActive = false;
-            shopPointer.destroy();
-            shop.destroy();
-        }
+    } else {
+    
     }
 
     if (cursors.right.isDown)
@@ -928,38 +957,62 @@ function onEvent() {
 
 //Portal overlaps
 function checkOverlapPortalHub(player, portalHub) {
-    if(cursors.up.isDown){
-    player.body.x = 800;
-    player.body.y = 300;
+    if(cursors.up.isDown && !gamepad){
+        player.body.x = 800;
+        player.body.y = 300;
+    }
+    else if(gamepad && gamepad.buttons[config.UP].pressed){
+        player.body.x = 800;
+        player.body.y = 300;
     }
 }
 
 function checkOverlapPortal(player, portal) {
-    if (cursors.up.isDown) {
+    if (cursors.up.isDown && !gamepad) {
+        player.body.x = 7680;
+        player.body.y = 120;
+    }
+    else if(gamepad && gamepad.buttons[config.UP].pressed){
         player.body.x = 7680;
         player.body.y = 120;
     }
 }
 function checkOverlapPortal1(player, portal1) {
-    if (cursors.up.isDown) {
+    if (cursors.up.isDown && !gamepad) {
+        player.body.x = 13120;
+        player.body.y = 250;
+    }
+    else if(gamepad && gamepad.buttons[config.UP].pressed){
         player.body.x = 13120;
         player.body.y = 250;
     }
 }
 function checkOverlapPortal2(player, portal2) {
-    if (cursors.up.isDown) {
+    if (cursors.up.isDown && !gamepad) {
+        player.body.x = 27328;
+        player.body.y = 380;
+    }
+    else if(gamepad && gamepad.buttons[config.UP].pressed){
         player.body.x = 27328;
         player.body.y = 380;
     }
 }
 function checkOverlapPortal3(player, portal3) {
-    if (cursors.up.isDown) {
+    if (cursors.up.isDown && !gamepad) {
+        player.body.x = 46656;
+        player.body.y = 120;
+    }
+    else if(gamepad && gamepad.buttons[config.UP].pressed){
         player.body.x = 46656;
         player.body.y = 120;
     }
 }
 function checkOverlapPortal4(player, portal4) {
-    if (cursors.up.isDown) {
+    if (cursors.up.isDown && !gamepad) {
+        player.body.x = 65024;
+        player.body.y = 896;
+    }
+    else if(gamepad && gamepad.buttons[config.UP].pressed){
         player.body.x = 65024;
         player.body.y = 896;
     }
@@ -991,14 +1044,21 @@ function checkOverlapPlayer(player, enemy) {
     document.getElementById('Health').innerHTML = 'Health:' + health;
 }
 function checkOverlapInnkeeper(player, Innkeeper) {
-    if(cursors.up.isDown && shopActive == false){
+    if(cursors.up.isDown && !shopActive && !gamepad){
         states = 'idle';
         player.setVelocityX(0);
         shopActive = true;
         shop = this.add.image(innKeeper.x, innKeeper.y, 'shopWindow');
         shopPointer = this.add.image(shop.x+130, shop.y-103, 'shopPointer');
 
-    } //shop.y -55 = Hammer Upgrade   ||   shop.y-103 = HP-pot   ||   shop.y-8 = gemShop ||shop.y+40=exit
+    }
+    else if(gamepad && gamepad.buttons[config.UP].pressed && !shopActive){
+        states = 'idle';
+        player.setVelocityX(0);
+        shopActive = true;
+        shop = this.add.image(innKeeper.x, innKeeper.y, 'shopWindow');
+        shopPointer = this.add.image(shop.x+130, shop.y-103, 'shopPointer');
+    }
 }
 
 function checkAttackState(newState, xOrigin, yOrigin){
