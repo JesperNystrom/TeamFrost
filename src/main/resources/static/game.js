@@ -31,8 +31,10 @@ var player;
 var weaponHitBox;
 var enemies;
 var health;
-//var healthBar;
 var healthValue = 100;
+var enemyHealth = 100;
+var enemyHealthValue = 100;
+//var healthBar;
 var healthText;
 var map;
 var spacefield;
@@ -439,8 +441,6 @@ function create() {
     });
 
 
-
-    
 }
 
 function update() {
@@ -459,7 +459,7 @@ function update() {
 
     if (stamina < 80)
         stamina++;
-    console.log(player.body.y);
+    //console.log(player.body.y);
     if(player.body.velocity.y > 900)
         player.body.velocity.y = 900;
     if(player.body.y >= 3200)
@@ -886,8 +886,15 @@ function checkOverlapPortal4(player, portal4) {
     }
 }
 function checkOverlapHitBox(weaponHitBox, enemy) {
+    if(states == 'lightAttack') {
+    enemyHealth -=1;
+} else if (states == 'heavyAttack') {
+    enemyHealth -=3;
+}
+    if(enemyHealth <= 0)
     enemy.disableBody(true, true);
 }
+
 function checkOverlapPlayer(player, enemy) {
     
     states = 'hurt';
@@ -910,7 +917,7 @@ function checkAttackState(newState, xOrigin, yOrigin){
             player.originX = xOrigin;
             player.originY = yOrigin;
             states=goIntoState;
-        },200);} 
+        },200);}
     else if(states == 'heavyAttack' && goIntoState != 'heavyAttack'){
         setTimeout(function () {
             player.originX = xOrigin;
