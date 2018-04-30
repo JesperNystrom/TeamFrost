@@ -18,7 +18,7 @@ var config = {
         }
     }
 };
-
+var goIntoState;
 var gamepad;
 var states;
 var fallBuffert;
@@ -45,6 +45,7 @@ var portal2;
 var portal3;
 var portal4;
 var game = new Phaser.Game(config);
+var stamina;
 
 function preload() {
     this.load.image('bkGround', '../sprites/Background.png');
@@ -57,7 +58,7 @@ function preload() {
         { frameWidth: 217, frameHeight: 187 });
     this.load.spritesheet('playerLightAttack', '../sprites/PlayerLightAttack.png',
         { frameWidth: 216, frameHeight: 135 });
-    this.load.spritesheet('playerGlide', '../sprites/PlayerGlide.png',
+    this.load.spritesheet('playerGlide', '../sprites/PlayerGlide.png', //PlayerGlide.png
         { frameWidth: 199, frameHeight: 168 });
     this.load.spritesheet('playerJump', '../sprites/PlayerJump.png',
         { frameWidth: 128, frameHeight: 140 });
@@ -159,93 +160,63 @@ function create() {
     Phaser.Display.Align.In.TopLeft(spacefield, healthBar); */
     healthText = this.add.text(16,16, 'Health: 100',  { fontSize: '32px', fill: '#999' });
 
-
-
-    //Create ghostEnemies
-    ghostEnemies = this.physics.add.group();
-    var ghostSpawn = [];
-    var lastGhostSpawn = {x:map.findByIndex(16,0,true).x*64, y:map.findByIndex(16,0,true).y*64}
-    var currentGhostSpawn;
-    var i=0;
-    do {
-        ghostSpawn.push({x:map.findByIndex(16,i).x*64, y:map.findByIndex(16,i).y*64});
-        currentGhostSpawn = {x:map.findByIndex(16,i).x*64, y:map.findByIndex(16,i).y*64};
-        i++;
-    } while(lastGhostSpawn.x != currentGhostSpawn.x && lastGhostSpawn.y != currentGhostSpawn.y)
-    for(spawn of ghostSpawn){
-    ghostEnemies.create(spawn.x, spawn.y, 'enemyGhost');
-    }
-
     //Create Innkeeper
     innKeeper = this.physics.add.sprite(1200, 320, 'innKeeper');
 
-    //Create flurryEnemies
+
+    //Create Enemies
+    ghostEnemies = this.physics.add.group();
     flurryEnemies = this.physics.add.group();
-    flurryEnemies.create(400, 100, 'enemyFlurry');
-
-    //Create impEnemies
     impEnemies = this.physics.add.group();
-    var impSpawn = [];
-    var lastImpSpawn = {x:map.findByIndex(15,0,true).x*64, y:map.findByIndex(15,0,true).y*64}
-    var currentImpSpawn;
-    var i=0;
-    do {
-        impSpawn.push({x:map.findByIndex(15,i).x*64, y:map.findByIndex(15,i).y*64});
-        currentImpSpawn = {x:map.findByIndex(15,i).x*64, y:map.findByIndex(15,i).y*64};
-        i++;
-    } while(lastImpSpawn.x != currentImpSpawn.x && lastImpSpawn.y != currentImpSpawn.y)
-    for(spawn of impSpawn){
-    impEnemies.create(spawn.x, spawn.y, 'enemyImp');
-    }
-
-    //Create wraithEnemies
     wraithEnemies = this.physics.add.group();
-    var wraithSpawn = [];
-    var lastWraithSpawn = {x:map.findByIndex(20,0,true).x*64, y:map.findByIndex(20,0,true).y*64}
-    var currentWraithSpawn;
-    var i=0;
-    do {
-        wraithSpawn.push({x:map.findByIndex(20,i).x*64, y:map.findByIndex(20,i).y*64});
-        currentWraithSpawn = {x:map.findByIndex(20,i).x*64, y:map.findByIndex(20,i).y*64};
-        i++;
-    } while(lastWraithSpawn.x != currentWraithSpawn.x && lastWraithSpawn.y != currentWraithSpawn.y)
-    for(spawn of wraithSpawn){
-    wraithEnemies.create(spawn.x, spawn.y, 'enemyWraith');
-    }
-
-    //Create yetiEnemies
     yetiEnemies = this.physics.add.group();
-    var yetiSpawn = [];
-    var lastYetiSpawn = {x:map.findByIndex(19,0,true).x*64, y:map.findByIndex(19,0,true).y*64}
-    var currentYetiSpawn;
-    var i=0;
-    do {
-        yetiSpawn.push({x:map.findByIndex(19,i).x*64, y:map.findByIndex(19,i).y*64});
-        currentYetiSpawn = {x:map.findByIndex(19,i).x*64, y:map.findByIndex(19,i).y*64};
-        i++;
-    } while(lastYetiSpawn.x != currentYetiSpawn.x && lastYetiSpawn.y != currentYetiSpawn.y)
-    for(spawn of yetiSpawn){
-    yetiEnemies.create(spawn.x, spawn.y, 'enemyYeti');
-    }
-
-    //Create zombieEnemies
     zombieEnemies = this.physics.add.group();
-    var zombieSpawn = [];
-    var lastZombieSpawn = {x:map.findByIndex(18,0,true).x*64, y:map.findByIndex(18,0,true).y*64}
-    var currentZombieSpawn;
-    var i=0;
-    do {
-        zombieSpawn.push({x:map.findByIndex(18,i).x*64, y:map.findByIndex(18,i).y*64});
-        currentZombieSpawn = {x:map.findByIndex(18,i).x*64, y:map.findByIndex(18,i).y*64};
-        i++;
-    } while(lastZombieSpawn.x != currentZombieSpawn.x && lastZombieSpawn.y != currentZombieSpawn.y)
-    for(spawn of zombieSpawn){
-    zombieEnemies.create(spawn.x, spawn.y, 'enemyZombie');
+
+    //imp = 15, ghost = 16, flurr = 17 , Zombie == 18, yeti = 19, wraith = 20 
+    var enemiesArray = [impEnemies, ghostEnemies, flurryEnemies, 
+                        zombieEnemies, yetiEnemies, wraithEnemies];
+    var enemyIndex = 15;
+    var enemyName;
+    for(enemyType of enemiesArray){
+        switch(enemyIndex){
+            case 15:
+                enemyName ='enemyImp'
+                break;
+            case 16:
+                enemyName ='enemyGhost'
+                break;
+            case 17:
+                enemyName ='enemyFlurry'
+                break;
+            case 18:
+                enemyName ='enemyZombie'
+                break;
+            case 19:
+                enemyName ='enemyYeti'
+                break;
+            case 20:
+                enemyName ='enemyWraith'
+                break;
+        }
+        var enemyTypeSpawn = [];
+        var lastEnemyTypeSpawn = {x:map.findByIndex(enemyIndex,0,true).x*64, y:map.findByIndex(enemyIndex,0,true).y*64}
+        var currentEnemyTypeSpawn;
+        var j=0;
+        do {
+            enemyTypeSpawn.push({x:map.findByIndex(enemyIndex,j).x*64, y:map.findByIndex(enemyIndex,j).y*64});
+            currentEnemyTypeSpawn = {x:map.findByIndex(enemyIndex,j).x*64, y:map.findByIndex(enemyIndex,j).y*64};
+            j++;
+        } while(lastEnemyTypeSpawn.x != currentEnemyTypeSpawn.x && lastEnemyTypeSpawn.y != currentEnemyTypeSpawn.y)
+        for(spawn of enemyTypeSpawn){
+            enemyType.create(spawn.x, spawn.y, enemyName);
+        }
+        enemyIndex++;
     }
 
     //Make player a phys object and player/platforms/ghostEnemies collide
     player = this.physics.add.sprite(768,320, 'playerRun');
     player.body.setSize(64, 138);
+    stamina = 80;
 
     //Colliders
     this.physics.add.collider(player, layer);
@@ -255,6 +226,7 @@ function create() {
     this.physics.add.collider(wraithEnemies, layer);
     this.physics.add.collider(yetiEnemies, layer);
     this.physics.add.collider(zombieEnemies, layer);
+    this.physics.add.collider(portalHub, layer);
     this.physics.add.collider(portal, layer);
     this.physics.add.collider(portal1, layer);
     this.physics.add.collider(portal2, layer);
@@ -277,6 +249,7 @@ function create() {
     this.physics.add.overlap(weaponHitBox, wraithEnemies, checkOverlapHitBox, null, this);
     this.physics.add.overlap(weaponHitBox, yetiEnemies, checkOverlapHitBox, null, this);
     this.physics.add.overlap(weaponHitBox, zombieEnemies, checkOverlapHitBox, null, this);
+    this.physics.add.overlap(player, portalHub, checkOverlapPortalHub, null, this);
     this.physics.add.overlap(player, portal, checkOverlapPortal, null, this);
     this.physics.add.overlap(player, portal1, checkOverlapPortal1, null, this);
     this.physics.add.overlap(player, portal2, checkOverlapPortal2, null, this);
@@ -428,7 +401,11 @@ function create() {
 }
 
 function update() {
-
+    if (stamina < 80)
+        stamina++;
+    console.log(stamina);
+    if(player.body.velocity.y > 900)
+        player.body.velocity.y = 900;
     innKeeper.anims.play('keeper', true);
 
     spacefield.x = player.x;
@@ -509,13 +486,6 @@ function update() {
         else {
             child.flipX = false;
             child.setVelocityX(-200);
-        }
-
-        if (child.body.y < player.body.y + 30) {
-            child.setVelocityY(50);
-        }
-        else {
-            child.setVelocityY(-50);
         }*/
     }
 
@@ -523,14 +493,14 @@ function update() {
     var impEnemy = impEnemies.getChildren();
     for (child of impEnemy) {
         child.anims.play('imp', true);
-        /*if (child.body.x < player.body.x) {
+        if (child.body.x < player.body.x) {
             child.flipX = false;
             child.setVelocityX(90);
         }
         else {
             child.flipX = true;
             child.setVelocityX(-90);
-        }*/
+        }
     }
 
     //Wraith
@@ -575,91 +545,80 @@ function update() {
         }*/
     }
 
-
+    //console.log(states)
     //CONTROLS
-    if (cursors.down.isDown && fallBuffert > 0) {
-        states = 'glide';
-        player.originY = 0.58;
+    if (cursors.down.isDown && fallBuffert > 0 && stamina >= 60) {
         if (player.flipX) {
+            checkAttackState('glide', 0.2, 0.58);
             player.setVelocityX(-650)
-            player.originX = 0.2;
         } else {
+            checkAttackState('glide', 0.8, 0.58);
             player.setVelocityX(650)
-            player.originX = 0.8;
         }
 
     } else if (cursors.left.isDown) {
         player.setVelocityX(-260);
-
-        if (player.body.onFloor())
-            states = 'run';
-
         player.flipX = true;
+        if (player.body.onFloor()){
+            checkAttackState('run',0.5,0.5);
+        }
     } else if (cursors.right.isDown) {
         player.setVelocityX(260);
         player.flipX = false;
         if (player.body.onFloor()) {
-            states = 'run';
+            checkAttackState('run',0.5,0.5);
         }
 
     } else {
-        player.originX = 0.5;
-        player.originY = 0.5;
+        checkAttackState('idle', 0.5, 0.5);
         player.setVelocityX(0);
-        states = 4;
     }
-    if (key_Z.isDown && !cursors.down.isDown) {
-        player.originY = 0.5;
+    if (key_Z.isDown && !cursors.down.isDown && stamina >= 40) {
+        stamina -= 10;
         if (player.flipX) {
-            player.originX = 0.7;
+            checkAttackState('lightAttack', 0.7, 0.5);
         } else {
-            player.originX = 0.3;
+            checkAttackState('lightAttack', 0.3, 0.5);
         }
         timedEvent = this.time.addEvent({
             delay: 0, callback: onEvent,
             callbackScope: this, repeat: 0, startAt: 0
         });
-        states = 'lightAttack';
     }
 
-    if (key_X.isDown && !cursors.down.isDown) {
-        player.originY = 0.62;
+    if (key_X.isDown && !cursors.down.isDown && stamina >= 80) {
+        stamina -= 40;
         if (player.flipX) {
-            player.originX = 0.7;
+            checkAttackState('heavyAttack', 0.7, 0.62);
         } else {
-            player.originX = 0.3;
+            checkAttackState('heavyAttack', 0.3, 0.62);
         }
         timedEvent = this.time.addEvent({
             delay: 0, callback: onEvent,
             callbackScope: this, repeat: 0, startAt: 0
         });
-        states = 'heavyAttack';
-
     }
 
     if (key_jump.isDown && player.body.onFloor()) {
         player.setVelocityY(-400);
         if (player.body.velocity.y < 0 && player.body.velocity.x != 0)
-            states = 'jump';
+            checkAttackState('jump', 0.5, 0.5);
         fallBuffert = 0;
     }
 
-    if (player.body.velocity.y > 0 && !key_X.isDown && !key_Z.isDown) {
-        states = 'fall';
-    }
-    if (player.body.velocity.y < 0 && !cursors.up.isDown) {
-        states = 'jump';
+    if (player.body.velocity.y > 0) {
+        checkAttackState('fall', 0.5, 0.5);
     }
     if (player.body.velocity.y < 0) {
-        states = 'jump';
+        checkAttackState('jump', 0.5, 0.5);
     }
     if (cursors.up.isDown && player.body.onWall()) {
         if (player.flipX) {
-            player.originX = 0.3;
+            checkAttackState('wallGlide', 0.3, 0.5);
         } else {
-            player.originX = 0.7;
+            checkAttackState('wallGlide', 0.7, 0.5);
         }
-        states = 'wallGlide';
+        if(states != 'lightAttack' && states != 'heavyAttack')
         player.setVelocityY(-400);
     }
     //GAMEPAD CONTROLS
@@ -749,7 +708,6 @@ function update() {
         gamepad = false;
 
     //CONTROL END
-    console.log(states)
 }
 
 function onEvent() {
@@ -813,7 +771,7 @@ function onEvent() {
     }
     
 }
-function checkOverlapPortal(player, portalHub) {
+function checkOverlapPortalHub(player, portalHub) {
     if(cursors.up.isDown){
     player.body.x = 768;
     player.body.y = 300;
@@ -866,4 +824,25 @@ function checkOverlapPlayer(player, enemy) {
         player.disableBody(true, true);
     }
     document.getElementById('Health').innerHTML = 'Health:' + health;
+}
+
+function checkAttackState(newState, xOrigin, yOrigin){
+    goIntoState = newState
+    if (states == 'lightAttack' && goIntoState != 'lightAttack'){
+        setTimeout(function () {
+            player.originX = xOrigin;
+            player.originY = yOrigin;
+            states=goIntoState;
+        },200);} 
+    else if(states == 'heavyAttack' && goIntoState != 'heavyAttack'){
+        setTimeout(function () {
+            player.originX = xOrigin;
+            player.originY = yOrigin;
+            states=goIntoState;
+        },350);} 
+    else {
+        player.originX = xOrigin;
+        player.originY = yOrigin;
+        states = goIntoState;
+        }
 }
