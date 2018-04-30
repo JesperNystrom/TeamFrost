@@ -96,6 +96,10 @@ function preload() {
 
     //Weapon hitbox
     this.load.image('weaponHitBox', '../sprites/WeaponHitBox.png');
+
+    //Portals
+    this.load.spritesheet('portals', '../sprites/Port.png',
+    { frameWidth: 192, frameHeight: 256 });
 }
 
 
@@ -134,26 +138,17 @@ function create() {
 
     //Portal
     portalHub = this.physics.add.group();
-    portalHub.create(10816,1650, 'portalTest');
-    portalHub.create(20672,2100, 'portalTest');
-    portalHub.create(44992,500, 'portalTest');
-    portalHub.create(62784,2750, 'portalTest');
-    portalHub.create(65024,1024, 'portalTest');
+    portalHub.create(10816,1650, 'portals');
+    portalHub.create(20672,2100, 'portals');
+    portalHub.create(44992,500, 'portals');
+    portalHub.create(62784,2750, 'portals');
+    portalHub.create(65024,1024, 'portals');
 
-    portal = this.physics.add.group();
-    portal.create(1750,320, 'portalTest');
-
-    portal1 = this.physics.add.group();
-    portal1.create(2000, 320, 'portalTest');
-
-    portal2 = this.physics.add.group();
-    portal2.create(2250, 320, 'portalTest');
-
-    portal3 = this.physics.add.group();
-    portal3.create(2500, 320, 'portalTest');
-
-    portal4 = this.physics.add.group();
-    portal4.create(2750, 320, 'portalTest');
+    portal = this.physics.add.sprite(1750,320,'portals');
+    portal1 = this.physics.add.sprite(2070,320,'portals');
+    portal2 = this.physics.add.sprite(2390,320,'portals');
+    portal3 = this.physics.add.sprite(2710,320,'portals');
+    portal4 = this.physics.add.sprite(3030,320,'portals');
     
 
     //Create healthBar
@@ -392,16 +387,58 @@ function create() {
         repeat: 1
     });
 
+    //Portals
+    this.anims.create({
+        key: 'portal1',
+        frames: this.anims.generateFrameNumbers('portals', { start: 0, end: 0 }),
+        frameRate: 8,
+        repeat: 1
+    });
+    this.anims.create({
+        key: 'portal2',
+        frames: this.anims.generateFrameNumbers('portals', { start: 1, end: 1 }),
+        frameRate: 8,
+        repeat: 1
+    });
+    this.anims.create({
+        key: 'portal3',
+        frames: this.anims.generateFrameNumbers('portals', { start: 2, end: 2 }),
+        frameRate: 8,
+        repeat: 1
+    });
+    this.anims.create({
+        key: 'portal4',
+        frames: this.anims.generateFrameNumbers('portals', { start: 3, end: 3 }),
+        frameRate: 8,
+        repeat: 1
+    });
+    this.anims.create({
+        key: 'portal5',
+        frames: this.anims.generateFrameNumbers('portals', { start: 4, end: 4 }),
+        frameRate: 8,
+        repeat: 1
+    });
+
     //GAMEPAD TESTING
     config = Phaser.Input.Gamepad.Configs.DUALSHOCK_4;
     this.input.gamepad.on('down', function (pad, button, value, data) {
         gamepad = pad;
     });
 
+
+
     
 }
 
 function update() {
+    innKeeper.anims.play('keeper', true);
+
+    portal.anims.play('portal1',true);
+    portal1.anims.play('portal2', true);
+    portal2.anims.play('portal3', true);
+    portal3.anims.play('portal4', true);
+    portal4.anims.play('portal5', true);
+
     if (stamina < 80)
         stamina++;
     console.log(player.body.y);
