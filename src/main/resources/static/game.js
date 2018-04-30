@@ -194,7 +194,7 @@ function create() {
     healthText = this.add.text(16,16, 'Health: 100',  { fontSize: '32px', fill: '#999' });
 
     //Create Innkeeper
-    innKeeper = this.physics.add.sprite(1200, 320, 'innKeeper');
+    innKeeper = this.physics.add.sprite(1200, 340, 'innKeeper');
 
 
     //Create Enemies
@@ -498,8 +498,10 @@ function update() {
     if (stamina < 80)
         stamina++;
     //console.log(player.body.y);
+    //Limit fall speed
     if(player.body.velocity.y > 900)
         player.body.velocity.y = 900;
+    //Falling = death
     if(player.body.y >= 3200)
         player.disableBody(true, true);
     
@@ -812,15 +814,41 @@ function update() {
             player.setVelocityY(-400);
         }
     }
-    } else {
+    } else {  //shop.y -55 = Hammer Upgrade   ||   shop.y-103 = HP-pot   ||   shop.y-8 = gemShop ||shop.y+40=exit
         console.log(shopPointer.y);
-        if(cursors.down.isDown && shopPointer.y != 375)
-            shopPointer.y += 48;
-        else if(cursors.up.isDown && shopPointer.y != 231)
-            shopPointer.y -= 48;
+        if(cursors.down.isDown && shopPointer.y == 327)
+            setTimeout(function() {
+                shopPointer.y = 375;
+            }, 200);
+        else if(cursors.down.isDown && shopPointer.y == 279)
+            setTimeout(function() {
+                shopPointer.y = 327;
+            }, 200);
+        else if(cursors.down.isDown && shopPointer.y == 231)
+            setTimeout(function() {
+                shopPointer.y = 279;
+            }, 200);
+        else if(cursors.up.isDown && shopPointer.y == 279)
+            setTimeout(function() {
+                shopPointer.y = 231;
+            }, 200);
+        else if(cursors.up.isDown && shopPointer.y == 327)
+            setTimeout(function() {
+                shopPointer.y = 279;
+            }, 200);
+        else if(cursors.up.isDown && shopPointer.y == 375)
+            setTimeout(function() {
+                shopPointer.y = 327;
+            }, 200);
+            
 
         if(key_jump.isDown && shopPointer.y == 231)
             console.log('You bought a potion!')
+        else if(key_jump.isDown && shopPointer.y == 375){
+            shopActive = false;
+            shopPointer.destroy();
+            shop.destroy();
+        }
     }
 
     if (cursors.right.isDown)
@@ -957,17 +985,13 @@ function checkOverlapPlayer(player, enemy) {
 }
 function checkOverlapInnkeeper(player, Innkeeper) {
     if(cursors.up.isDown && shopActive == false){
+        states = 'idle';
+        player.setVelocityX(0);
         shopActive = true;
         shop = this.add.image(innKeeper.x, innKeeper.y, 'shopWindow');
         shopPointer = this.add.image(shop.x+130, shop.y-103, 'shopPointer');
-        shopping();
 
     } //shop.y -55 = Hammer Upgrade   ||   shop.y-103 = HP-pot   ||   shop.y-8 = gemShop ||shop.y+40=exit
-}
-
-function shopping(){
-    if(cursors.up.isDown)
-        console.log('hej')
 }
 
 function checkAttackState(newState, xOrigin, yOrigin){
