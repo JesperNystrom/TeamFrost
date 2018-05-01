@@ -33,6 +33,8 @@ var weaponHitBox;
 var enemies;
 var score;
 var coins;
+var coinBags;
+var value;
 var health;
 var healthValue = 100;
 var enemyHealth = 100;
@@ -98,7 +100,7 @@ function preload() {
         { frameWidth: 384, frameHeight: 256 });
     this.load.image('shopWindow', '/sprites/ShopWindow.png');
     this.load.image('shopPointer', '/sprites/ShopPointer.png');
-
+    this.load.image('coin', '/sprites/Coins.png');
 
     this.load.image('background', '/sprites/testBackground.png');
     //LOAD TERRAIN
@@ -154,8 +156,8 @@ function create() {
     spacefield = this.add.image(0, 0, 'bkGround');
     //Player health
     health = 100;
-    coins = 9999;
-    score = 9999;
+    coins = 0;
+    score = 0;
 
 
     //Background
@@ -191,8 +193,9 @@ function create() {
     Phaser.Display.Align.In.TopLeft(spacefield, healthBar); */
     healthText = this.add.text(16, 16, 'Health: 100', { fontSize: '32px', fill: '#999' });
 
-    //Create Innkeeper
+    //Create Innkeeper and Coins
     innKeeper = this.physics.add.sprite(1200, 340, 'innKeeper');
+    coinBags = this.physics.add.group();
 
 
     //Create Enemies
@@ -251,6 +254,7 @@ function create() {
 
     //Colliders
     this.physics.add.collider(player, layer);
+    this.physics.add.collider(coinBags, layer);
     this.physics.add.collider(flurryEnemies, layer);
     this.physics.add.collider(ghostEnemies, layer);
     this.physics.add.collider(impEnemies, layer);
@@ -268,9 +272,10 @@ function create() {
     this.physics.add.collider(portal3, layer);
     this.physics.add.collider(portal4, layer);
     this.physics.add.collider(innKeeper, layer);
-    //CHECKING FOR SHOP-------------------------------------------------------
+    //CHECKING FOR SHOP AND COINS
     shopActive = false;
     this.physics.add.overlap(player, innKeeper, checkOverlapInnkeeper, null, this);
+    this.physics.add.overlap(player, coinBags, checkOverlapCoinBags, null, this);
 
     //Damage
     //this.physics.add.overlap(player, flurryEnemies, checkOverlapPlayer, null, this);
@@ -1024,8 +1029,33 @@ function checkOverlapHitBox(weaponHitBox, enemy) {
 } else if (states == 'heavyAttack') {
     enemyHealth -=3;
 }
-    if(enemyHealth <= 0)
-    enemy.disableBody(true, true);
+    if(enemyHealth <= 0){
+        enemy.disableBody(true, true);
+        value = setCoinValue(enemy);
+        console.log(value);
+        coinBags.create(enemy.x, enemy.y, 'coin');
+    }
+}
+
+function setCoinValue(enemy){
+    var enemyType = enemy.anims.currentAnim.key
+    switch(enemyType){
+        case 'imp':
+            return 20;
+            break;
+        case 'ghost':
+            return 20;
+            break;
+        case 'zombie':
+            return 40;
+            break;
+        case 'yeti':
+            return 100;
+            break;
+        case 'wraith':
+            return 40;
+            break;
+    }
 }
 
 //Enemy player overlap
@@ -1059,6 +1089,10 @@ function checkOverlapInnkeeper(player, Innkeeper) {
         shop = this.add.image(innKeeper.x, innKeeper.y, 'shopWindow');
         shopPointer = this.add.image(shop.x+130, shop.y-103, 'shopPointer');
     }
+}
+function checkOverlapCoinBags(player, coinbag) {
+    coinbag.disableBody(true, true);
+    coins += value;
 }
 
 function checkAttackState(newState, xOrigin, yOrigin){
