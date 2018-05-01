@@ -14,6 +14,9 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import java.util.HashMap;
+
+
 @Controller
 public class LoginFunctionController {
 
@@ -79,6 +82,32 @@ public class LoginFunctionController {
         return health;
     }
 
+    @GetMapping("/getPlayerStats")
+    @ResponseBody
+    public HashMap<String,String> getPlayerStats(HttpServletRequest request){
+        HashMap<String,String> playerStats = new HashMap<>();
+
+        GameUser gameUser = gameUserRepository.findByGameUserName(request.getRemoteUser());
+        Player player = gameUser.getPlayer();
+        Inventory inventory = inventoryRepository.getInventoryByPlayer(player);
+        String coins = "" + player.getCoins();
+        String health = "" + player.getHealth();
+        //outfit here
+        String score = "" + player.getScore();
+        String map = "" + player.getGameMap().getGameMapID();
+        String potions = "" + inventory.getHealthPotion();
+        String weapon = "" + inventory.getMeleeWeapon();
+
+        playerStats.put("coins",coins);
+        playerStats.put("health",health);
+        playerStats.put("score",score);
+        playerStats.put("map",map);
+        playerStats.put("potions",potions);
+        playerStats.put("weapon",weapon);
+
+        return playerStats;
+    }
+
     @PostMapping("/setNewHealth")
     @ResponseBody
     public int setNewHealth(HttpServletRequest request,@RequestParam int health){
@@ -90,40 +119,49 @@ public class LoginFunctionController {
     }
 
 
-    @GetMapping("/setCoins/{coins}")
-    public String setCoins(@PathVariable int coins, HttpServletRequest request){
-        GameUser gameUser = gameUserRepository.findByGameUserName(request.getRemoteUser());
-        Player player = gameUser.getPlayer();
-        player.setCoins(coins);
-        playerRepository.save(player);
-        return "success";
-    }
-
-    @GetMapping("/getCoins")
+    @PostMapping("/setHighscore")
     @ResponseBody
-    public int getCoins(HttpServletRequest request){
-        GameUser gameUser = gameUserRepository.findByGameUserName(request.getRemoteUser());
-        Player player = gameUser.getPlayer();
-        int coins = player.getCoins();
-        return coins;
-    }
-
-    @GetMapping("/setScore/{score}")
-    public String setCoins(@PathVariable Long score, HttpServletRequest request){
+    public String setScore(@RequestParam Long score, HttpServletRequest request){
         GameUser gameUser = gameUserRepository.findByGameUserName(request.getRemoteUser());
         Player player = gameUser.getPlayer();
         player.setScore(score);
         playerRepository.save(player);
+        Highscore highscore = new Highscore(score,player);
+        highscoreRepository.save(highscore);
         return "success";
     }
 
-    @GetMapping("/getScore")
+    @PostMapping("/saveStateAfterClearingMap")
     @ResponseBody
-    public Long getScore(HttpServletRequest request){
+    public String saveStateAfterClearingMap(HttpServletRequest request,@RequestParam Long score,@RequestParam int coins,
+                            @RequestParam int health,@RequestParam Long map,@RequestParam int potions){
         GameUser gameUser = gameUserRepository.findByGameUserName(request.getRemoteUser());
         Player player = gameUser.getPlayer();
-        Long score = player.getScore();
-        return score;
+        player.setScore(score);
+        player.setHealth(health);
+        player.setCoins(coins);
+        GameMap gameMap = gameMapRepository.findById(map).get();
+        player.setGameMap(gameMap);
+        playerRepository.save(player);
+        Inventory inventory = inventoryRepository.getInventoryByPlayer(player);
+        inventory.setHealthPotion(potions);
+        inventoryRepository.save(inventory);
+        return "success";
+    }
+
+    @PostMapping("/saveStateAfterPurchase")
+    @ResponseBody
+    public String saveStateAfterPurchase(HttpServletRequest request,@RequestParam int coins, @RequestParam int potions, @RequestParam Long weapon){
+        GameUser gameUser = gameUserRepository.findByGameUserName(request.getRemoteUser());
+        Player player = gameUser.getPlayer();
+        player.setCoins(coins);
+        playerRepository.save(player);
+        Inventory inventory = inventoryRepository.getInventoryByPlayer(player);
+        inventory.setHealthPotion(potions);
+        MeleeWeapon meleeWeapon = meleeWeaponRepository.findById(weapon).get();
+        inventory.setMeleeWeapon(meleeWeapon);
+        inventoryRepository.save(inventory);
+        return "success";
     }
 
     @GetMapping("/registration")
