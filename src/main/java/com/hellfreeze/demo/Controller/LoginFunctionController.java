@@ -61,8 +61,8 @@ public class LoginFunctionController {
         return "success";
     }
 
-    @GetMapping("/success/{health}")
-    public String successPage2(@PathVariable int health, HttpServletRequest request){
+    @GetMapping("/setHealth/{health}")
+    public String setHealth(@PathVariable int health, HttpServletRequest request){
         GameUser gameUser = gameUserRepository.findByGameUserName(request.getRemoteUser());
         Player player = gameUser.getPlayer();
         player.setHealth(health);
@@ -72,12 +72,54 @@ public class LoginFunctionController {
 
     @GetMapping("/getHealth")
     @ResponseBody
-    public int returnHealth(HttpServletRequest request){
+    public int getHealth(HttpServletRequest request){
         GameUser gameUser = gameUserRepository.findByGameUserName(request.getRemoteUser());
         Player player = gameUser.getPlayer();
         int health = player.getHealth();
         return health;
     }
+
+
+    @GetMapping("/setCoins/{coins}")
+    public String setCoins(@PathVariable int coins, HttpServletRequest request){
+        GameUser gameUser = gameUserRepository.findByGameUserName(request.getRemoteUser());
+        Player player = gameUser.getPlayer();
+        player.setCoins(coins);
+        playerRepository.save(player);
+        return "success";
+    }
+
+    @GetMapping("/getCoins")
+    @ResponseBody
+    public int getCoins(HttpServletRequest request){
+        GameUser gameUser = gameUserRepository.findByGameUserName(request.getRemoteUser());
+        Player player = gameUser.getPlayer();
+        int coins = player.getCoins();
+        return coins;
+    }
+
+
+    @GetMapping("/setScore/{score}")
+    public String setCoins(@PathVariable Long score, HttpServletRequest request){
+        GameUser gameUser = gameUserRepository.findByGameUserName(request.getRemoteUser());
+        Player player = gameUser.getPlayer();
+        player.setScore(score);
+        playerRepository.save(player);
+        return "success";
+    }
+
+    @GetMapping("/getScore")
+    @ResponseBody
+    public Long getScore(HttpServletRequest request){
+        GameUser gameUser = gameUserRepository.findByGameUserName(request.getRemoteUser());
+        Player player = gameUser.getPlayer();
+        Long score = player.getScore();
+        return score;
+    }
+
+
+
+
 
     @GetMapping("/registration")
     public ModelAndView registrationPage(){

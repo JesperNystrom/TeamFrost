@@ -58,82 +58,82 @@ var music3;
 var music4;
 
 function preload() {
-    this.load.image('bkGround', '../sprites/Background.png');
+    this.load.image('bkGround', '/sprites/Background.png');
     //Player sprites
-    this.load.spritesheet('playerRun', '../sprites/PlayerRun.png',
+    this.load.spritesheet('playerRun', '/sprites/PlayerRun.png',
         { frameWidth: 128, frameHeight: 140 });
-    this.load.spritesheet('playerIdle', '../sprites/PlayerIdle.png',
+    this.load.spritesheet('playerIdle', '/sprites/PlayerIdle.png',
         { frameWidth: 128, frameHeight: 140 });
-    this.load.spritesheet('playerHeavyAttack', '../sprites/PlayerHeavyAtk.png',
+    this.load.spritesheet('playerHeavyAttack', '/sprites/PlayerHeavyAtk.png',
         { frameWidth: 217, frameHeight: 187 });
-    this.load.spritesheet('playerLightAttack', '../sprites/PlayerLightAttack.png',
+    this.load.spritesheet('playerLightAttack', '/sprites/PlayerLightAttack.png',
         { frameWidth: 216, frameHeight: 135 });
-    this.load.spritesheet('playerGlide', '../sprites/PlayerGlide.png', //PlayerGlide.png
+    this.load.spritesheet('playerGlide', '/sprites/PlayerGlide.png', //PlayerGlide.png
         { frameWidth: 199, frameHeight: 168 });
-    this.load.spritesheet('playerJump', '../sprites/PlayerJump.png',
+    this.load.spritesheet('playerJump', '/sprites/PlayerJump.png',
         { frameWidth: 128, frameHeight: 140 });
-    this.load.spritesheet('playerFall', '../sprites/PlayerFall.png',
+    this.load.spritesheet('playerFall', '/sprites/PlayerFall.png',
         { frameWidth: 128, frameHeight: 150 });
-    this.load.spritesheet('playerWallGlide', '../sprites/PlayerWallGlide.png',
+    this.load.spritesheet('playerWallGlide', '/sprites/PlayerWallGlide.png',
         { frameWidth: 129, frameHeight: 210 });
-    this.load.spritesheet('playerHurt', '../sprites/PlayerHurt.png',
+    this.load.spritesheet('playerHurt', '/sprites/PlayerHurt.png',
         { frameWidth: 128, frameHeight: 140 });
 
     //Enemy sprites
-    this.load.spritesheet('enemyFlurry', '../sprites/EnemyFlurry.png',
+    this.load.spritesheet('enemyFlurry', '/sprites/EnemyFlurry.png',
         { frameWidth: 44, frameHeight: 40 });
-    this.load.spritesheet('enemyGhost', '../sprites/EnemyGhost.png',
+    this.load.spritesheet('enemyGhost', '/sprites/EnemyGhost.png',
         { frameWidth: 64, frameHeight: 100 });
-    this.load.spritesheet('enemyImp', '../sprites/EnemyImp.png',
+    this.load.spritesheet('enemyImp', '/sprites/EnemyImp.png',
         { frameWidth: 64, frameHeight: 64 });
-    this.load.spritesheet('enemyWraith', '../sprites/EnemyWraith.png',
+    this.load.spritesheet('enemyWraith', '/sprites/EnemyWraith.png',
         { frameWidth: 83, frameHeight: 164 });
-    this.load.spritesheet('enemyYeti', '../sprites/EnemyYeti.png',
+    this.load.spritesheet('enemyYeti', '/sprites/EnemyYeti.png',
         { frameWidth: 232, frameHeight: 236 });
-    this.load.spritesheet('enemyZombie', '../sprites/EnemyZombie.png',
+    this.load.spritesheet('enemyZombie', '/sprites/EnemyZombie.png',
         { frameWidth: 64, frameHeight: 128 });
 
     //Npc Sprites
-    this.load.spritesheet('innKeeper', '../sprites/InnKeeper.png',
+    this.load.spritesheet('innKeeper', '/sprites/InnKeeper.png',
         { frameWidth: 384, frameHeight: 256 });
-    this.load.image('shopWindow', '../sprites/ShopWindow.png');
-    this.load.image('shopPointer', '../sprites/ShopPointer.png');
+    this.load.image('shopWindow', '/sprites/ShopWindow.png');
+    this.load.image('shopPointer', '/sprites/ShopPointer.png');
 
 
-    this.load.image('background', '../sprites/testBackground.png');
+    this.load.image('background', '/sprites/testBackground.png');
     //LOAD TERRAIN
-    this.load.image('tiles', '../sprites/TileSetComplete.png');
-    this.load.tilemapCSV('map', '../maps/World.csv');
-    this.load.image('portalTest', '../sprites/WeaponHitboxTest.png');
+    this.load.image('tiles', '/sprites/TileSetComplete.png');
+    this.load.tilemapCSV('map', '/maps/World.csv');
+    this.load.image('portalTest', '/sprites/WeaponHitboxTest.png');
 
     //Weapon hitbox
-    this.load.image('weaponHitBox', '../sprites/WeaponHitBox.png');
-    this.load.image('portalTest', '../sprites/WeaponHitboxTest.png');
+    this.load.image('weaponHitBox', '/sprites/WeaponHitBox.png');
+    this.load.image('portalTest', '/sprites/WeaponHitboxTest.png');
 
     //Music
     this.load.audio('themeMusic', [
-        '../static/hubMusic.mp3'
+        '/hubMusic.mp3'
         
     ]);
 
     this.load.audio('level1Music', [
-        '../static/Level1Music.mp3'
+        '/Level1Music.mp3'
     ]);
 
     this.load.audio('level2Music', [
-        '../static/Level2Music.mp3'
+        '/Level2Music.mp3'
     ]);
 
     this.load.audio('level3Music', [
-        '../static/Level3Music.mp3'
+        '/Level3Music.mp3'
     ]);
 
     this.load.audio('level4Music', [
-        '../static/Level3Music.mp3'
+        '/Level3Music.mp3'
     ]);
 
     //Portals
-    this.load.spritesheet('portals', '../sprites/Port.png',
+    this.load.spritesheet('portals', '/sprites/Port.png',
         { frameWidth: 192, frameHeight: 256 });
 }
 
