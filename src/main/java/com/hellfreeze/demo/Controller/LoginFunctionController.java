@@ -79,6 +79,16 @@ public class LoginFunctionController {
         return health;
     }
 
+    @PostMapping("/setNewHealth")
+    @ResponseBody
+    public int setNewHealth(HttpServletRequest request,@RequestParam int health){
+        GameUser gameUser = gameUserRepository.findByGameUserName(request.getRemoteUser());
+        Player player = gameUser.getPlayer();
+        player.setHealth(health);
+        playerRepository.save(player);
+        return health;
+    }
+
     @GetMapping("/registration")
     public ModelAndView registrationPage(){
         return new ModelAndView("registration").addObject("gameUser",new GameUser());
