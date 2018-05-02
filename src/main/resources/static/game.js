@@ -29,6 +29,7 @@ var cursors;
 var layer;
 var tileset;
 var player;
+var weapon;
 var weaponHitBox;
 var enemies;
 var health;
@@ -48,12 +49,14 @@ var portal3;
 var portal4;
 var game = new Phaser.Game(config);
 var stamina;
-var shopActive
+var potions;
+var shopActive;
 var musicTheme;
 var music1;
 var music2;
 var music3;
 var music4;
+var changeMusic;
 
 function preload() {
     this.load.image('bkGround', '../sprites/Background.png');
@@ -76,6 +79,8 @@ function preload() {
         { frameWidth: 129, frameHeight: 210 });
     this.load.spritesheet('playerHurt', '../sprites/PlayerHurt.png',
         { frameWidth: 128, frameHeight: 140 });
+    this.load.spritesheet('playerDead', '../sprites/PlayerDead.png',
+        { frameWidth: 140, frameHeight: 153 });
 
     //Enemy sprites
     this.load.spritesheet('enemyFlurry', '../sprites/EnemyFlurry.png',
@@ -91,14 +96,27 @@ function preload() {
     this.load.spritesheet('enemyZombie', '../sprites/EnemyZombie.png',
         { frameWidth: 64, frameHeight: 128 });
 
+    //Zirla sprites
+    this.load.spritesheet('zirlaMoving', '../sprites/ZirlaMoving_strip16.png',
+        {frameWidth: 256, frameHeight: 256});
+    this.load.spritesheet('zirlaGlobeGlow', '../sprites/ZirlaGlobeGlow_strip15.png',
+        {frameWidth: 256, frameHeight: 256});
+    this.load.spritesheet('zirlaHandRaise', '../sprites/ZirlaHandRaise_strip16.png',
+        {frameWidth: 256, frameHeight: 256});
+    this.load.spritesheet('zirlaHit', '../sprites/ZirlaHit_strip3.png',
+        {frameWidth: 256, frameHeight: 256});
+    this.load.spritesheet('zirlaDefeated', '../sprites/ZirlaDefeated.png',
+        {frameWidth: 256, frameHeight: 256});
+
     //Npc Sprites
     this.load.spritesheet('innKeeper', '../sprites/InnKeeper.png',
         { frameWidth: 384, frameHeight: 256 });
     this.load.image('shopWindow', '../sprites/ShopWindow.png');
     this.load.image('shopPointer', '../sprites/ShopPointer.png');
 
-
+    //Background
     this.load.image('background', '../sprites/testBackground.png');
+    
     //LOAD TERRAIN
     this.load.image('tiles', '../sprites/TileSetComplete.png');
     this.load.tilemapCSV('map', '../maps/World.csv');
@@ -109,25 +127,24 @@ function preload() {
     this.load.image('portalTest', '../sprites/WeaponHitboxTest.png');
 
     //Music
-    this.load.audio('themeMusic', [
+    this.load.audio('musicTheme', [
         '../static/hubMusic.mp3'
-        
     ]);
 
-    this.load.audio('level1Music', [
-        '../static/Level1Music.mp3'
-    ]);
+    // this.load.audio('level1Music', [
+    //     '../static/Level1Music.mp3'
+    // ]);
 
     this.load.audio('level2Music', [
         '../static/Level2Music.mp3'
     ]);
 
-    this.load.audio('level3Music', [
-        '../static/Level3Music.mp3'
-    ]);
+    // this.load.audio('level3Music', [
+    //     '../static/Level3Music.mp3'
+    // ]);
 
     this.load.audio('level4Music', [
-        '../static/Level3Music.mp3'
+        '../static/Level4Music.mp3'
     ]);
 
     //Portals
@@ -171,7 +188,7 @@ function create() {
 
     //Portal
     portalHub = this.physics.add.sprite(10816, 1550, 'portals');
-    portalHub1 = this.physics.add.sprite(20672, 2100, 'portals');
+    portalHub1 = this.physics.add.sprite(20704, 1856, 'portals');
     portalHub2 = this.physics.add.sprite(44992, 500, 'portals');
     portalHub3 = this.physics.add.sprite(62816, 2600, 'portals');
     portalHub4 = this.physics.add.sprite(65024, 1024, 'portals');
@@ -191,6 +208,9 @@ function create() {
     //Create Innkeeper
     innKeeper = this.physics.add.sprite(1200, 320, 'innKeeper');
 
+    //Create Zirla
+    zirla = this.physics.add.sprite(65792, 1344, 'zirlaMoving');
+    zirla.body.setSize(256, 256);
 
     //Create Enemies
     ghostEnemies = this.physics.add.group();
@@ -199,6 +219,7 @@ function create() {
     wraithEnemies = this.physics.add.group();
     yetiEnemies = this.physics.add.group();
     zombieEnemies = this.physics.add.group();
+    zirlaEnemies = this.physics.add.group();
 
     //imp = 15, ghost = 16, flurr = 17 , Zombie == 18, yeti = 19, wraith = 20 
     var enemiesArray = [impEnemies, ghostEnemies, flurryEnemies,
@@ -254,6 +275,8 @@ function create() {
     this.physics.add.collider(wraithEnemies, layer);
     this.physics.add.collider(yetiEnemies, layer);
     this.physics.add.collider(zombieEnemies, layer);
+    this.physics.add.collider(zirla, layer);
+    this.physics.add.collider(innKeeper, layer);
     this.physics.add.collider(portalHub, layer);
     this.physics.add.collider(portalHub1, layer);
     this.physics.add.collider(portalHub2, layer);
@@ -264,7 +287,7 @@ function create() {
     this.physics.add.collider(portal2, layer);
     this.physics.add.collider(portal3, layer);
     this.physics.add.collider(portal4, layer);
-    this.physics.add.collider(innKeeper, layer);
+
     //CHECKING FOR SHOP-------------------------------------------------------
     shopActive = false;
     this.physics.add.overlap(player, innKeeper, checkOverlapInnkeeper, null, this);
@@ -276,6 +299,7 @@ function create() {
     this.physics.add.overlap(player, wraithEnemies, checkOverlapPlayer, null, this);
     this.physics.add.overlap(player, yetiEnemies, checkOverlapPlayer, null, this);
     this.physics.add.overlap(player, zombieEnemies, checkOverlapPlayer, null, this);
+    this.physics.add.overlap(player, zirla, checkOverlapPlayer, null, this);
 
     //Hitbox/kill-able
     //this.physics.add.overlap(weaponHitBox, flurryEnemies, checkOverlapHitBox, null, this);
@@ -284,6 +308,7 @@ function create() {
     this.physics.add.overlap(weaponHitBox, wraithEnemies, checkOverlapHitBox, null, this);
     this.physics.add.overlap(weaponHitBox, yetiEnemies, checkOverlapHitBox, null, this);
     this.physics.add.overlap(weaponHitBox, zombieEnemies, checkOverlapHitBox, null, this);
+    this.physics.add.overlap(weaponHitBox, zirla, checkOverlapHitBox, null, this);
     this.physics.add.overlap(player, portalHub, checkOverlapPortalHub, null, this);
     this.physics.add.overlap(player, portalHub1, checkOverlapPortalHub, null, this);
     this.physics.add.overlap(player, portalHub2, checkOverlapPortalHub, null, this);
@@ -367,9 +392,17 @@ function create() {
         frameRate: 20,
         repeat: 1
     });
+
     this.anims.create({
         key: 'hurt',
         frames: this.anims.generateFrameNumbers('playerHurt', { start: 0, end: 6 }),
+        frameRate: 60,
+        repeat: 0
+    });
+
+    this.anims.create({
+        key: 'dead',
+        frames: this.anims.generateFrameNumbers('playerDead', { start: 0, end: 1 }),
         frameRate: 60,
         repeat: 0
     });
@@ -468,6 +501,41 @@ function create() {
         repeat: 1
     });
 
+    this.anims.create({
+        key: 'zirlaMove',
+        frames: this.anims.generateFrameNumbers('zirlaMoving', { start: 0, end: 15 }),
+        frameRate: 20,
+        repeat: 0
+    });
+
+    this.anims.create({
+        key: 'zirlaGlobe',
+        frames: this.anims.generateFrameNumbers('zirlaGlobeGlow', { start: 0, end: 14 }),
+        frameRate: 20,
+        repeat: 0
+    });
+
+    this.anims.create({
+        key: 'zirlaHand',
+        frames: this.anims.generateFrameNumbers('zirlaHandRaise', { start: 0, end: 15 }),
+        frameRate: 20,
+        repeat: 0
+    });
+
+    this.anims.create({
+        key: 'zirlaHurt',
+        frames: this.anims.generateFrameNumbers('zirlaHit', { start: 0, end: 2 }),
+        frameRate: 20,
+        repeat: 0
+    });
+
+    this.anims.create({
+        key: 'zirlaDead',
+        frames: this.anims.generateFrameNumbers('zirlaDefeated', { start: 0, end: 1 }),
+        frameRate: 20,
+        repeat: 0
+    });
+
     //GAMEPAD TESTING
     config = Phaser.Input.Gamepad.Configs.DUALSHOCK_4;
     this.input.gamepad.on('down', function (pad, button, value, data) {
@@ -475,20 +543,27 @@ function create() {
     });
 
     //Music
-    musicTheme = this.sound.add('themeMusic');
-    music1 = this.sound.add('level1Music');
+    musicTheme = this.sound.add('musicTheme');
+    //music1 = this.sound.add('level1Music');
     music2 = this.sound.add('level2Music');
-    music3 = this.sound.add('level3Music');
+    // music3 = this.sound.add('level3Music');
     music4 = this.sound.add('level4Music');
+    musicTheme.play({loop: true});
+    //music1.play({loop: true});
+    music2.play({loop: true});
+    //music3.play({loop: true});
+    music4.play({loop: true});
+    musicTheme.pause();
+    //music1.pause();
+    music2.pause();
+    //music3.pause();
+    music4.pause();
 
-    //Music
-    
-    musicTheme.play();
 }
 
 function update() {
     innKeeper.anims.play('keeper', true);
-
+    zirla.anims.play('zirlaMove', true);
     portalHub.anims.play('portalHub', true);
     portalHub1.anims.play('portalHub', true);
     portalHub2.anims.play('portalHub', true);
@@ -665,6 +740,25 @@ function update() {
         else child.setVelocityX(0);
 
     }
+
+     //Zirla
+     var zirlaEnemy = zirlaEnemies.getChildren();
+     for (child of zirlaEnemy) {
+         child.anims.play('zirlaMove', true);
+         var distanceY = child.body.y + 500;
+         var distanceX = child.body.x - player.body.x;
+         if (Math.abs(distanceX) < 650 && player.body.x < child.body.x && distanceY > player.body.y) {
+             child.flipX = false;
+             child.setVelocityX(-20);
+         }
+         else if (Math.abs(distanceX) < 650 && player.body.x > child.body.x && distanceY > player.body.y) {
+             child.flipX = true;
+             child.setVelocityX(50);
+         }
+         else child.setVelocityX(0);
+ 
+     }
+
     //console.log(states)
     //CONTROLS
     if(!shopActive){
@@ -833,6 +927,62 @@ function update() {
         gamepad = false;
     //CONTROL END
 
+    //Music Changer
+    var songs = [
+        musicTheme, 
+        //music1, 
+        music2, 
+        //music3, 
+        music4
+    ];
+
+   if(player.body.x > 64 && player.body.x < 850){
+        for (song of songs){
+            console.log("play Theme");
+            //music1.pause();
+            music2.pause();
+            //music3.pause();
+            music4.pause();
+            musicTheme.resume({loop: true});
+        }
+    }
+    else if(player.body.x > 7650 && player.body.x < 7700){
+        for (song of songs){
+            console.log("play music1")
+            musicTheme.pause();
+            music2.resume({loop: true});
+        }
+    } 
+    else if(player.body.x > 13100 && player.body.x < 13140){
+        for (song of songs){
+            console.log("play music2")
+            musicTheme.pause();
+            music2.resume({loop: true});
+        }
+    } 
+    else if(player.body.x > 27320 && player.body.x < 27340){
+        for (song of songs){
+            console.log("play music3")
+            song.pause();
+
+            music4.resume({loop: true});
+        }
+    }
+    else if(player.body.x > 48310 && player.body.x < 48330){
+        for (song of songs){
+            console.log("play music4")
+            song.pause();
+
+            music4.resume({loop: true});
+        }
+    }
+    else if(player.body.x > 66880 && player.body.x < 67328 && player.body.y > 1400 && player.body.y < 1420 ){
+        for (song of songs){
+            console.log("play boss music")
+            song.pause();
+            music4.resume({loop: true});
+        }
+    }
    
 }
 
@@ -926,14 +1076,14 @@ function checkOverlapPortal2(player, portal2) {
 }
 function checkOverlapPortal3(player, portal3) {
     if (cursors.up.isDown) {
-        player.body.x = 46656;
+        player.body.x = 48320;
         player.body.y = 120;
     }
 }
 function checkOverlapPortal4(player, portal4) {
     if (cursors.up.isDown) {
-        player.body.x = 65024;
-        player.body.y = 896;
+        player.body.x = 64832;
+        player.body.y = 768;
     }
 }
 //Hitbox overlap
@@ -998,4 +1148,5 @@ function checkAttackState(newState, xOrigin, yOrigin) {
         player.originY = yOrigin;
         states = goIntoState;
     }
+   
 }
