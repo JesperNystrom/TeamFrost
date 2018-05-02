@@ -108,7 +108,7 @@ public class LoginFunctionController {
         String score = "" + player.getScore();
         String map = "" + player.getGameMap().getGameMapID();
         String potions = "" + inventory.getHealthPotion();
-        String weapon = "" + inventory.getMeleeWeapon();
+        String weapon = "" + inventory.getMeleeWeapon().getMeleeWeaponID();
 
         playerStats.put("coins",coins);
         playerStats.put("health",health);

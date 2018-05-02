@@ -29,12 +29,14 @@ var cursors;
 var layer;
 var tileset;
 var player;
+var weapon;
 var weaponHitBox;
 var enemies;
 var score;
 var coins;
 var coinBags;
 var value;
+var potions;
 var health;
 var healthValue = 100;
 var enemyHealth = 100;
@@ -101,6 +103,8 @@ function preload() {
     this.load.image('shopWindow', '/sprites/ShopWindow.png');
     this.load.image('shopPointer', '/sprites/ShopPointer.png');
     this.load.image('coin', '/sprites/Coins.png');
+    this.load.spritesheet('potionWindow', '/sprites/PotionWindow.png',
+        { frameWidth:64, frameHeight: 64 });
 
     this.load.image('background', '/sprites/testBackground.png');
     //LOAD TERRAIN
@@ -155,10 +159,22 @@ function preload() {
 function create() {
     spacefield = this.add.image(0, 0, 'bkGround');
     //Player health
-    health = 100;
-    coins = 0;
-    score = 0;
-
+    // health = 100;
+    // coins = 0;
+    // score = 0;
+    // potions = 0;
+    $.ajax({
+        type: "GET",
+        url: "/getPlayerStats", //which is mapped to its partner function on our controller class
+        success: function (result) {
+            coins = parseInt(result["coins"]);
+            health = parseInt(result["health"]);
+            score = parseInt(result["score"]);
+            map = parseInt(result["map"]);
+            potions = parseInt(result["potions"]);
+            weapon = parseInt(result["weapon"]);
+        }
+    });
 
     //Background
     snowfield = this.add.tileSprite(0, 0, 1137, 640, 'background');
@@ -196,7 +212,7 @@ function create() {
     //Create Innkeeper and Coins
     innKeeper = this.physics.add.sprite(1200, 340, 'innKeeper');
     coinBags = this.physics.add.group();
-
+    potionWindow = this.add.sprite(1089, 48, 'potionWindow').setScrollFactor(0);
 
     //Create Enemies
     ghostEnemies = this.physics.add.group();
@@ -315,16 +331,29 @@ function create() {
     //Shopcontrols  //327 = Hammer Upgrade   ||   375 = HP-pot   ||   279 = gemShop || 231=exit
     key_BUY = this.input.keyboard.on('keydown_SPACE', function (event) {
         if(shopActive){
-            if(shopPointer.y == 231)
+            if(shopPointer.y == 231 && coins >= 20 && potions < 5){
                 coins -=20;
-            else if(shopPointer.y == 279)
+                potions += 1;
+            }
+            else if(shopPointer.y == 279 && coins >= 40){
                 coins -=40;
+            }
             else if(shopPointer.y == 327)
                 console.log('Goto gem shop')
             else if(shopPointer.y == 375){
                 shopActive = false;
                 shopPointer.destroy();
                 shop.destroy();
+                $.ajax({
+                    type: "POST",
+                    data: {
+                        //Add outfit: outfit, later
+                        coins: coins,
+                        weapon: weapon,
+                        potions: potions
+                    },
+                    url: "/saveStateAfterPurchase" //which is mapped to its partner function on our controller class
+                });
             }
                 
         }
@@ -339,13 +368,58 @@ function create() {
             shopPointer.y += 48;
         }
     });
+    key_drinkPotion = this.input.keyboard.on('keydown_C', function(event){
+        if(potions > 0 && health < 100){
+            potions -=1;
+            if(health <= 75)
+                health += 25;
+            else
+                health = 100;
+        }
+    })
 
     //Camera
     this.cameras.main.setSize(1137, 640);
     //this.cameras.add(400,0);
     this.cameras.main.startFollow(player);
 
-
+    //Animations for potions
+    this.anims.create({
+        key: 'potion0',
+        frames: this.anims.generateFrameNumbers('potionWindow', { start: 0, end: 0 }),
+        frameRate: 20,
+        repeat: 1
+    });
+    this.anims.create({
+        key: 'potion1',
+        frames: this.anims.generateFrameNumbers('potionWindow', { start: 1, end: 1 }),
+        frameRate: 20,
+        repeat: 1
+    });
+    this.anims.create({
+        key: 'potion2',
+        frames: this.anims.generateFrameNumbers('potionWindow', { start: 2, end: 2 }),
+        frameRate: 20,
+        repeat: 1
+    });
+    this.anims.create({
+        key: 'potion3',
+        frames: this.anims.generateFrameNumbers('potionWindow', { start: 3, end: 3 }),
+        frameRate: 20,
+        repeat: 1
+    });
+    this.anims.create({
+        key: 'potion4',
+        frames: this.anims.generateFrameNumbers('potionWindow', { start: 4, end: 4 }),
+        frameRate: 20,
+        repeat: 1
+    });
+    this.anims.create({
+        key: 'potion5',
+        frames: this.anims.generateFrameNumbers('potionWindow', { start: 5, end: 5 }),
+        frameRate: 20,
+        repeat: 1
+    });
     //Animations for player
     this.anims.create({
         key: 'lightAttack',
@@ -507,34 +581,53 @@ function create() {
     config = Phaser.Input.Gamepad.Configs.DUALSHOCK_4;
     this.input.gamepad.on('down', function (pad, button, value, data) {
         gamepad = pad;
-        if(shopActive){
             switch (button.index)
             {
                 case config.UP:
-                    if(shopPointer.y != 231)
+                    if(shopActive && shopPointer.y != 231)
                         shopPointer.y -= 48;
                     break;
 
                 case config.DOWN:
-                    if(shopPointer.y != 375)
+                    if(shopActive && shopPointer.y != 375)
                     shopPointer.y += 48;
                     break;
                 case config.X:
-                    if(shopPointer.y == 231)
+                    if(shopActive && shopPointer.y == 231 && coins >= 20 && potions < 5){
                         coins -=20;
-                    else if(shopPointer.y == 279)
+                        potions += 1;
+                    }
+                    else if(shopActive && shopPointer.y == 279 && coins >= 40)
                         coins -=40;
-                    else if(shopPointer.y == 327)
+                    else if(shopActive && shopPointer.y == 327)
                         console.log('Goto gem shop')
-                    else if(shopPointer.y == 375){
+                    else if(shopActive && shopPointer.y == 375){
                         shopActive = false;
                         shopPointer.destroy();
                         shop.destroy();
+                        $.ajax({
+                            type: "POST",
+                            data: {
+                                //Add outfit: outfit, later
+                                coins: coins,
+                                weapon: weapon,
+                                potions: potions
+                            },
+                            url: "/saveStateAfterPurchase" //which is mapped to its partner function on our controller class
+                        });
                     }
                     break;
+                case config.CIRCLE:
+                    if(potions > 0 && health < 100){
+                        potions -=1;
+                        if(health <= 75)
+                            health += 25;
+                        else
+                            health = 100;
+                    }   
+                    break;
             }
-        }
-    });
+        });
 
 
     //Music
@@ -550,6 +643,27 @@ function create() {
 }
 
 function update() {
+    switch(potions){
+        case 0:
+            potionWindow.anims.play('potion0', true);
+            break;
+        case 1:
+            potionWindow.anims.play('potion1', true);
+            break;
+        case 2:
+            potionWindow.anims.play('potion2', true);
+            break;
+        case 3:
+            potionWindow.anims.play('potion3', true);
+            break;
+        case 4:
+            potionWindow.anims.play('potion4', true);
+            break;
+        case 5:
+            potionWindow.anims.play('potion5', true);
+            break;
+    }
+
     innKeeper.anims.play('keeper', true);
 
     portalHub.anims.play('portalHub', true);
@@ -962,6 +1076,17 @@ function onEvent() {
 
 //Portal overlaps
 function checkOverlapPortalHub(player, portalHub) {
+    $.ajax({
+        type: "POST",
+        data: {
+            score: score,
+            coins: coins,
+            health: health,
+            map: map,
+            potions: potions
+        },
+        url: "/saveStateAfterClearingMap" //which is mapped to its partner function on our controller class
+    });
     if(cursors.up.isDown && !gamepad){
         player.body.x = 800;
         player.body.y = 300;
@@ -1032,8 +1157,30 @@ function checkOverlapHitBox(weaponHitBox, enemy) {
     if(enemyHealth <= 0){
         enemy.disableBody(true, true);
         value = setCoinValue(enemy);
-        console.log(value);
+        points = setPointValue(enemy);
+        score += points;
         coinBags.create(enemy.x, enemy.y, 'coin');
+    }
+}
+
+function setPointValue(enemy){
+    var enemyType = enemy.anims.currentAnim.key
+    switch(enemyType){
+        case 'imp':
+            return 50;
+            break;
+        case 'ghost':
+            return 70;
+            break;
+        case 'zombie':
+            return 100;
+            break;
+        case 'yeti':
+            return 500;
+            break;
+        case 'wraith':
+            return 100;
+            break;
     }
 }
 
