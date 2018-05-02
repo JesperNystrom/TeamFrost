@@ -53,8 +53,8 @@ $.ajax({
     data: {
         //Add outfit: outfit, later
         coins: coins,
-        weapon: weapon,
-        potions: potions
+        potions: potions,
+        weapon: weapon
     },
     url: "/saveStateAfterPurchase" //which is mapped to its partner function on our controller class
 });
