@@ -46,7 +46,7 @@ var level1 = false;
 var level2 = false;
 var level3 = false;
 var level4 = false;
-var level = 1;
+var level;
 var spacefield;
 var backgroundv;
 var timedEvent;
@@ -188,7 +188,7 @@ function create() {
             coins = parseInt(result["coins"]);
             health = parseInt(result["health"]);
             score = parseInt(result["score"]);
-            map = parseInt(result["map"]);
+            level = parseInt(result["map"]);
             potions = parseInt(result["potions"]);
             weapon = parseInt(result["weapon"]);
         }
@@ -1145,6 +1145,10 @@ function update() {
             url: "/resetPlayer" //which is mapped to its partner function on our controller class
         });
         health = -1;
+        setTimeout(function () {
+            location.reload();
+        }, 1000);
+        
     }
 
 
@@ -1271,17 +1275,6 @@ function onEvent() {
 
 //Portal overlaps
 function checkOverlapPortalHub(player, portalHub) {
-    $.ajax({
-        type: "POST",
-        data: {
-            score: score,
-            coins: coins,
-            health: health,
-            map: map,
-            potions: potions
-        },
-        url: "/saveStateAfterClearingMap" //which is mapped to its partner function on our controller class
-    });
     if(cursors.up.isDown && !gamepad){
         player.body.x = 800;
         player.body.y = 300;
@@ -1301,6 +1294,17 @@ function checkOverlapPortalHub(player, portalHub) {
             level = 5;
             level4 = true
         }
+        $.ajax({
+            type: "POST",
+            data: {
+                score: score,
+                coins: coins,
+                health: health,
+                map: level,
+                potions: potions
+            },
+            url: "/saveStateAfterClearingMap" //which is mapped to its partner function on our controller class
+        });
     }
     else if(gamepad && gamepad.buttons[config.UP].pressed){
         player.body.x = 800;
