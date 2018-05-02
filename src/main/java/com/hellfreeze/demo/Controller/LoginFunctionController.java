@@ -78,6 +78,9 @@ public class LoginFunctionController {
         return "success";
     }
 
+    @GetMapping("/story")
+    public String storyPage() { return "story"; }
+
     @GetMapping("/getPlayerStats")
     @ResponseBody
     public HashMap<String,String> getPlayerStats(HttpServletRequest request){

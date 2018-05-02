@@ -5,15 +5,30 @@ body {
     text-align: center;
 }
 
-#statBar {
-    margin-left: 13%;
+#h1 {
+    font-size: 100px;
 }
 
-#button {
-    padding-left: 70%;
+.story{
+    font-size: 24px;
+    margin: 0 10px;
 }
-#smallEmptySpace{
+
+#makers{
+    font-size: 17px;
+    list-style-type: none;
+}
+
+#specialThanks{
+    font-size: 17px;
+}
+
+.smallEmptySpace{
     height: 20px;
+}
+
+.emptySpace{
+    height: 60px;
 }
 
 a:link {
