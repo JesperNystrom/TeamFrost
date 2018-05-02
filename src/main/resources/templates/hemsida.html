@@ -31,6 +31,7 @@
 </head>
 <body>
 <h4 th:text="'INLOGGAD SOM ' + ${#httpServletRequest.remoteUser}"></h4>
+<a href="/story">STORY</a>
 <a href="/highscores">HIGHSCORES</a>
 <div id="button">
 <form th:action="@{/logout}" method="post">
