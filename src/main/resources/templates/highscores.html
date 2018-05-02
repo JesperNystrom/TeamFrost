@@ -6,8 +6,6 @@
 </head>
 <body>
 <h1>All highscores</h1>
-<div th:each="highscore : ${highscores}" th:text="${highscore.totalScore}">
-
-</div>
+<div th:each="highscore : ${highscores}" th:text="${highscore.totalScore}"></div>
 </body>
 </html>
