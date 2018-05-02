@@ -3,11 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <title>Highscores</title>
+    <link rel="stylesheet" href="/css/highscore.css">
 </head>
 <body>
-<h1>All highscores</h1>
+    <div id="emptySpace"></div>
+<h1>ALL HIGHSCORES</h1>
 <div th:each="highscore : ${highscores}" th:text="${highscore.totalScore}">
 
 </div>
+
+<a href="/hemsida.html"> BACK TO GAME </a>
+
 </body>
 </html>

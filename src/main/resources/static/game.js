@@ -207,7 +207,7 @@ function create() {
     //Portal
     portalHub = this.physics.add.sprite(10816, 1550, 'portals');
     portalHub1 = this.physics.add.sprite(20704, 1856, 'portals');
-    portalHub2 = this.physics.add.sprite(44992, 500, 'portals');
+    portalHub2 = this.physics.add.sprite(45088, 320, 'portals');
     portalHub3 = this.physics.add.sprite(62816, 2600, 'portals');
     portalHub4 = this.physics.add.sprite(65024, 1024, 'portals');
 

@@ -1,0 +1,10 @@
+body {
+    background-color: rgb(10, 10, 10);
+    font-family: "Press Start Regular";
+    color: white;
+    text-align: center;
+}
+
+#emptySpace{
+    height: 200px;
+}
