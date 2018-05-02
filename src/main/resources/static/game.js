@@ -291,9 +291,11 @@ function create() {
     this.physics.add.collider(flurryEnemies, layer);
     //this.physics.add.collider(ghostEnemies, layer);
     this.physics.add.collider(impEnemies, layer);
+    this.physics.add.collider(impEnemies, impEnemies);
+    this.physics.add.collider(zombieEnemies, layer);
+    this.physics.add.collider(zombieEnemies, zombieEnemies);
     this.physics.add.collider(wraithEnemies, layer);
     this.physics.add.collider(yetiEnemies, layer);
-    this.physics.add.collider(zombieEnemies, layer);
     this.physics.add.collider(zirla, layer);
     this.physics.add.collider(innKeeper, layer);
     this.physics.add.collider(portalHub, layer);
@@ -912,13 +914,13 @@ function update() {
     var yetiEnemy = yetiEnemies.getChildren();
     for (child of yetiEnemy) {
         child.anims.play('yeti', true);
-        var distanceY = child.body.y + 500;
+        var distanceY = child.body.y - 500;
         var distanceX = child.body.x - player.body.x;
-        if (Math.abs(distanceX) < 1500 && player.body.x < child.body.x && distanceY > player.body.y) {
+        if (Math.abs(distanceX) < 1500 && player.body.x < child.body.x && distanceY < player.body.y) {
             child.flipX = false;
             child.setVelocityX(-450);
         }
-        else if (Math.abs(distanceX) < 1500 && player.body.x > child.body.x && distanceY > player.body.y) {
+        else if (Math.abs(distanceX) < 1500 && player.body.x > child.body.x && distanceY < player.body.y) {
             child.flipX = true;
             child.setVelocityX(450);
         }
