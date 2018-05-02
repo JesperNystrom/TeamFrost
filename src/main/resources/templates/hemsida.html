@@ -29,6 +29,7 @@
 </head>
 <body>
 <h4 th:text="'Inloggad som ' + ${#httpServletRequest.remoteUser}"></h4>
+<a href="/highscores">Highscores</a>
 <form th:action="@{/logout}" method="post">
     <input type="submit" value="Logout"/>
     <div id="statBar">
@@ -37,6 +38,7 @@
         <span id="Score"></span>
     </div>
 </form>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src ="/game.js"></script>
 </body>
 </html>

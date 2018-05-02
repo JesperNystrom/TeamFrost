@@ -173,10 +173,22 @@ function preload() {
 function create() {
     spacefield = this.add.image(0, 0, 'bkGround');
     //Player health
-    health = 100;
-    coins = 0;
-    score = 0;
-    potions = 0;
+    // health = 100;
+    // coins = 0;
+    // score = 0;
+    // potions = 0;
+    $.ajax({
+        type: "GET",
+        url: "/getPlayerStats", //which is mapped to its partner function on our controller class
+        success: function (result) {
+            coins = parseInt(result["coins"]);
+            health = parseInt(result["health"]);
+            score = parseInt(result["score"]);
+            map = parseInt(result["map"]);
+            potions = parseInt(result["potions"]);
+            weapon = parseInt(result["weapon"]);
+        }
+    });
 
     //Background
     snowfield = this.add.tileSprite(0, 0, 1137, 640, 'background');
@@ -355,6 +367,16 @@ function create() {
                 shopActive = false;
                 shopPointer.destroy();
                 shop.destroy();
+                $.ajax({
+                    type: "POST",
+                    data: {
+                        //Add outfit: outfit, later
+                        coins: coins,
+                        weapon: weapon,
+                        potions: potions
+                    },
+                    url: "/saveStateAfterPurchase" //which is mapped to its partner function on our controller class
+                });
             }
                 
         }
@@ -649,6 +671,16 @@ function create() {
                         shopActive = false;
                         shopPointer.destroy();
                         shop.destroy();
+                        $.ajax({
+                            type: "POST",
+                            data: {
+                                //Add outfit: outfit, later
+                                coins: coins,
+                                weapon: weapon,
+                                potions: potions
+                            },
+                            url: "/saveStateAfterPurchase" //which is mapped to its partner function on our controller class
+                        });
                     }
                     break;
                 case config.CIRCLE:
@@ -1192,6 +1224,17 @@ function onEvent() {
 
 //Portal overlaps
 function checkOverlapPortalHub(player, portalHub) {
+    $.ajax({
+        type: "POST",
+        data: {
+            score: score,
+            coins: coins,
+            health: health,
+            map: map,
+            potions: potions
+        },
+        url: "/saveStateAfterClearingMap" //which is mapped to its partner function on our controller class
+    });
     if(cursors.up.isDown && !gamepad){
         player.body.x = 800;
         player.body.y = 300;

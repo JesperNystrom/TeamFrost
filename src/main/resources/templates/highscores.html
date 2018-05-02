@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Highscores</title>
+</head>
+<body>
+<h1>All highscores</h1>
+<div th:each="highscore : ${highscores}" th:text="${highscore.totalScore}">
+
+</div>
+</body>
+</html>

@@ -53,8 +53,8 @@ $.ajax({
     data: {
         //Add outfit: outfit, later
         coins: coins,
-        weapon: weapon,
-        potions: potions
+        potions: potions,
+        weapon: weapon
     },
     url: "/saveStateAfterPurchase" //which is mapped to its partner function on our controller class
 });
@@ -64,11 +64,11 @@ $.ajax({
     type: "GET",
     url: "/getPlayerStats", //which is mapped to its partner function on our controller class
     success: function (result) {
-        coins = ["coins"];
+        coins = result["coins"];
         health = result["health"];
-        score = ["score"];
+        score = result["score"];
         map = result["map"];
-        potions = ["potions"];
-        weapon = ["weapon"];
+        potions = result["potions"];
+        weapon = result["weapon"];
     }
 });

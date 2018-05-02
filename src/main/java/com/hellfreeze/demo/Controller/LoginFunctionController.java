@@ -14,7 +14,9 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 
 @Controller
@@ -59,6 +61,16 @@ public class LoginFunctionController {
         return "hemsida";
     }
 
+    @GetMapping("/highscores")
+    public ModelAndView highscorePage(){
+
+        List<Highscore> highscores = new ArrayList<>();
+        highscores = (List<Highscore>) highscoreRepository.findAll();
+
+        return new ModelAndView("highscores")
+                .addObject("highscores",highscores);
+    }
+
     @GetMapping("/success")
     public String successPage(){
         return "success";
@@ -96,7 +108,7 @@ public class LoginFunctionController {
         String score = "" + player.getScore();
         String map = "" + player.getGameMap().getGameMapID();
         String potions = "" + inventory.getHealthPotion();
-        String weapon = "" + inventory.getMeleeWeapon();
+        String weapon = "" + inventory.getMeleeWeapon().getMeleeWeaponID();
 
         playerStats.put("coins",coins);
         playerStats.put("health",health);
