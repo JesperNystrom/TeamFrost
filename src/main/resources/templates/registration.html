@@ -15,7 +15,7 @@
     EMAIL <input type="text" th:field="*{email}" required="required"/>
     <input type="submit" value="Submit"/>
     <p th:if="${#fields.hasErrors('gameUserName')}">USERNAME MUST BE BETWEEN 2 AND 60 CHARACTERS</p>
-    <p th:if="${#fields.hasErrors('password')}">PASSWORD MUST BE BETWEEN 2 ABD 60 CHARACTERS</p>
+    <p th:if="${#fields.hasErrors('password')}">PASSWORD MUST BE BETWEEN 2 AND 60 CHARACTERS</p>
     <p th:if="${#fields.hasErrors('email')}">INVALID EMAIL ADDRESS</p>
 
 
