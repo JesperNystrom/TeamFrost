@@ -39,10 +39,14 @@ var value;
 var potions;
 var health;
 var healthValue = 100;
-var enemyHealth = 100;
-//var healthBar;
-var healthText;
+var enemyHealth = 20;
+var yetiHealth = 200;
 var map;
+var level1 = false;
+var level2 = false;
+var level3 = false;
+var level4 = false;
+var level;
 var spacefield;
 var backgroundv;
 var timedEvent;
@@ -184,7 +188,7 @@ function create() {
             coins = parseInt(result["coins"]);
             health = parseInt(result["health"]);
             score = parseInt(result["score"]);
-            map = parseInt(result["map"]);
+            level = parseInt(result["map"]);
             potions = parseInt(result["potions"]);
             weapon = parseInt(result["weapon"]);
         }
@@ -221,7 +225,6 @@ function create() {
     //Create healthBar
     /* healthBar = this.add.image(this.width/2, this.height/2, 'healthBar');
     Phaser.Display.Align.In.TopLeft(spacefield, healthBar); */
-    healthText = this.add.text(16, 16, 'Health: 100', { fontSize: '32px', fill: '#999' });
 
     //Create Innkeeper and Coins
     innKeeper = this.physics.add.sprite(1200, 340, 'innKeeper');
@@ -249,7 +252,7 @@ function create() {
     for (enemyType of enemiesArray) {
         switch (enemyIndex) {
             case 15:
-                enemyName = 'enemyImp'
+                enemyName = 'enemyImp'   
                 break;
             case 16:
                 enemyName = 'enemyGhost'
@@ -291,11 +294,13 @@ function create() {
     this.physics.add.collider(player, layer);
     this.physics.add.collider(coinBags, layer);
     this.physics.add.collider(flurryEnemies, layer);
-    this.physics.add.collider(ghostEnemies, layer);
+    //this.physics.add.collider(ghostEnemies, layer);
     this.physics.add.collider(impEnemies, layer);
+    this.physics.add.collider(impEnemies, impEnemies);
+    this.physics.add.collider(zombieEnemies, layer);
+    this.physics.add.collider(zombieEnemies, zombieEnemies);
     this.physics.add.collider(wraithEnemies, layer);
     this.physics.add.collider(yetiEnemies, layer);
-    this.physics.add.collider(zombieEnemies, layer);
     this.physics.add.collider(zirla, layer);
     this.physics.add.collider(innKeeper, layer);
     this.physics.add.collider(portalHub, layer);
@@ -308,6 +313,8 @@ function create() {
     this.physics.add.collider(portal2, layer);
     this.physics.add.collider(portal3, layer);
     this.physics.add.collider(portal4, layer);
+
+    
 
     //CHECKING FOR SHOP AND COINS
     shopActive = false;
@@ -328,7 +335,7 @@ function create() {
     this.physics.add.overlap(weaponHitBox, ghostEnemies, checkOverlapHitBox, null, this);
     this.physics.add.overlap(weaponHitBox, impEnemies, checkOverlapHitBox, null, this);
     this.physics.add.overlap(weaponHitBox, wraithEnemies, checkOverlapHitBox, null, this);
-    this.physics.add.overlap(weaponHitBox, yetiEnemies, checkOverlapHitBox, null, this);
+    this.physics.add.overlap(weaponHitBox, yetiEnemies, checkOverlapHitBoxYeti, null, this);
     this.physics.add.overlap(weaponHitBox, zombieEnemies, checkOverlapHitBox, null, this);
     this.physics.add.overlap(weaponHitBox, zirla, checkOverlapHitBox, null, this);
     this.physics.add.overlap(player, portalHub, checkOverlapPortalHub, null, this);
@@ -776,8 +783,6 @@ function update() {
     document.getElementById('Health').innerHTML = 'Health: ' + health;
     document.getElementById('Score').innerHTML = 'Score: ' + score;
     document.getElementById('Coins').innerHTML = 'Coins: ' + coins;
-    healthText.x = player.x - 550;
-    healthText.y = player.y - 275;
 
     if (!player.body.onFloor()) {
         fallBuffert--;
@@ -844,14 +849,35 @@ function update() {
     var ghostEnemy = ghostEnemies.getChildren();
     for (child of ghostEnemy) {
         child.anims.play('ghost', true);
-        /*if (child.body.x < player.body.x) {
-            child.flipX = true;
-            child.setVelocityX(200);
+        if (child.body.x > player.body.x) {
+            if(child.body.x - 300 < player.body.x) {
+                if(child.body.y > player.body.y) {
+                    child.setVelocityY(-100);
+                } else if (child.body.y < player.body.y) {
+                    child.setVelocityY(100);
+                } 
+                child.setVelocityX(-180);
+            } 
+            else {
+            child.setVelocityX(0);
+            child.setVelocityY(-10);
+            }
+
+        } else {
+            if(child.body.x + 300 > player.body.x) {
+                if(child.body.y > player.body.y) {
+                    child.setVelocityY(-100); 
+                } else if (child.body.y < player.body.y) {
+                    child.setVelocityY(100);
+                }
+                child.setVelocityX(180);
+            }
+            else {
+            child.setVelocityX(0);
+            child.setVelocityY(-10);
+            }
+            
         }
-        else {
-            child.flipX = false;
-            child.setVelocityX(-200);
-        }*/
     }
 
     //Imp
@@ -893,13 +919,13 @@ function update() {
     var yetiEnemy = yetiEnemies.getChildren();
     for (child of yetiEnemy) {
         child.anims.play('yeti', true);
-        var distanceY = child.body.y + 500;
+        var distanceY = child.body.y - 500;
         var distanceX = child.body.x - player.body.x;
-        if (Math.abs(distanceX) < 1500 && player.body.x < child.body.x && distanceY > player.body.y) {
+        if (Math.abs(distanceX) < 1500 && player.body.x < child.body.x && distanceY < player.body.y) {
             child.flipX = false;
             child.setVelocityX(-450);
         }
-        else if (Math.abs(distanceX) < 1500 && player.body.x > child.body.x && distanceY > player.body.y) {
+        else if (Math.abs(distanceX) < 1500 && player.body.x > child.body.x && distanceY < player.body.y) {
             child.flipX = true;
             child.setVelocityX(450);
         }
@@ -1105,6 +1131,26 @@ function update() {
     if (cursors.right.isDown)
         gamepad = false;
     //CONTROL END
+    if(health == 0){
+        $.ajax({
+            type: "POST",
+            data: {
+                score: score
+            },
+            url: "/setHighscore" //which is mapped to its partner function on our controller class
+        });
+        //create new player
+        $.ajax({
+            type: "GET",
+            url: "/resetPlayer" //which is mapped to its partner function on our controller class
+        });
+        health = -1;
+        setTimeout(function () {
+            location.reload();
+        }, 1000);
+        
+    }
+
 
     //Music Changer
     var songs = [
@@ -1229,20 +1275,36 @@ function onEvent() {
 
 //Portal overlaps
 function checkOverlapPortalHub(player, portalHub) {
-    $.ajax({
-        type: "POST",
-        data: {
-            score: score,
-            coins: coins,
-            health: health,
-            map: map,
-            potions: potions
-        },
-        url: "/saveStateAfterClearingMap" //which is mapped to its partner function on our controller class
-    });
     if(cursors.up.isDown && !gamepad){
         player.body.x = 800;
         player.body.y = 300;
+        if(level ==  1 && level1 == false){
+            level = 2;
+            level1 = true
+        }
+        else if(level ==  2 && level1 == true){
+            level = 3;
+            level2 = true
+        }
+        else if(level ==  3 && level2 == true){
+            level = 4;
+            level3 = true
+        }
+        else if(level ==  4 && level3 == true){
+            level = 5;
+            level4 = true
+        }
+        $.ajax({
+            type: "POST",
+            data: {
+                score: score,
+                coins: coins,
+                health: health,
+                map: level,
+                potions: potions
+            },
+            url: "/saveStateAfterClearingMap" //which is mapped to its partner function on our controller class
+        });
     }
     else if(gamepad && gamepad.buttons[config.UP].pressed){
         player.body.x = 800;
@@ -1261,48 +1323,66 @@ function checkOverlapPortal(player, portal) {
     }
 }
 function checkOverlapPortal1(player, portal1) {
-    if (cursors.up.isDown && !gamepad) {
+    if (cursors.up.isDown && !gamepad && weapon > 1 && level > 1) {
         player.body.x = 13120;
         player.body.y = 250;
     }
-    else if(gamepad && gamepad.buttons[config.UP].pressed){
+    else if(gamepad && gamepad.buttons[config.UP].pressed && weapon > 1 && level > 1){
         player.body.x = 13120;
         player.body.y = 250;
     }
 }
 function checkOverlapPortal2(player, portal2) {
-    if (cursors.up.isDown && !gamepad) {
+    if (cursors.up.isDown && !gamepad && level > 2 && weapon > 2) {
         player.body.x = 27328;
         player.body.y = 380;
     }
-    else if(gamepad && gamepad.buttons[config.UP].pressed){
+    else if(gamepad && gamepad.buttons[config.UP].pressed && level > 2 && weapon > 2){
         player.body.x = 27328;
         player.body.y = 380;
     }
 }
 function checkOverlapPortal3(player, portal3) {
 
-    if (cursors.up.isDown && !gamepad) {
+    if (cursors.up.isDown && !gamepad && level > 3 && weapon > 2) {
         player.body.x = 48320;
         player.body.y = 120;
     }
-    else if(gamepad && gamepad.buttons[config.UP].pressed){
+    else if(gamepad && gamepad.buttons[config.UP].pressed && level > 3 && weapon > 2){
         player.body.x = 48320;
         player.body.y = 120;
     }
 }
 function checkOverlapPortal4(player, portal4) {
 
-    if (cursors.up.isDown && !gamepad) {
+    if (cursors.up.isDown && !gamepad && level > 4 && weapon > 2) {
         player.body.x = 64832;
         player.body.y = 768;
     }
-    else if(gamepad && gamepad.buttons[config.UP].pressed){
+    else if(gamepad && gamepad.buttons[config.UP].pressed && level > 4 && weapon > 2){
         player.body.x = 64832;
         player.body.y = 768;
     }
 }
 //Hitbox overlap
+
+function checkOverlapHitBoxYeti(weaponHitBox, yetiEnemies) {
+    if(states == 'lightAttack') {
+    yetiHealth -=1;
+} else if (states == 'heavyAttack') {
+    yetiHealth -=3;
+}
+    if(yetiHealth <= 0){
+        yetiEnemies.disableBody(true, true);
+        value = setCoinValue(yetiEnemies);
+        points = setPointValue(yetiEnemies);
+        score += points;
+        coinBags.create(yetiEnemies.x, yetiEnemies.y, 'coin');
+        yetiHealth = 200;
+    }
+   
+}
+
 function checkOverlapHitBox(weaponHitBox, enemy) {
     if(states == 'lightAttack') {
     enemyHealth -=1;
@@ -1315,7 +1395,9 @@ function checkOverlapHitBox(weaponHitBox, enemy) {
         points = setPointValue(enemy);
         score += points;
         coinBags.create(enemy.x, enemy.y, 'coin');
+        enemyHealth = 20;
     }
+   
 }
 
 function setPointValue(enemy){
@@ -1366,14 +1448,12 @@ function checkOverlapPlayer(player, enemy) {
     states = 'hurt';
     player.setVelocityX(100);
     health -= 1;
-    healthText.setText('Health:' + health)
     setTimeout(function () {
     }, 3500);
     console.log(health);
     if (health <= 0) {
         player.disableBody(true, true);
     }
-    document.getElementById('Health').innerHTML = 'Health:' + health;
 }
 function checkOverlapInnkeeper(player, Innkeeper) {
     if(cursors.up.isDown && !shopActive && !gamepad){
