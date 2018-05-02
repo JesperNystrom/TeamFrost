@@ -32,6 +32,11 @@ var player;
 var weapon;
 var weaponHitBox;
 var enemies;
+var score;
+var coins;
+var coinBags;
+var value;
+var potions;
 var health;
 var healthValue = 100;
 var enemyHealth = 100;
@@ -49,7 +54,6 @@ var portal3;
 var portal4;
 var game = new Phaser.Game(config);
 var stamina;
-var potions;
 var shopActive;
 var musicTheme;
 var music1;
@@ -59,96 +63,97 @@ var music4;
 var changeMusic;
 
 function preload() {
-    this.load.image('bkGround', '../sprites/Background.png');
+    this.load.image('bkGround', '/sprites/Background.png');
     //Player sprites
-    this.load.spritesheet('playerRun', '../sprites/PlayerRun.png',
+    this.load.spritesheet('playerRun', '/sprites/PlayerRun.png',
         { frameWidth: 128, frameHeight: 140 });
-    this.load.spritesheet('playerIdle', '../sprites/PlayerIdle.png',
+    this.load.spritesheet('playerIdle', '/sprites/PlayerIdle.png',
         { frameWidth: 128, frameHeight: 140 });
-    this.load.spritesheet('playerHeavyAttack', '../sprites/PlayerHeavyAtk.png',
+    this.load.spritesheet('playerHeavyAttack', '/sprites/PlayerHeavyAtk.png',
         { frameWidth: 217, frameHeight: 187 });
-    this.load.spritesheet('playerLightAttack', '../sprites/PlayerLightAttack.png',
+    this.load.spritesheet('playerLightAttack', '/sprites/PlayerLightAttack.png',
         { frameWidth: 216, frameHeight: 135 });
-    this.load.spritesheet('playerGlide', '../sprites/PlayerGlide.png', //PlayerGlide.png
+    this.load.spritesheet('playerGlide', '/sprites/PlayerGlide.png', //PlayerGlide.png
         { frameWidth: 199, frameHeight: 168 });
-    this.load.spritesheet('playerJump', '../sprites/PlayerJump.png',
+    this.load.spritesheet('playerJump', '/sprites/PlayerJump.png',
         { frameWidth: 128, frameHeight: 140 });
-    this.load.spritesheet('playerFall', '../sprites/PlayerFall.png',
+    this.load.spritesheet('playerFall', '/sprites/PlayerFall.png',
         { frameWidth: 128, frameHeight: 150 });
-    this.load.spritesheet('playerWallGlide', '../sprites/PlayerWallGlide.png',
+    this.load.spritesheet('playerWallGlide', '/sprites/PlayerWallGlide.png',
         { frameWidth: 129, frameHeight: 210 });
-    this.load.spritesheet('playerHurt', '../sprites/PlayerHurt.png',
+    this.load.spritesheet('playerHurt', '/sprites/PlayerHurt.png',
         { frameWidth: 128, frameHeight: 140 });
-    this.load.spritesheet('playerDead', '../sprites/PlayerDead.png',
+    this.load.spritesheet('playerDead', '/sprites/PlayerDead.png',
         { frameWidth: 140, frameHeight: 153 });
 
     //Enemy sprites
-    this.load.spritesheet('enemyFlurry', '../sprites/EnemyFlurry.png',
+    this.load.spritesheet('enemyFlurry', '/sprites/EnemyFlurry.png',
         { frameWidth: 44, frameHeight: 40 });
-    this.load.spritesheet('enemyGhost', '../sprites/EnemyGhost.png',
+    this.load.spritesheet('enemyGhost', '/sprites/EnemyGhost.png',
         { frameWidth: 64, frameHeight: 100 });
-    this.load.spritesheet('enemyImp', '../sprites/EnemyImp.png',
+    this.load.spritesheet('enemyImp', '/sprites/EnemyImp.png',
         { frameWidth: 64, frameHeight: 64 });
-    this.load.spritesheet('enemyWraith', '../sprites/EnemyWraith.png',
+    this.load.spritesheet('enemyWraith', '/sprites/EnemyWraith.png',
         { frameWidth: 83, frameHeight: 164 });
-    this.load.spritesheet('enemyYeti', '../sprites/EnemyYeti.png',
+    this.load.spritesheet('enemyYeti', '/sprites/EnemyYeti.png',
         { frameWidth: 232, frameHeight: 236 });
-    this.load.spritesheet('enemyZombie', '../sprites/EnemyZombie.png',
+    this.load.spritesheet('enemyZombie', '/sprites/EnemyZombie.png',
         { frameWidth: 64, frameHeight: 128 });
 
     //Zirla sprites
-    this.load.spritesheet('zirlaMoving', '../sprites/ZirlaMoving_strip16.png',
+    this.load.spritesheet('zirlaMoving', '/sprites/ZirlaMoving_strip16.png',
         {frameWidth: 256, frameHeight: 256});
-    this.load.spritesheet('zirlaGlobeGlow', '../sprites/ZirlaGlobeGlow_strip15.png',
+    this.load.spritesheet('zirlaGlobeGlow', '/sprites/ZirlaGlobeGlow_strip15.png',
         {frameWidth: 256, frameHeight: 256});
-    this.load.spritesheet('zirlaHandRaise', '../sprites/ZirlaHandRaise_strip16.png',
+    this.load.spritesheet('zirlaHandRaise', '/sprites/ZirlaHandRaise_strip16.png',
         {frameWidth: 256, frameHeight: 256});
-    this.load.spritesheet('zirlaHit', '../sprites/ZirlaHit_strip3.png',
+    this.load.spritesheet('zirlaHit', '/sprites/ZirlaHit_strip3.png',
         {frameWidth: 256, frameHeight: 256});
-    this.load.spritesheet('zirlaDefeated', '../sprites/ZirlaDefeated.png',
+    this.load.spritesheet('zirlaDefeated', '/sprites/ZirlaDefeated.png',
         {frameWidth: 256, frameHeight: 256});
 
     //Npc Sprites
-    this.load.spritesheet('innKeeper', '../sprites/InnKeeper.png',
+    this.load.spritesheet('innKeeper', '/sprites/InnKeeper.png',
         { frameWidth: 384, frameHeight: 256 });
-    this.load.image('shopWindow', '../sprites/ShopWindow.png');
-    this.load.image('shopPointer', '../sprites/ShopPointer.png');
+    this.load.image('shopWindow', '/sprites/ShopWindow.png');
+    this.load.image('shopPointer', '/sprites/ShopPointer.png');
+    this.load.image('coin', '/sprites/Coins.png');
+    this.load.spritesheet('potionWindow', '/sprites/PotionWindow.png',
+        { frameWidth:64, frameHeight: 64 });
 
-    //Background
-    this.load.image('background', '../sprites/testBackground.png');
-    
+    this.load.image('background', '/sprites/testBackground.png');
     //LOAD TERRAIN
-    this.load.image('tiles', '../sprites/TileSetComplete.png');
-    this.load.tilemapCSV('map', '../maps/World.csv');
-    this.load.image('portalTest', '../sprites/WeaponHitboxTest.png');
+    this.load.image('tiles', '/sprites/TileSetComplete.png');
+    this.load.tilemapCSV('map', '/maps/World.csv');
+    this.load.image('portalTest', '/sprites/WeaponHitboxTest.png');
 
     //Weapon hitbox
-    this.load.image('weaponHitBox', '../sprites/WeaponHitBox.png');
-    this.load.image('portalTest', '../sprites/WeaponHitboxTest.png');
+    this.load.image('weaponHitBox', '/sprites/WeaponHitBox.png');
+    this.load.image('portalTest', '/sprites/WeaponHitboxTest.png');
 
     //Music
     this.load.audio('musicTheme', [
-        '../static/hubMusic.mp3'
+        '/HubMusic.mp3'
     ]);
 
     // this.load.audio('level1Music', [
-    //     '../static/Level1Music.mp3'
+    //     '/Level1Music.mp3'
     // ]);
 
     this.load.audio('level2Music', [
-        '../static/Level2Music.mp3'
+        '/Level2Music.mp3'
     ]);
 
     // this.load.audio('level3Music', [
-    //     '../static/Level3Music.mp3'
+    //     '/Level3Music.mp3'
     // ]);
 
     this.load.audio('level4Music', [
-        '../static/Level4Music.mp3'
+        '/Level4Music.mp3'
     ]);
 
     //Portals
-    this.load.spritesheet('portals', '../sprites/Port.png',
+    this.load.spritesheet('portals', '/sprites/Port.png',
         { frameWidth: 192, frameHeight: 256 });
 }
 
@@ -169,8 +174,9 @@ function create() {
     spacefield = this.add.image(0, 0, 'bkGround');
     //Player health
     health = 100;
-
-
+    coins = 0;
+    score = 0;
+    potions = 0;
 
     //Background
     snowfield = this.add.tileSprite(0, 0, 1137, 640, 'background');
@@ -205,8 +211,10 @@ function create() {
     Phaser.Display.Align.In.TopLeft(spacefield, healthBar); */
     healthText = this.add.text(16, 16, 'Health: 100', { fontSize: '32px', fill: '#999' });
 
-    //Create Innkeeper
-    innKeeper = this.physics.add.sprite(1200, 320, 'innKeeper');
+    //Create Innkeeper and Coins
+    innKeeper = this.physics.add.sprite(1200, 340, 'innKeeper');
+    coinBags = this.physics.add.group();
+    potionWindow = this.add.sprite(1089, 48, 'potionWindow').setScrollFactor(0);
 
     //Create Zirla
     zirla = this.physics.add.sprite(65792, 1344, 'zirlaMoving');
@@ -269,6 +277,7 @@ function create() {
 
     //Colliders
     this.physics.add.collider(player, layer);
+    this.physics.add.collider(coinBags, layer);
     this.physics.add.collider(flurryEnemies, layer);
     this.physics.add.collider(ghostEnemies, layer);
     this.physics.add.collider(impEnemies, layer);
@@ -288,9 +297,10 @@ function create() {
     this.physics.add.collider(portal3, layer);
     this.physics.add.collider(portal4, layer);
 
-    //CHECKING FOR SHOP-------------------------------------------------------
+    //CHECKING FOR SHOP AND COINS
     shopActive = false;
     this.physics.add.overlap(player, innKeeper, checkOverlapInnkeeper, null, this);
+    this.physics.add.overlap(player, coinBags, checkOverlapCoinBags, null, this);
 
     //Damage
     //this.physics.add.overlap(player, flurryEnemies, checkOverlapPlayer, null, this);
@@ -328,14 +338,89 @@ function create() {
     key_X = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.X);
     key_Z = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z);
     key_jump = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
-
+   
+    //Shopcontrols  //327 = Hammer Upgrade   ||   375 = HP-pot   ||   279 = gemShop || 231=exit
+    key_BUY = this.input.keyboard.on('keydown_SPACE', function (event) {
+        if(shopActive){
+            if(shopPointer.y == 231 && coins >= 20 && potions < 5){
+                coins -=20;
+                potions += 1;
+            }
+            else if(shopPointer.y == 279 && coins >= 40){
+                coins -=40;
+            }
+            else if(shopPointer.y == 327)
+                console.log('Goto gem shop')
+            else if(shopPointer.y == 375){
+                shopActive = false;
+                shopPointer.destroy();
+                shop.destroy();
+            }
+                
+        }
+    });
+    key_UP = this.input.keyboard.on('keydown_UP', function (event) {
+        if(shopActive && shopPointer.y != 231){
+            shopPointer.y -= 48;
+        }
+    });
+    key_DOWN = this.input.keyboard.on('keydown_DOWN', function (event) {
+        if(shopActive && shopPointer.y != 375){
+            shopPointer.y += 48;
+        }
+    });
+    key_drinkPotion = this.input.keyboard.on('keydown_C', function(event){
+        if(potions > 0 && health < 100){
+            potions -=1;
+            if(health <= 75)
+                health += 25;
+            else
+                health = 100;
+        }
+    })
 
     //Camera
     this.cameras.main.setSize(1137, 640);
     //this.cameras.add(400,0);
     this.cameras.main.startFollow(player);
 
-
+    //Animations for potions
+    this.anims.create({
+        key: 'potion0',
+        frames: this.anims.generateFrameNumbers('potionWindow', { start: 0, end: 0 }),
+        frameRate: 20,
+        repeat: 1
+    });
+    this.anims.create({
+        key: 'potion1',
+        frames: this.anims.generateFrameNumbers('potionWindow', { start: 1, end: 1 }),
+        frameRate: 20,
+        repeat: 1
+    });
+    this.anims.create({
+        key: 'potion2',
+        frames: this.anims.generateFrameNumbers('potionWindow', { start: 2, end: 2 }),
+        frameRate: 20,
+        repeat: 1
+    });
+    this.anims.create({
+        key: 'potion3',
+        frames: this.anims.generateFrameNumbers('potionWindow', { start: 3, end: 3 }),
+        frameRate: 20,
+        repeat: 1
+    });
+    this.anims.create({
+        key: 'potion4',
+        frames: this.anims.generateFrameNumbers('potionWindow', { start: 4, end: 4 }),
+        frameRate: 20,
+        repeat: 1
+    });
+    this.anims.create({
+        key: 'potion5',
+        frames: this.anims.generateFrameNumbers('potionWindow', { start: 5, end: 5 }),
+        frameRate: 20,
+        repeat: 1
+    });
     //Animations for player
     this.anims.create({
         key: 'lightAttack',
@@ -536,11 +621,48 @@ function create() {
         repeat: 0
     });
 
-    //GAMEPAD TESTING
+    //GAMEPAD ENABLEING
     config = Phaser.Input.Gamepad.Configs.DUALSHOCK_4;
     this.input.gamepad.on('down', function (pad, button, value, data) {
         gamepad = pad;
-    });
+            switch (button.index)
+            {
+                case config.UP:
+                    if(shopActive && shopPointer.y != 231)
+                        shopPointer.y -= 48;
+                    break;
+
+                case config.DOWN:
+                    if(shopActive && shopPointer.y != 375)
+                    shopPointer.y += 48;
+                    break;
+                case config.X:
+                    if(shopActive && shopPointer.y == 231 && coins >= 20 && potions < 5){
+                        coins -=20;
+                        potions += 1;
+                    }
+                    else if(shopActive && shopPointer.y == 279 && coins >= 40)
+                        coins -=40;
+                    else if(shopActive && shopPointer.y == 327)
+                        console.log('Goto gem shop')
+                    else if(shopActive && shopPointer.y == 375){
+                        shopActive = false;
+                        shopPointer.destroy();
+                        shop.destroy();
+                    }
+                    break;
+                case config.CIRCLE:
+                    if(potions > 0 && health < 100){
+                        potions -=1;
+                        if(health <= 75)
+                            health += 25;
+                        else
+                            health = 100;
+                    }   
+                    break;
+            }
+        });
+
 
     //Music
     musicTheme = this.sound.add('musicTheme');
@@ -562,6 +684,27 @@ function create() {
 }
 
 function update() {
+    switch(potions){
+        case 0:
+            potionWindow.anims.play('potion0', true);
+            break;
+        case 1:
+            potionWindow.anims.play('potion1', true);
+            break;
+        case 2:
+            potionWindow.anims.play('potion2', true);
+            break;
+        case 3:
+            potionWindow.anims.play('potion3', true);
+            break;
+        case 4:
+            potionWindow.anims.play('potion4', true);
+            break;
+        case 5:
+            potionWindow.anims.play('potion5', true);
+            break;
+    }
+
     innKeeper.anims.play('keeper', true);
     zirla.anims.play('zirlaMove', true);
     portalHub.anims.play('portalHub', true);
@@ -579,9 +722,11 @@ function update() {
         stamina++;
 
     //console.log(player.body.y);
+    //Limit fall speed
     if(player.body.velocity.y > 900)
         player.body.velocity.y = 900;
-    if (player.body.y >= 3200)
+    //Falling = death
+    if(player.body.y >= 3200)
         player.disableBody(true, true);
 
     innKeeper.anims.play('keeper', true);
@@ -591,7 +736,9 @@ function update() {
     snowfield.y = player.y;
     snowfield.tilePositionY -= 2;
 
-    document.getElementById('Health').innerHTML = 'Health:' + health;
+    document.getElementById('Health').innerHTML = 'Health: ' + health;
+    document.getElementById('Score').innerHTML = 'Score: ' + score;
+    document.getElementById('Coins').innerHTML = 'Coins: ' + coins;
     healthText.x = player.x - 550;
     healthText.y = player.y - 275;
 
@@ -863,7 +1010,7 @@ function update() {
             checkAttackState('idle', 0.5, 0.5);
             player.setVelocityX(0);
         }
-        if (gamepad.buttons[config.SQUARE].pressed && !gamepad.buttons[config.R1].pressed) {
+        if (gamepad.buttons[config.SQUARE].pressed && !gamepad.buttons[config.R1].pressed && stamina >= 40) {
             stamina -= 41;
             if (player.flipX) {
                 checkAttackState('lightAttack', 0.7, 0.5);
@@ -876,7 +1023,7 @@ function update() {
             });
         }
 
-        if (gamepad.buttons[config.TRIANGLE].pressed && !gamepad.buttons[config.R1].pressed) {
+        if (gamepad.buttons[config.TRIANGLE].pressed && !gamepad.buttons[config.R1].pressed && stamina >= 80) {
             stamina -= 50;
             if (player.flipX) {
                 checkAttackState('heavyAttack', 0.7, 0.62);
@@ -905,22 +1052,17 @@ function update() {
         if (gamepad.buttons[config.UP].pressed && gamepad.buttons[config.R1].pressed && player.body.onWall()) {
             if (player.flipX) {
                 checkAttackState('wallGlide', 0.3, 0.5);
+                player.setVelocityX(-10)
             } else {
                 checkAttackState('wallGlide', 0.7, 0.5);
+                player.setVelocityX(10)
             }
             if (states != 'lightAttack' && states != 'heavyAttack')
                 player.setVelocityY(-400);
         }
     }
     } else {
-        console.log(shopPointer.y);
-        if(cursors.down.isDown && shopPointer.y != 375)
-            shopPointer.y += 48;
-        else if(cursors.up.isDown && shopPointer.y != 231)
-            shopPointer.y -= 48;
-
-        if(key_jump.isDown && shopPointer.y == 231)
-            console.log('You bought a potion!')
+    
     }
 
     if (cursors.right.isDown)
@@ -1050,38 +1192,64 @@ function onEvent() {
 
 //Portal overlaps
 function checkOverlapPortalHub(player, portalHub) {
-    if(cursors.up.isDown){
-    player.body.x = 800;
-    player.body.y = 300;
+    if(cursors.up.isDown && !gamepad){
+        player.body.x = 800;
+        player.body.y = 300;
+    }
+    else if(gamepad && gamepad.buttons[config.UP].pressed){
+        player.body.x = 800;
+        player.body.y = 300;
     }
 }
 
 function checkOverlapPortal(player, portal) {
-    if (cursors.up.isDown) {
+    if (cursors.up.isDown && !gamepad) {
+        player.body.x = 7680;
+        player.body.y = 120;
+    }
+    else if(gamepad && gamepad.buttons[config.UP].pressed){
         player.body.x = 7680;
         player.body.y = 120;
     }
 }
 function checkOverlapPortal1(player, portal1) {
-    if (cursors.up.isDown) {
+    if (cursors.up.isDown && !gamepad) {
+        player.body.x = 13120;
+        player.body.y = 250;
+    }
+    else if(gamepad && gamepad.buttons[config.UP].pressed){
         player.body.x = 13120;
         player.body.y = 250;
     }
 }
 function checkOverlapPortal2(player, portal2) {
-    if (cursors.up.isDown) {
+    if (cursors.up.isDown && !gamepad) {
+        player.body.x = 27328;
+        player.body.y = 380;
+    }
+    else if(gamepad && gamepad.buttons[config.UP].pressed){
         player.body.x = 27328;
         player.body.y = 380;
     }
 }
 function checkOverlapPortal3(player, portal3) {
-    if (cursors.up.isDown) {
+
+    if (cursors.up.isDown && !gamepad) {
+        player.body.x = 48320;
+        player.body.y = 120;
+    }
+    else if(gamepad && gamepad.buttons[config.UP].pressed){
         player.body.x = 48320;
         player.body.y = 120;
     }
 }
 function checkOverlapPortal4(player, portal4) {
-    if (cursors.up.isDown) {
+
+    if (cursors.up.isDown && !gamepad) {
+        player.body.x = 64832;
+        player.body.y = 768;
+    }
+    else if(gamepad && gamepad.buttons[config.UP].pressed){
         player.body.x = 64832;
         player.body.y = 768;
     }
@@ -1093,8 +1261,55 @@ function checkOverlapHitBox(weaponHitBox, enemy) {
 } else if (states == 'heavyAttack') {
     enemyHealth -=3;
 }
-    if(enemyHealth <= 0)
-    enemy.disableBody(true, true);
+    if(enemyHealth <= 0){
+        enemy.disableBody(true, true);
+        value = setCoinValue(enemy);
+        points = setPointValue(enemy);
+        score += points;
+        coinBags.create(enemy.x, enemy.y, 'coin');
+    }
+}
+
+function setPointValue(enemy){
+    var enemyType = enemy.anims.currentAnim.key
+    switch(enemyType){
+        case 'imp':
+            return 50;
+            break;
+        case 'ghost':
+            return 70;
+            break;
+        case 'zombie':
+            return 100;
+            break;
+        case 'yeti':
+            return 500;
+            break;
+        case 'wraith':
+            return 100;
+            break;
+    }
+}
+
+function setCoinValue(enemy){
+    var enemyType = enemy.anims.currentAnim.key
+    switch(enemyType){
+        case 'imp':
+            return 20;
+            break;
+        case 'ghost':
+            return 20;
+            break;
+        case 'zombie':
+            return 40;
+            break;
+        case 'yeti':
+            return 100;
+            break;
+        case 'wraith':
+            return 40;
+            break;
+    }
 }
 
 //Enemy player overlap
@@ -1113,21 +1328,28 @@ function checkOverlapPlayer(player, enemy) {
     document.getElementById('Health').innerHTML = 'Health:' + health;
 }
 function checkOverlapInnkeeper(player, Innkeeper) {
-    if(cursors.up.isDown && shopActive == false){
+    if(cursors.up.isDown && !shopActive && !gamepad){
+        states = 'idle';
+        player.setVelocityX(0);
         shopActive = true;
         shop = this.add.image(innKeeper.x, innKeeper.y, 'shopWindow');
         shopPointer = this.add.image(shop.x+130, shop.y-103, 'shopPointer');
-        shopping();
 
-    } //shop.y -55 = Hammer Upgrade   ||   shop.y-103 = HP-pot   ||   shop.y-8 = gemShop ||shop.y+40=exit
+    }
+    else if(gamepad && gamepad.buttons[config.UP].pressed && !shopActive){
+        states = 'idle';
+        player.setVelocityX(0);
+        shopActive = true;
+        shop = this.add.image(innKeeper.x, innKeeper.y, 'shopWindow');
+        shopPointer = this.add.image(shop.x+130, shop.y-103, 'shopPointer');
+    }
+}
+function checkOverlapCoinBags(player, coinbag) {
+    coinbag.disableBody(true, true);
+    coins += value;
 }
 
-function shopping(){
-    if(cursors.up.isDown)
-        console.log('hej')
-}
-
-function checkAttackState(newState, xOrigin, yOrigin) {
+function checkAttackState(newState, xOrigin, yOrigin){
     goIntoState = newState
     if (states == 'lightAttack' && goIntoState != 'lightAttack') {
         setTimeout(function () {
