@@ -41,6 +41,8 @@ var health;
 var healthValue = 100;
 var enemyHealth = 20;
 var yetiHealth = 200;
+var zirla;
+var zirlaHealth = 200;
 var map;
 var level1 = false;
 var level2 = false;
@@ -232,7 +234,8 @@ function create() {
     potionWindow = this.add.sprite(1089, 48, 'potionWindow').setScrollFactor(0);
 
     //Create Zirla
-    zirla = this.physics.add.sprite(65792, 1344, 'zirlaMoving');
+    //1059,39
+    zirla = this.physics.add.sprite(67600, 2450, 'zirlaMoving');
     zirla.body.setSize(256, 256);
 
     //Create Enemies
@@ -242,7 +245,6 @@ function create() {
     wraithEnemies = this.physics.add.group();
     yetiEnemies = this.physics.add.group();
     zombieEnemies = this.physics.add.group();
-    zirlaEnemies = this.physics.add.group();
 
     //imp = 15, ghost = 16, flurr = 17 , Zombie == 18, yeti = 19, wraith = 20 
     var enemiesArray = [impEnemies, ghostEnemies, flurryEnemies,
@@ -337,7 +339,7 @@ function create() {
     this.physics.add.overlap(weaponHitBox, wraithEnemies, checkOverlapHitBox, null, this);
     this.physics.add.overlap(weaponHitBox, yetiEnemies, checkOverlapHitBoxYeti, null, this);
     this.physics.add.overlap(weaponHitBox, zombieEnemies, checkOverlapHitBox, null, this);
-    this.physics.add.overlap(weaponHitBox, zirla, checkOverlapHitBox, null, this);
+    this.physics.add.overlap(weaponHitBox, zirla, checkOverlapHitBoxZirla, null, this);
     this.physics.add.overlap(player, portalHub, checkOverlapPortalHub, null, this);
     this.physics.add.overlap(player, portalHub1, checkOverlapPortalHub, null, this);
     this.physics.add.overlap(player, portalHub2, checkOverlapPortalHub, null, this);
@@ -616,6 +618,7 @@ function create() {
         repeat: 1
     });
 
+    //Zirla
     this.anims.create({
         key: 'zirlaMove',
         frames: this.anims.generateFrameNumbers('zirlaMoving', { start: 0, end: 15 }),
@@ -726,6 +729,7 @@ function create() {
 }
 
 function update() {
+
     switch(potions){
         case 0:
             potionWindow.anims.play('potion0', true);
@@ -952,23 +956,38 @@ function update() {
     }
 
      //Zirla
-     var zirlaEnemy = zirlaEnemies.getChildren();
-     for (child of zirlaEnemy) {
-         child.anims.play('zirlaMove', true);
-         var distanceY = child.body.y + 500;
-         var distanceX = child.body.x - player.body.x;
-         if (Math.abs(distanceX) < 650 && player.body.x < child.body.x && distanceY > player.body.y) {
-             child.flipX = false;
-             child.setVelocityX(-20);
-         }
-         else if (Math.abs(distanceX) < 650 && player.body.x > child.body.x && distanceY > player.body.y) {
-             child.flipX = true;
-             child.setVelocityX(50);
-         }
-         else child.setVelocityX(0);
- 
-     }
+        if (zirla.body.x > player.body.x) {
+            if(zirla.body.x - 300 < player.body.x) {
+                if(zirla.body.y > player.body.y) {
+                    zirla.setVelocityY(-20);
+                } else if (zirla.body.y < player.body.y) {
+                    zirla.setVelocityY(20);
+                } 
+                zirla.setVelocityX(-20);
+            } 
+            else {
+            zirla.setVelocityX(0);
+            zirla.setVelocityY(-10);
+            }
 
+        } else {
+            if(zirla.body.x + 300 > player.body.x) {
+                if(zirla.body.y > player.body.y) {
+                    zirla.setVelocityY(-20); 
+                } else if (zirla.body.y < player.body.y) {
+                    zirla.setVelocityY(20);
+                }
+                zirla.setVelocityX(20);
+            }
+            else {
+            zirla.setVelocityX(0);
+            zirla.setVelocityY(-10);
+            }
+            
+        }
+    
+     
+ 
     //console.log(states)
     //CONTROLS
     if(!shopActive){
@@ -1208,7 +1227,12 @@ function update() {
             music4.resume({loop: true});
         }
     }
-   
+//console.log(zirlaHealth);
+    if(zirlaHealth <= 0) {
+        zirla.anims.play('zirlaDead', true);
+        zirla.setVelocityX(0);
+        //zirla.disableBody(true, true);
+    }
 }
 
 function onEvent() {
@@ -1270,6 +1294,8 @@ function onEvent() {
         }
 
     }
+       
+
 
 }
 
@@ -1365,6 +1391,15 @@ function checkOverlapPortal4(player, portal4) {
     }
 }
 //Hitbox overlap
+function checkOverlapHitBoxZirla(weaponHitBox, zirla) {
+    console.log(zirlaHealth);
+    if(states == 'lightAttack') {
+    zirlaHealth -=1;
+} else if (states == 'heavyAttack') {
+    zirlaHealth -=3;
+}
+   
+}
 
 function checkOverlapHitBoxYeti(weaponHitBox, yetiEnemies) {
     if(states == 'lightAttack') {
