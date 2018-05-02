@@ -1131,7 +1131,7 @@ function update() {
         if (player.body.velocity.y < 0) {
             checkAttackState('jump', 0.5, 0.5);
         }
-        if (gamepad.buttons[config.UP].pressed && gamepad.buttons[config.R1].pressed && player.body.onWall() && weapon < 2) {
+        if (gamepad.buttons[config.UP].pressed && gamepad.buttons[config.R1].pressed && player.body.onWall() && weapon > 2) {
             if (player.flipX) {
                 checkAttackState('wallGlide', 0.3, 0.5);
                 player.setVelocityX(-10)
@@ -1335,6 +1335,33 @@ function checkOverlapPortalHub(player, portalHub) {
     else if(gamepad && gamepad.buttons[config.UP].pressed){
         player.body.x = 800;
         player.body.y = 300;
+        if(level ==  1 && level1 == false){
+            level = 2;
+            level1 = true
+        }
+        else if(level ==  2 && level1 == true){
+            level = 3;
+            level2 = true
+        }
+        else if(level ==  3 && level2 == true){
+            level = 4;
+            level3 = true
+        }
+        else if(level ==  4 && level3 == true){
+            level = 5;
+            level4 = true
+        }
+        $.ajax({
+            type: "POST",
+            data: {
+                score: score,
+                coins: coins,
+                health: health,
+                map: level,
+                potions: potions
+            },
+            url: "/saveStateAfterClearingMap" //which is mapped to its partner function on our controller class
+        });
     }
 }
 
