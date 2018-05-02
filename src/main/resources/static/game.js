@@ -1300,23 +1300,24 @@ function onEvent() {
 }
 
 //Portal overlaps
-function checkOverlapPortalHub(player, portalHub) {
+function checkOverlapPortalHub(player, hubPortal) {
+    console.log(hubPortal.x)
     if(cursors.up.isDown && !gamepad){
         player.body.x = 800;
         player.body.y = 300;
-        if(level ==  1 && level1 == false){
+        if(level ==  1 && hubPortal.x == 10816){
             level = 2;
             level1 = true
         }
-        else if(level ==  2 && level1 == true){
+        else if(level ==  2 && hubPortal.x == 20704){
             level = 3;
             level2 = true
         }
-        else if(level ==  3 && level2 == true){
+        else if(level ==  3 && hubPortal.x == 45088){
             level = 4;
             level3 = true
         }
-        else if(level ==  4 && level3 == true){
+        else if(level ==  4 && hubPortal.x == 62816){
             level = 5;
             level4 = true
         }
@@ -1335,19 +1336,19 @@ function checkOverlapPortalHub(player, portalHub) {
     else if(gamepad && gamepad.buttons[config.UP].pressed){
         player.body.x = 800;
         player.body.y = 300;
-        if(level ==  1 && level1 == false){
+        if(level ==  1 && hubPortal.x == 10816){
             level = 2;
             level1 = true
         }
-        else if(level ==  2 && level1 == true){
+        else if(level ==  2 && hubPortal.x == 20704){
             level = 3;
             level2 = true
         }
-        else if(level ==  3 && level2 == true){
+        else if(level ==  3 && hubPortal.x == 45088){
             level = 4;
             level3 = true
         }
-        else if(level ==  4 && level3 == true){
+        else if(level ==  4 && hubPortal.x == 62816){
             level = 5;
             level4 = true
         }
