@@ -199,7 +199,7 @@ public class LoginFunctionController {
     @PostMapping("/registration")
     public ModelAndView submitForm(@Valid GameUser gameUser, BindingResult bindingResult){
         if (bindingResult.hasErrors()) {
-            return new ModelAndView("registration").addObject("gameUser",new GameUser());
+            return new ModelAndView("registration").addObject("gameUser",gameUser);
         }
         //add validation for username and email to be unique.
         GameUser gameUser1 = gameUserRepository.findByGameUserName(gameUser.getGameUserName());
