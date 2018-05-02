@@ -44,6 +44,11 @@ var yetiHealth = 200;
 var zirla;
 var zirlaHealth = 200;
 var map;
+var level1 = false;
+var level2 = false;
+var level3 = false;
+var level4 = false;
+var level;
 var spacefield;
 var backgroundv;
 var timedEvent;
@@ -185,7 +190,7 @@ function create() {
             coins = parseInt(result["coins"]);
             health = parseInt(result["health"]);
             score = parseInt(result["score"]);
-            map = parseInt(result["map"]);
+            level = parseInt(result["map"]);
             potions = parseInt(result["potions"]);
             weapon = parseInt(result["weapon"]);
         }
@@ -1145,6 +1150,26 @@ function update() {
     if (cursors.right.isDown)
         gamepad = false;
     //CONTROL END
+    if(health == 0){
+        $.ajax({
+            type: "POST",
+            data: {
+                score: score
+            },
+            url: "/setHighscore" //which is mapped to its partner function on our controller class
+        });
+        //create new player
+        $.ajax({
+            type: "GET",
+            url: "/resetPlayer" //which is mapped to its partner function on our controller class
+        });
+        health = -1;
+        setTimeout(function () {
+            location.reload();
+        }, 1000);
+        
+    }
+
 
     //Music Changer
     var songs = [
@@ -1276,20 +1301,36 @@ function onEvent() {
 
 //Portal overlaps
 function checkOverlapPortalHub(player, portalHub) {
-    $.ajax({
-        type: "POST",
-        data: {
-            score: score,
-            coins: coins,
-            health: health,
-            map: map,
-            potions: potions
-        },
-        url: "/saveStateAfterClearingMap" //which is mapped to its partner function on our controller class
-    });
     if(cursors.up.isDown && !gamepad){
         player.body.x = 800;
         player.body.y = 300;
+        if(level ==  1 && level1 == false){
+            level = 2;
+            level1 = true
+        }
+        else if(level ==  2 && level1 == true){
+            level = 3;
+            level2 = true
+        }
+        else if(level ==  3 && level2 == true){
+            level = 4;
+            level3 = true
+        }
+        else if(level ==  4 && level3 == true){
+            level = 5;
+            level4 = true
+        }
+        $.ajax({
+            type: "POST",
+            data: {
+                score: score,
+                coins: coins,
+                health: health,
+                map: level,
+                potions: potions
+            },
+            url: "/saveStateAfterClearingMap" //which is mapped to its partner function on our controller class
+        });
     }
     else if(gamepad && gamepad.buttons[config.UP].pressed){
         player.body.x = 800;
@@ -1308,42 +1349,43 @@ function checkOverlapPortal(player, portal) {
     }
 }
 function checkOverlapPortal1(player, portal1) {
-    if (cursors.up.isDown && !gamepad) {
+    if (cursors.up.isDown && !gamepad && weapon > 1 && level > 1) {
         player.body.x = 13120;
         player.body.y = 250;
     }
-    else if(gamepad && gamepad.buttons[config.UP].pressed){
+    else if(gamepad && gamepad.buttons[config.UP].pressed && weapon > 1 && level > 1){
         player.body.x = 13120;
         player.body.y = 250;
     }
 }
 function checkOverlapPortal2(player, portal2) {
-    if (cursors.up.isDown && !gamepad) {
+    if (cursors.up.isDown && !gamepad && level > 2 && weapon > 2) {
         player.body.x = 27328;
         player.body.y = 380;
     }
-    else if(gamepad && gamepad.buttons[config.UP].pressed){
+    else if(gamepad && gamepad.buttons[config.UP].pressed && level > 2 && weapon > 2){
         player.body.x = 27328;
         player.body.y = 380;
     }
 }
 function checkOverlapPortal3(player, portal3) {
 
-    if (cursors.up.isDown && !gamepad) {
+    if (cursors.up.isDown && !gamepad && level > 3 && weapon > 2) {
         player.body.x = 48320;
         player.body.y = 120;
     }
-    else if(gamepad && gamepad.buttons[config.UP].pressed){
+    else if(gamepad && gamepad.buttons[config.UP].pressed && level > 3 && weapon > 2){
         player.body.x = 48320;
         player.body.y = 120;
     }
 }
 function checkOverlapPortal4(player, portal4) {
-    if (cursors.up.isDown && !gamepad) {
+
+    if (cursors.up.isDown && !gamepad && level > 4 && weapon > 2) {
         player.body.x = 64832;
         player.body.y = 768;
     }
-    else if(gamepad && gamepad.buttons[config.UP].pressed){
+    else if(gamepad && gamepad.buttons[config.UP].pressed && level > 4 && weapon > 2){
         player.body.x = 64832;
         player.body.y = 768;
     }

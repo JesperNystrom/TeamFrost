@@ -1,6 +1,6 @@
 body {
     background-color: rgb(10, 10, 10);
-    font-family: "Press Start Regular";
+    font-family: 'Press Start 2P', cursive;
     color: white;
     text-align: center;
 }
@@ -9,7 +9,7 @@ h1 {
     font-size: 50px;
 }
 
-#emptySpace{
+.emptySpace{
     height: 20px;
 }
 
