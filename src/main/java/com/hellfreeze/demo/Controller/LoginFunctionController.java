@@ -14,7 +14,9 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -65,7 +67,7 @@ public class LoginFunctionController {
     public ModelAndView highscorePage(){
 
         List<Highscore> highscores = new ArrayList<>();
-        highscores = (List<Highscore>) highscoreRepository.findAll();
+        highscores = (List<Highscore>) highscoreRepository.findAllByOrderByTotalScoreDesc();
 
         return new ModelAndView("highscores")
                 .addObject("highscores",highscores);
@@ -74,24 +76,6 @@ public class LoginFunctionController {
     @GetMapping("/success")
     public String successPage(){
         return "success";
-    }
-
-    @GetMapping("/setHealth/{health}")
-    public String setHealth(@PathVariable int health, HttpServletRequest request){
-        GameUser gameUser = gameUserRepository.findByGameUserName(request.getRemoteUser());
-        Player player = gameUser.getPlayer();
-        player.setHealth(health);
-        playerRepository.save(player);
-        return "success";
-    }
-
-    @GetMapping("/getHealth")
-    @ResponseBody
-    public int getHealth(HttpServletRequest request){
-        GameUser gameUser = gameUserRepository.findByGameUserName(request.getRemoteUser());
-        Player player = gameUser.getPlayer();
-        int health = player.getHealth();
-        return health;
     }
 
     @GetMapping("/getPlayerStats")
@@ -134,12 +118,13 @@ public class LoginFunctionController {
     @PostMapping("/setHighscore")
     @ResponseBody
     public String setScore(@RequestParam Long score, HttpServletRequest request){
-        GameUser gameUser = gameUserRepository.findByGameUserName(request.getRemoteUser());
-        Player player = gameUser.getPlayer();
-        player.setScore(score);
-        playerRepository.save(player);
-        Highscore highscore = new Highscore(score,player);
-        highscoreRepository.save(highscore);
+        Highscore highscoreLowest = highscoreRepository.findFirstByOrderByTotalScoreAsc();
+        if(highscoreLowest.getTotalScore() < score){
+            GameUser gameUser = gameUserRepository.findByGameUserName(request.getRemoteUser());
+            highscoreLowest.setGameUserName(gameUser.getGameUserName());
+            highscoreLowest.setTotalScore(score);
+            highscoreRepository.save(highscoreLowest);
+        }
         return "success";
     }
 
@@ -176,6 +161,33 @@ public class LoginFunctionController {
         return "success";
     }
 
+    @GetMapping("/resetPlayer")
+    public String resetPlayer(HttpServletRequest request){
+        GameUser gameUser = gameUserRepository.findByGameUserName(request.getRemoteUser());
+
+        Outfit outfit= outfitRepository.findById(1L).get();
+
+        GameMap gameMap = gameMapRepository.findById(1L).get();
+
+        Player player = new Player(0L,100,0,outfit.getOutfitColor(),gameMap);
+
+        playerRepository.save(player);
+
+        MeleeWeapon meleeWeapon = meleeWeaponRepository.findById(1L).get();
+
+        RangedWeapon rangedWeapon = rangedWeaponRepository.findById(1L).get();
+        Inventory inventory = new Inventory(3,player,meleeWeapon,rangedWeapon);
+
+        inventoryRepository.save(inventory);
+
+        gameUser.addOutfit(outfit);
+
+        gameUser.setPlayer(player);
+
+        gameUserRepository.save(gameUser);
+        return "success";
+    }
+
     @GetMapping("/registration")
     public ModelAndView registrationPage(){
         return new ModelAndView("registration").addObject("gameUser",new GameUser());
@@ -198,17 +210,13 @@ public class LoginFunctionController {
         gameUser.setPassword(passwordEncoder.encode(gameUser.getPassword()));
 
         //set default values for a player and assign it to the user
-        Outfit outfit= outfitRepository.findById(8L).get();
+        Outfit outfit= outfitRepository.findById(1L).get();
 
         GameMap gameMap = gameMapRepository.findById(1L).get();
 
         Player player = new Player(0L,100,0,outfit.getOutfitColor(),gameMap);
 
         playerRepository.save(player);
-
-        Highscore highscore = new Highscore(0L,player);
-
-        highscoreRepository.save(highscore);
 
         MeleeWeapon meleeWeapon = meleeWeaponRepository.findById(1L).get();
 

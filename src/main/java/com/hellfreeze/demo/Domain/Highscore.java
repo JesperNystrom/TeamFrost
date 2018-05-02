@@ -9,22 +9,27 @@ public class Highscore {
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long highscoreID;
     private Long totalScore;
-
-    @OneToOne
-    private Player player;
+    private String gameUserName;
 
     public Highscore() {
     }
 
-    public Highscore(Long totalScore, Player player) {
+    public Highscore(Long totalScore, String gameUserName) {
         this.totalScore = totalScore;
-        this.player = player;
+        this.gameUserName = gameUserName;
     }
 
     public Long getHighscoreID() {
         return highscoreID;
     }
 
+    public String getGameUserName() {
+        return gameUserName;
+    }
+
+    public void setGameUserName(String gameUserName) {
+        this.gameUserName = gameUserName;
+    }
 
     public Long getTotalScore() {
         return totalScore;
@@ -34,11 +39,4 @@ public class Highscore {
         this.totalScore = totalScore;
     }
 
-    public Player getPlayer() {
-        return player;
-    }
-
-    public void setPlayer(Player player) {
-        this.player = player;
-    }
 }

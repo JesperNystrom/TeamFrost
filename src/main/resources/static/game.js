@@ -206,7 +206,7 @@ function create() {
     //Portal
     portalHub = this.physics.add.sprite(10816, 1550, 'portals');
     portalHub1 = this.physics.add.sprite(20704, 1856, 'portals');
-    portalHub2 = this.physics.add.sprite(44992, 500, 'portals');
+    portalHub2 = this.physics.add.sprite(45088, 320, 'portals');
     portalHub3 = this.physics.add.sprite(62816, 2600, 'portals');
     portalHub4 = this.physics.add.sprite(65024, 1024, 'portals');
 
@@ -360,6 +360,7 @@ function create() {
             }
             else if(shopPointer.y == 279 && coins >= 40){
                 coins -=40;
+                weapon += 1;
             }
             else if(shopPointer.y == 327)
                 console.log('Goto gem shop')
@@ -663,8 +664,10 @@ function create() {
                         coins -=20;
                         potions += 1;
                     }
-                    else if(shopActive && shopPointer.y == 279 && coins >= 40)
+                    else if(shopActive && shopPointer.y == 279 && coins >= 40){
                         coins -=40;
+                        weapon += 1;
+                    }
                     else if(shopActive && shopPointer.y == 327)
                         console.log('Goto gem shop')
                     else if(shopActive && shopPointer.y == 375){
@@ -758,8 +761,10 @@ function update() {
     if(player.body.velocity.y > 900)
         player.body.velocity.y = 900;
     //Falling = death
-    if(player.body.y >= 3200)
+    if(player.body.y >= 3200){
+        health = 0;
         player.disableBody(true, true);
+    }
 
     innKeeper.anims.play('keeper', true);
 
@@ -960,7 +965,7 @@ function update() {
     //console.log(states)
     //CONTROLS
     if(!shopActive){
-    if (cursors.down.isDown && fallBuffert > 0 && stamina >= 60) {
+    if (cursors.down.isDown && fallBuffert > 0 && stamina >= 60 && weapon > 1) {
         if (player.flipX) {
             checkAttackState('glide', 0.2, 0.58);
             player.setVelocityX(-650)
@@ -1025,7 +1030,7 @@ function update() {
     if (player.body.velocity.y < 0) {
         checkAttackState('jump', 0.5, 0.5);
     }
-    if (cursors.up.isDown && player.body.onWall()) {
+    if (cursors.up.isDown && player.body.onWall() && weapon > 2) {
         if (player.flipX) {
             checkAttackState('wallGlide', 0.3, 0.5);
         } else {
@@ -1036,7 +1041,7 @@ function update() {
     }
     //GAMEPAD CONTROLS
     if (gamepad) {
-        if (gamepad.buttons[config.R1].pressed && fallBuffert > 0) {
+        if (gamepad.buttons[config.R1].pressed && fallBuffert > 0 && weapon > 1) {
             if (player.flipX) {
                 checkAttackState('glide', 0.2, 0.58);
                 player.setVelocityX(-650)
@@ -1100,7 +1105,7 @@ function update() {
         if (player.body.velocity.y < 0) {
             checkAttackState('jump', 0.5, 0.5);
         }
-        if (gamepad.buttons[config.UP].pressed && gamepad.buttons[config.R1].pressed && player.body.onWall()) {
+        if (gamepad.buttons[config.UP].pressed && gamepad.buttons[config.R1].pressed && player.body.onWall() && weapon < 2) {
             if (player.flipX) {
                 checkAttackState('wallGlide', 0.3, 0.5);
                 player.setVelocityX(-10)

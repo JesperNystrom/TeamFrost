@@ -1,0 +1,37 @@
+body {
+    background-color: rgb(10, 10, 10);
+    font-family: "Press Start Regular";
+    color: white;
+    text-align: center;
+}
+
+#statBar {
+    margin-left: 13%;
+}
+
+#button {
+    padding-left: 70%;
+}
+a:link {
+    color: rgb(50, 150, 180) ;
+    background-color: transparent;
+    text-decoration: none;
+}
+
+a:visited {
+    color: rgb(50, 150, 180);
+    background-color: transparent;
+    text-decoration: none;
+}
+
+a:hover {
+    color: rgb(50, 150, 180);
+    background-color: transparent;
+    text-decoration: none;
+}
+
+a:active {
+    color: rgb(50, 150, 180);
+    background-color: transparent;
+    text-decoration: none;
+}

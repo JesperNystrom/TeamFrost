@@ -72,3 +72,9 @@ $.ajax({
         weapon = result["weapon"];
     }
 });
+
+//create new player
+$.ajax({
+    type: "GET",
+    url: "/resetPlayer" //which is mapped to its partner function on our controller class
+});
