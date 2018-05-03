@@ -43,8 +43,8 @@ var enemyHealth = 20;
 var yetiHealth = 200;
 var zirla;
 var zirlaHealth = 200;
-var lightning;
-var lightningState;
+var orb;
+var orbActive = false;
 var map;
 var level1 = false;
 var level2 = false;
@@ -121,8 +121,7 @@ function preload() {
         {frameWidth: 256, frameHeight: 256});
     this.load.spritesheet('zirlaDefeated', '/sprites/ZirlaDefeated.png',
         {frameWidth: 256, frameHeight: 256});
-    this.load.spritesheet('zirlaAttack', '/sprites/ZirlaIceLightning.png',
-        {frameWidth: 256, frameHeight: 256});
+    this.load.image('orb', '/sprites/Orb.png');
 
     //Npc Sprites
     this.load.spritesheet('innKeeper', '/sprites/InnKeeper.png',
@@ -244,7 +243,7 @@ function create() {
     //1059,39
     zirla = this.physics.add.sprite(67600, 2450, 'zirlaMoving');
     zirla.body.setSize(256, 256);
-    //lightning = this.physics.add.sprite(zirla.body.x, zirla.body.y, 'zirlaAttack');
+    orb = this.physics.add.group();
 
     //Create Enemies
     ghostEnemies = this.physics.add.group();
@@ -324,7 +323,6 @@ function create() {
     this.physics.add.collider(portal2, layer);
     this.physics.add.collider(portal3, layer);
     this.physics.add.collider(portal4, layer);
-    //this.physics.add.collider(lightning, layer);
 
 
     
@@ -342,6 +340,7 @@ function create() {
     this.physics.add.overlap(player, yetiEnemies, checkOverlapPlayer, null, this);
     this.physics.add.overlap(player, zombieEnemies, checkOverlapPlayer, null, this);
     this.physics.add.overlap(player, zirla, checkOverlapPlayer, null, this);
+    this.physics.add.overlap(player, orb, checkOverlapOrb, null, this);
 
     //Hitbox/kill-able
     //this.physics.add.overlap(weaponHitBox, flurryEnemies, checkOverlapHitBox, null, this);
@@ -673,13 +672,6 @@ function create() {
         repeat: 0
     });
 
-    this.anims.create({
-        key: 'zirlaLightning',
-        frames: this.anims.generateFrameNumbers('zirlaAttack', { start: 0, end: 7 }),
-        frameRate: 20,
-        repeat: 0
-    });
-
     //GAMEPAD ENABLEING
     config = Phaser.Input.Gamepad.Configs.DUALSHOCK_4;
     this.input.gamepad.on('down', function (pad, button, value, data) {
@@ -786,7 +778,6 @@ function update() {
             break;
     }
 
-    //lightning.anims.play('zirlaLightning', true);
     innKeeper.anims.play('keeper', true);
     zirla.anims.play('zirlaMove', true);
     portalHub.anims.play('portalHub', true);
@@ -835,24 +826,6 @@ function update() {
         fallBuffert = 25;
     }
 
-    //Zirla lightning
-    switch (lightningState) {
-        case 'attack':
-        lightning = this.physics.add.sprite(zirla.body.x, zirla.body.y+150, 'zirlaAttack');
-        lightning.anims.play('zirlaLightning', true);
-        setTimeout(function (lightning) {
-        lightning.x = zirla.body.x+100;
-        lightning.y = zirla.body.y+150;
-         }, 3000);
-         
-        setTimeout(function () {
-            lightning.disableBody(true,true);
-        }, 10);
-        break;
-        case 'idle' :
-        //lightning.disableBody(true, true);
-        break;
-    }
 
     //Plays animation'
     switch (states) {
@@ -890,6 +863,19 @@ function update() {
     }
 
     //Enemy animations and movement
+    var orbs = orb.getChildren();
+    for(child of orbs) {
+        if(child.x > player.body.x) {
+            child.x -=5;
+        } else if (child.x < player.body.x) {
+            child.x +=5;
+        }
+        if(child.y > player.body.y) {
+            child.y -=5;
+        } else if (child.y < player.body.y) {
+            child.y +=5;
+        }
+    }
 
     //Flurry
     var flurryEnemy = flurryEnemies.getChildren();
@@ -1018,38 +1004,44 @@ function update() {
      //Zirla
         if (zirla.body.x > player.body.x) {
             zirla.flipX = false;
-            if(zirla.body.x - 300 < player.body.x) {
-            lightningState = 'attack';
-               
-                if(zirla.body.y > player.body.y) {
-                    zirla.setVelocityY(-20);
-                } else if (zirla.body.y < player.body.y) {
-                    zirla.setVelocityY(20);
-                } 
-                zirla.setVelocityX(-20);
+            if(zirla.body.y > player.body.y) {
+                zirla.setVelocityY(-20);
+            } else if (zirla.body.y < player.body.y) {
+                zirla.setVelocityY(20);
             } 
-            else {
-                lightningState = 'idle';
-            zirla.setVelocityX(0);
-            zirla.setVelocityY(-10);
-            }
+            zirla.setVelocityX(-20);
+        } 
+        else {
+        zirla.setVelocityY(-10);
+        }
+            if(zirla.body.x - 300 < player.body.x && orbActive == false) { 
+                orb.create(zirla.body.x+150, zirla.body.y+20, 'orb');
+                orbActive = true;
+                setTimeout(function(){
+                    orbActive = false;
+                }, 1500) ;             
+                
 
-        } else {
+        } 
+        if (zirla.body.x < player.body.x) {
             zirla.flipX = true;
-            if(zirla.body.x + 300 > player.body.x) {
-                    lightningState = 'attack';
-                if(zirla.body.y > player.body.y) {
-                    zirla.setVelocityY(-20); 
-                } else if (zirla.body.y < player.body.y) {
-                    zirla.setVelocityY(20);
-                }
-                zirla.setVelocityX(20);
+            if(zirla.body.y > player.body.y) {
+                zirla.setVelocityY(-20); 
+            } else if (zirla.body.y < player.body.y) {
+                zirla.setVelocityY(20);
             }
-            else {
-                lightningState = 'idle';
-            zirla.setVelocityX(0);
-            zirla.setVelocityY(-10);
-            }
+            zirla.setVelocityX(20);
+        }
+        else {
+        zirla.setVelocityY(-10);
+        }
+            if(zirla.body.x + 300 > player.body.x && orbActive == false) {
+                orb.create(zirla.body.x+150, zirla.body.y+20, 'orb');
+                orbActive = true;
+                setTimeout(function(){
+                    orbActive = false;
+                }, 1500) ;  
+                
             
         }
     
@@ -1215,7 +1207,7 @@ function update() {
     if (cursors.right.isDown)
         gamepad = false;
     //CONTROL END
-    if(health == 0){
+    if(health <= 0){
         $.ajax({
             type: "POST",
             data: {
@@ -1497,6 +1489,17 @@ function checkOverlapHitBoxZirla(weaponHitBox, zirla) {
 }
    
 }
+
+function checkOverlapOrb(player, childOrb) {
+        health -= 5;
+        childOrb.destroy();
+       
+}
+
+/* orbs.forEach(function(orb) {
+    this.physics.accelerateToObject(orb, player, 50 + Math.random() * 100);
+  }, this); */
+
 
 function checkOverlapHitBoxYeti(weaponHitBox, yetiEnemies) {
     if(states == 'lightAttack') {
