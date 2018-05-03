@@ -29,6 +29,7 @@ var cursors;
 var layer;
 var tileset;
 var player;
+var playerDeads = false;
 var weapon;
 var weaponHitBox;
 var enemies;
@@ -42,7 +43,8 @@ var healthValue = 100;
 var enemyHealth = 20;
 var yetiHealth = 200;
 var zirla;
-var zirlaHealth = 200;
+var zirlaHealth = 100;
+var zirlaDeads = false;
 var orb;
 var orbActive = false;
 var map;
@@ -74,6 +76,7 @@ var changeMusic;
 
 function preload() {
     this.load.image('bkGround', '/sprites/Background.png');
+    this.load.image('devil', '/sprites/FrozenDevil.png');
     //Player sprites
     this.load.spritesheet('playerRun', '/sprites/PlayerRun.png',
         { frameWidth: 128, frameHeight: 140 });
@@ -215,6 +218,8 @@ function create() {
     map.setCollision([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14]);
 
     weaponHitBox = this.physics.add.staticGroup();
+    devil = this.physics.add.sprite(67136, 2560, 'devil');
+
 
     //Portal
     portalHub = this.physics.add.sprite(10816, 1550, 'portals');
@@ -242,7 +247,7 @@ function create() {
     //Create Zirla
     //1059,39
     zirla = this.physics.add.sprite(67600, 2450, 'zirlaMoving');
-    zirla.body.setSize(256, 256);
+    zirla.body.setSize(100, 256);
     orb = this.physics.add.group();
 
     //Create Enemies
@@ -312,6 +317,7 @@ function create() {
     this.physics.add.collider(wraithEnemies, layer);
     this.physics.add.collider(yetiEnemies, layer);
     this.physics.add.collider(zirla, layer);
+    this.physics.add.collider(devil, layer);
     this.physics.add.collider(innKeeper, layer);
     this.physics.add.collider(portalHub, layer);
     this.physics.add.collider(portalHub1, layer);
@@ -1015,11 +1021,13 @@ function update() {
         zirla.setVelocityY(-10);
         }
             if(zirla.body.x - 300 < player.body.x && orbActive == false) { 
+                if(zirlaDeads == false){
                 orb.create(zirla.body.x+150, zirla.body.y+20, 'orb');
                 orbActive = true;
                 setTimeout(function(){
                     orbActive = false;
-                }, 1500) ;             
+                }, 1500) ;   
+            }          
                 
 
         } 
@@ -1207,7 +1215,11 @@ function update() {
     if (cursors.right.isDown)
         gamepad = false;
     //CONTROL END
-    if(health <= 0){
+    if(health <= 0 && !playerDeads){
+        playerDeads = true;
+        score += potions*200;
+        score += coins*2;
+
         $.ajax({
             type: "POST",
             data: {
@@ -1294,6 +1306,29 @@ function update() {
         zirla.anims.play('zirlaDead', true);
         zirla.setVelocityX(0);
         zirla.disableBody(true, false);
+
+        if(!zirlaDeads){
+            zirlaDeads = true;
+            score += health*20;
+            score += potions*40;
+            score += coins*2;
+
+            $.ajax({
+                type: "POST",
+                data: {
+                    score: score
+                },
+                url: "/setHighscore" //which is mapped to its partner function on our controller class
+            });
+            //create new player
+            $.ajax({
+                type: "GET",
+                url: "/resetPlayer" //which is mapped to its partner function on our controller class
+            });
+            setTimeout(function () {
+                location.reload();
+            }, 5000);
+        }
     }
 }
 
