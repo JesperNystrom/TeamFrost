@@ -43,6 +43,8 @@ var enemyHealth = 20;
 var yetiHealth = 200;
 var zirla;
 var zirlaHealth = 200;
+var lightning;
+var lightningState;
 var map;
 var level1 = false;
 var level2 = false;
@@ -107,15 +109,17 @@ function preload() {
         { frameWidth: 64, frameHeight: 128 });
 
     //Zirla sprites
-    this.load.spritesheet('zirlaMoving', '/sprites/ZirlaMoving_strip16.png',
+    this.load.spritesheet('zirlaMoving', '/sprites/ZirlaMoving.png',
         {frameWidth: 256, frameHeight: 256});
-    this.load.spritesheet('zirlaGlobeGlow', '/sprites/ZirlaGlobeGlow_strip15.png',
+    this.load.spritesheet('zirlaGlobeGlow', '/sprites/ZirlaGlobeGlow.png',
         {frameWidth: 256, frameHeight: 256});
-    this.load.spritesheet('zirlaHandRaise', '/sprites/ZirlaHandRaise_strip16.png',
+    this.load.spritesheet('zirlaHandRaise', '/sprites/ZirlaHandRaise.png',
         {frameWidth: 256, frameHeight: 256});
-    this.load.spritesheet('zirlaHit', '/sprites/ZirlaHit_strip3.png',
+    this.load.spritesheet('zirlaHit', '/sprites/ZirlaHit.png',
         {frameWidth: 256, frameHeight: 256});
     this.load.spritesheet('zirlaDefeated', '/sprites/ZirlaDefeated.png',
+        {frameWidth: 256, frameHeight: 256});
+    this.load.spritesheet('zirlaAttack', '/sprites/ZirlaIceLightning.png',
         {frameWidth: 256, frameHeight: 256});
 
     //Npc Sprites
@@ -237,6 +241,7 @@ function create() {
     //1059,39
     zirla = this.physics.add.sprite(67600, 2450, 'zirlaMoving');
     zirla.body.setSize(256, 256);
+    //lightning = this.physics.add.sprite(zirla.body.x, zirla.body.y, 'zirlaAttack');
 
     //Create Enemies
     ghostEnemies = this.physics.add.group();
@@ -245,6 +250,7 @@ function create() {
     wraithEnemies = this.physics.add.group();
     yetiEnemies = this.physics.add.group();
     zombieEnemies = this.physics.add.group();
+   
 
     //imp = 15, ghost = 16, flurr = 17 , Zombie == 18, yeti = 19, wraith = 20 
     var enemiesArray = [impEnemies, ghostEnemies, flurryEnemies,
@@ -315,6 +321,8 @@ function create() {
     this.physics.add.collider(portal2, layer);
     this.physics.add.collider(portal3, layer);
     this.physics.add.collider(portal4, layer);
+    //this.physics.add.collider(lightning, layer);
+
 
     
 
@@ -654,6 +662,13 @@ function create() {
         repeat: 0
     });
 
+    this.anims.create({
+        key: 'zirlaLightning',
+        frames: this.anims.generateFrameNumbers('zirlaAttack', { start: 0, end: 7 }),
+        frameRate: 20,
+        repeat: 0
+    });
+
     //GAMEPAD ENABLEING
     config = Phaser.Input.Gamepad.Configs.DUALSHOCK_4;
     this.input.gamepad.on('down', function (pad, button, value, data) {
@@ -751,6 +766,7 @@ function update() {
             break;
     }
 
+    //lightning.anims.play('zirlaLightning', true);
     innKeeper.anims.play('keeper', true);
     zirla.anims.play('zirlaMove', true);
     portalHub.anims.play('portalHub', true);
@@ -792,6 +808,25 @@ function update() {
         fallBuffert--;
     } else if (player.body.onFloor()) {
         fallBuffert = 25;
+    }
+
+    //Zirla lightning
+    switch (lightningState) {
+        case 'attack':
+        lightning = this.physics.add.sprite(zirla.body.x, zirla.body.y+150, 'zirlaAttack');
+        lightning.anims.play('zirlaLightning', true);
+        setTimeout(function (lightning) {
+        lightning.x = zirla.body.x+100;
+        lightning.y = zirla.body.y+150;
+         }, 3000);
+         
+        setTimeout(function () {
+            lightning.disableBody(true,true);
+        }, 10);
+        break;
+        case 'idle' :
+        //lightning.disableBody(true, true);
+        break;
     }
 
     //Plays animation'
@@ -957,7 +992,10 @@ function update() {
 
      //Zirla
         if (zirla.body.x > player.body.x) {
+            zirla.flipX = false;
             if(zirla.body.x - 300 < player.body.x) {
+            lightningState = 'attack';
+               
                 if(zirla.body.y > player.body.y) {
                     zirla.setVelocityY(-20);
                 } else if (zirla.body.y < player.body.y) {
@@ -966,12 +1004,15 @@ function update() {
                 zirla.setVelocityX(-20);
             } 
             else {
+                lightningState = 'idle';
             zirla.setVelocityX(0);
             zirla.setVelocityY(-10);
             }
 
         } else {
+            zirla.flipX = true;
             if(zirla.body.x + 300 > player.body.x) {
+                    lightningState = 'attack';
                 if(zirla.body.y > player.body.y) {
                     zirla.setVelocityY(-20); 
                 } else if (zirla.body.y < player.body.y) {
@@ -980,6 +1021,7 @@ function update() {
                 zirla.setVelocityX(20);
             }
             else {
+                lightningState = 'idle';
             zirla.setVelocityX(0);
             zirla.setVelocityY(-10);
             }
@@ -1229,9 +1271,14 @@ function update() {
     }
 //console.log(zirlaHealth);
     if(zirlaHealth <= 0) {
+        if(zirla.body.x > player.body.x) {
+            zirla.flipX = true;
+        }
+        else { zirla.flipX = false; }
+    
         zirla.anims.play('zirlaDead', true);
         zirla.setVelocityX(0);
-        //zirla.disableBody(true, true);
+        zirla.disableBody(true, false);
     }
 }
 
