@@ -53,6 +53,8 @@ var spacefield;
 var backgroundv;
 var timedEvent;
 var innKeeper;
+var textActive = false;
+var textBox;
 var portal;
 var portal1;
 var portal2;
@@ -126,6 +128,7 @@ function preload() {
     this.load.image('coin', '/sprites/Coins.png');
     this.load.spritesheet('potionWindow', '/sprites/PotionWindow.png',
         { frameWidth:64, frameHeight: 64 });
+    this.load.image('textBox', '/sprites/TextBox.png')
 
     this.load.image('background', '/sprites/testBackground.png');
     //LOAD TERRAIN
@@ -360,18 +363,22 @@ function create() {
     key_Z = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z);
     key_jump = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
    
-    //Shopcontrols  //327 = Hammer Upgrade   ||   375 = HP-pot   ||   279 = gemShop || 231=exit
+    //Shopcontrols  231 = potion, 279 = upgrade1, 311 = upgrade 2, 343 = gemshop, 375 = exit
     key_BUY = this.input.keyboard.on('keydown_SPACE', function (event) {
         if(shopActive){
             if(shopPointer.y == 231 && coins >= 20 && potions < 5){
                 coins -=20;
                 potions += 1;
             }
-            else if(shopPointer.y == 279 && coins >= 40){
-                coins -=40;
+            else if(shopPointer.y == 279 && weapon == 1 && coins >= 140){
+                coins -=140;
                 weapon += 1;
             }
-            else if(shopPointer.y == 327)
+            else if(shopActive && shopPointer.y == 311 && weapon == 2 && coins >= 620){
+                coins -= 620;
+                weapon += 1;
+            }
+            else if(shopActive && shopPointer.y == 343)
                 console.log('Goto gem shop')
             else if(shopPointer.y == 375){
                 shopActive = false;
@@ -392,13 +399,17 @@ function create() {
         }
     });
     key_UP = this.input.keyboard.on('keydown_UP', function (event) {
-        if(shopActive && shopPointer.y != 231){
+        if(shopActive && shopPointer.y == 279)
             shopPointer.y -= 48;
+        else if(shopActive && shopPointer.y != 231){
+            shopPointer.y -= 32;
         }
     });
     key_DOWN = this.input.keyboard.on('keydown_DOWN', function (event) {
-        if(shopActive && shopPointer.y != 375){
+        if(shopActive && shopPointer.y == 231)
             shopPointer.y += 48;
+        else if(shopActive && shopPointer.y != 375){
+            shopPointer.y += 32;
         }
     });
     key_drinkPotion = this.input.keyboard.on('keydown_C', function(event){
@@ -661,24 +672,34 @@ function create() {
             switch (button.index)
             {
                 case config.UP:
-                    if(shopActive && shopPointer.y != 231)
+                    if(shopActive && shopPointer.y == 279)
                         shopPointer.y -= 48;
+                    else if(shopActive && shopPointer.y != 231){
+                        shopPointer.y -= 32;
+                    }
                     break;
 
                 case config.DOWN:
-                    if(shopActive && shopPointer.y != 375)
-                    shopPointer.y += 48;
+                    if(shopActive && shopPointer.y == 231)
+                        shopPointer.y += 48;
+                    else if(shopActive && shopPointer.y != 375){
+                        shopPointer.y += 32;
+                    }
                     break;
                 case config.X:
                     if(shopActive && shopPointer.y == 231 && coins >= 20 && potions < 5){
                         coins -=20;
                         potions += 1;
                     }
-                    else if(shopActive && shopPointer.y == 279 && coins >= 40){
-                        coins -=40;
+                    else if(shopActive && shopPointer.y == 279 && weapon == 1 && coins >= 140){
+                        coins -=140;
                         weapon += 1;
                     }
-                    else if(shopActive && shopPointer.y == 327)
+                    else if(shopActive && shopPointer.y == 311 && weapon == 2 && coins >= 620){
+                        coins -= 620;
+                        weapon += 1;
+                    }
+                    else if(shopActive && shopPointer.y == 343)
                         console.log('Goto gem shop')
                     else if(shopActive && shopPointer.y == 375){
                         shopActive = false;
@@ -729,7 +750,6 @@ function create() {
 }
 
 function update() {
-
     switch(potions){
         case 0:
             potionWindow.anims.play('potion0', true);
@@ -767,7 +787,6 @@ function update() {
     if (stamina < 80)
         stamina++;
 
-    //console.log(player.body.y);
     //Limit fall speed
     if(player.body.velocity.y > 900)
         player.body.velocity.y = 900;
@@ -778,6 +797,12 @@ function update() {
     }
 
     innKeeper.anims.play('keeper', true);
+    if(textActive){
+        setTimeout(function () {
+            textActive = false;
+            textBox.destroy();
+        }, 1000);
+    }
 
     spacefield.x = player.x;
     snowfield.x = player.x;
@@ -986,9 +1011,7 @@ function update() {
             
         }
     
-     
- 
-    //console.log(states)
+
     //CONTROLS
     if(!shopActive){
     if (cursors.down.isDown && fallBuffert > 0 && stamina >= 60 && weapon > 1) {
@@ -1301,7 +1324,6 @@ function onEvent() {
 
 //Portal overlaps
 function checkOverlapPortalHub(player, hubPortal) {
-    console.log(hubPortal.x)
     if(cursors.up.isDown && !gamepad){
         player.body.x = 800;
         player.body.y = 300;
@@ -1513,26 +1535,28 @@ function checkOverlapPlayer(player, enemy) {
     health -= 1;
     setTimeout(function () {
     }, 3500);
-    console.log(health);
     if (health <= 0) {
         player.disableBody(true, true);
     }
 }
 function checkOverlapInnkeeper(player, Innkeeper) {
+    if(!shopActive && !textActive){
+        textBox = this.add.image(innKeeper.x-150, innKeeper.y-150,'textBox')
+        textActive = true;
+    }
     if(cursors.up.isDown && !shopActive && !gamepad){
         states = 'idle';
         player.setVelocityX(0);
         shopActive = true;
         shop = this.add.image(innKeeper.x, innKeeper.y, 'shopWindow');
-        shopPointer = this.add.image(shop.x+130, shop.y-103, 'shopPointer');
-
+        shopPointer = this.add.image(shop.x+200, shop.y-103, 'shopPointer');
     }
     else if(gamepad && gamepad.buttons[config.UP].pressed && !shopActive){
         states = 'idle';
         player.setVelocityX(0);
         shopActive = true;
         shop = this.add.image(innKeeper.x, innKeeper.y, 'shopWindow');
-        shopPointer = this.add.image(shop.x+130, shop.y-103, 'shopPointer');
+        shopPointer = this.add.image(shop.x+200, shop.y-103, 'shopPointer');
     }
 }
 function checkOverlapCoinBags(player, coinbag) {
