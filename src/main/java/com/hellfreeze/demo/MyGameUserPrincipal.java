@@ -4,13 +4,10 @@ import com.hellfreeze.demo.Domain.GameUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 
@@ -25,13 +22,6 @@ public class MyGameUserPrincipal implements UserDetails {
     @Autowired
     private MyGameUserDetailsService userDetailsService;
 
-    //Could be unnecessary.
-//    //@Override
-//    protected void configure(AuthenticationManagerBuilder auth)
-//            throws Exception {
-//        auth.authenticationProvider(authenticationProvider());
-//    }
-
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider
@@ -44,7 +34,6 @@ public class MyGameUserPrincipal implements UserDetails {
     @Bean
     public PasswordEncoder encoder() {
         PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
-        //return new BCryptPasswordEncoder(11);
         return passwordEncoder;
     }
 

@@ -1,7 +1,5 @@
 package com.hellfreeze.demo.Domain;
 
-import com.hellfreeze.demo.Domain.GameMap;
-
 import javax.persistence.*;
 
 @Entity

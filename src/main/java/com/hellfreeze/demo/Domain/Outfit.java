@@ -1,7 +1,5 @@
 package com.hellfreeze.demo.Domain;
 
-import com.hellfreeze.demo.Domain.GameUser;
-
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
